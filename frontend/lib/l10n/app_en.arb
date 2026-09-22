@@ -1,0 +1,131 @@
+{
+  "@@locale": "en",
+
+  "wordmark": "PAY&SAVE",
+  "@wordmark": { "description": "App wordmark on the Welcome screen. Same across all locales." },
+
+  "welcomeTitleLine1": "Pay Together.",
+  "@welcomeTitleLine1": { "description": "First line of the Welcome screen headline." },
+
+  "welcomeTitleLine2": "Save Together.",
+  "@welcomeTitleLine2": { "description": "Second line of the Welcome screen headline." },
+
+  "welcomeSubtitle": "Keep your seettu records clear for everyone",
+  "@welcomeSubtitle": { "description": "Welcome screen subtitle under the headline." },
+
+  "languageEnglish": "English",
+  "@languageEnglish": { "description": "Language chip label, always shown in English regardless of the current locale." },
+
+  "languageSinhala": "සිංහල",
+  "@languageSinhala": { "description": "Language chip label, always shown in Sinhala regardless of the current locale." },
+
+  "languageTamil": "தமிழ்",
+  "@languageTamil": { "description": "Language chip label, always shown in Tamil regardless of the current locale." },
+
+  "getStarted": "Get started",
+  "@getStarted": { "description": "Primary button on the Welcome screen." },
+
+  "goodMorning": "Good morning, {name}",
+  "@goodMorning": {
+    "description": "Home screen greeting.",
+    "placeholders": { "name": { "type": "String", "example": "Nadeeshi" } }
+  },
+
+  "searchHint": "Find a payment or circle",
+  "@searchHint": { "description": "Placeholder text in the home search field." },
+
+  "thisCycle": "This cycle",
+  "@thisCycle": { "description": "Section title above the hero cycle card." },
+
+  "cycleOf": "Cycle {current} of {total}",
+  "@cycleOf": {
+    "description": "Hero card cycle counter.",
+    "placeholders": {
+      "current": { "type": "int", "example": "3" },
+      "total": { "type": "int", "example": "5" }
+    }
+  },
+
+  "dueInDays": "Due {date} · {days} days",
+  "@dueInDays": {
+    "description": "Hero card due-date caption while the cycle is not yet overdue.",
+    "placeholders": {
+      "date": { "type": "String", "example": "20 Sep" },
+      "days": { "type": "int", "example": "3" }
+    }
+  },
+
+  "payNow": "Pay now",
+  "@payNow": { "description": "Primary action on the hero cycle card in the due state." },
+
+  "viewRecord": "View record",
+  "@viewRecord": { "description": "Outline button on the hero cycle card once a contribution already exists for the cycle." },
+
+  "statusDue": "Due",
+  "@statusDue": { "description": "Status badge word for a contribution not yet recorded." },
+
+  "statusPendingSync": "Saved on this phone · not yet confirmed",
+  "@statusPendingSync": { "description": "Status badge caption while an offline record waits to sync." },
+
+  "statusRecorded": "Waiting for organizer to verify",
+  "@statusRecorded": { "description": "Status badge caption once a contribution is recorded but not yet verified." },
+
+  "statusVerified": "Verified",
+  "@statusVerified": { "description": "Status badge word once the organizer has verified a contribution." },
+
+  "chipTurnOrder": "Turn order",
+  "@chipTurnOrder": { "description": "Home screen quick-link chip." },
+
+  "chipHistory": "History",
+  "@chipHistory": { "description": "Home screen quick-link chip." },
+
+  "chipSavings": "Savings",
+  "@chipSavings": { "description": "Home screen quick-link chip." },
+
+  "chipReminders": "Reminders",
+  "@chipReminders": { "description": "Home screen quick-link chip." },
+
+  "turnOrderTile": "Turn order",
+  "@turnOrderTile": { "description": "Grid tile title on the home screen." },
+
+  "nextYourTurn": "Next: You",
+  "@nextYourTurn": { "description": "Grid tile subtitle announcing the member's own upcoming turn." },
+
+  "cycleNumberShort": "cycle {number}",
+  "@cycleNumberShort": {
+    "description": "Grid tile caption naming a cycle number.",
+    "placeholders": { "number": { "type": "int", "example": "5" } }
+  },
+
+  "mySavingsTile": "My savings",
+  "@mySavingsTile": { "description": "Grid tile title on the home screen." },
+
+  "verifiedCount": "{count} verified",
+  "@verifiedCount": {
+    "description": "Grid tile caption counting verified contributions.",
+    "placeholders": { "count": { "type": "int", "example": "3" } }
+  },
+
+  "navHome": "Home",
+  "@navHome": { "description": "Bottom navigation label." },
+
+  "navCircles": "Circles",
+  "@navCircles": { "description": "Bottom navigation label." },
+
+  "navHistory": "History",
+  "@navHistory": { "description": "Bottom navigation label." },
+
+  "navSettings": "Settings",
+  "@navSettings": { "description": "Bottom navigation label." },
+
+  "arithmeticSummary": "{count} {statusWord} × LKR {unit} = LKR {total}",
+  "@arithmeticSummary": {
+    "description": "Every total is shown with its arithmetic (NFR-07), e.g. 3 verified x LKR 5,000 = LKR 15,000.",
+    "placeholders": {
+      "count": { "type": "int", "example": "3" },
+      "statusWord": { "type": "String", "example": "verified" },
+      "unit": { "type": "String", "example": "5,000" },
+      "total": { "type": "String", "example": "15,000" }
+    }
+  }
+}

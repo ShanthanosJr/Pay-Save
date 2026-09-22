@@ -36,3 +36,18 @@ frontend/.flutter-plugins-dependencies
 infra/cdk.out/
 .terraform/
 *.tfstate*
+
+# AI coding agent tooling and internal planning docs (kept locally,
+# not part of the published repository)
+.claude/
+.agent/
+AGENTS.md
+docs/antigravity-prompts.md
+docs/MASTER_PLAN.md
+docs/design-system.md
+docs/adr/
+frontend/README.md
+backend/README.md
+insights-service/README.md
+infra/README.md
+scripts/README.md

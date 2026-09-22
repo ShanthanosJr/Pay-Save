@@ -6,11 +6,9 @@ Pay&Save is a mobile-first app for community savings circles (seettu / ROSCA) in
 
 It is the build of the design researched and tested in IT3060 Human Computer Interaction (Group 64, Milestones 01 and 02).
 
-> Status: foundation phase. The plan is in [`docs/MASTER_PLAN.md`](docs/MASTER_PLAN.md). Service folders are scaffolds until their phase starts.
+> Status: Phase 0 foundations — Flutter app shell, NestJS API skeleton and FastAPI insights skeleton are running, with CI green.
 
 ## Technology stack
-
-The stack mirrors the FitFlow lab architecture, adapted to a financial record-keeping product.
 
 | Layer | Choice |
 |---|---|
@@ -23,11 +21,9 @@ The stack mirrors the FitFlow lab architecture, adapted to a financial record-ke
 | Object storage / CDN | Amazon S3 + CloudFront (statements, circle cover images) |
 | Hosting & delivery | AWS ECS Fargate, GitHub Actions CI/CD, CloudWatch + OpenTelemetry + Sentry |
 
-Why each choice was kept, changed or dropped: [`docs/MASTER_PLAN.md` §3](docs/MASTER_PLAN.md#3-stack-carried-over-from-fitflow-and-what-changes).
-
 ## Design
 
-Dark, photo-led interface with a deep forest-green accent, Montserrat headings and Poppins body text. Tokens and screen mapping: [`docs/design-system.md`](docs/design-system.md). Flutter theme: [`frontend/lib/core/theme/`](frontend/lib/core/theme/).
+Dark, photo-led interface with a deep forest-green accent, Montserrat headings and Poppins body text. Flutter theme: [`frontend/lib/core/theme/`](frontend/lib/core/theme/).
 
 ## Repository structure
 
@@ -37,14 +33,8 @@ pay-and-save/
 ├── backend/            NestJS core API (modular monolith) + SQL migrations
 ├── insights-service/   FastAPI service (statements, community aggregates)
 ├── infra/              Infrastructure as code (AWS CDK or Terraform, later phase)
-├── docs/
-│   ├── MASTER_PLAN.md
-│   ├── design-system.md
-│   ├── antigravity-prompts.md
-│   └── adr/
 ├── scripts/
 ├── .github/            CI workflow, PR template, Dependabot
-├── AGENTS.md           Rules for AI coding agents working in this repo
 └── docker-compose.yml  Local Postgres + Redis
 ```
 
@@ -56,7 +46,11 @@ psql postgresql://payandsave:payandsave@localhost:5432/payandsave \
      -f backend/db/migrations/0001_init.sql
 ```
 
-Then follow the phase you are working on in `docs/antigravity-prompts.md`.
+Frontend (Flutter): `cd frontend && flutter pub get && flutter run -d chrome`
+
+Backend (NestJS): `cd backend && npm ci && npm run start:dev`
+
+Insights service (FastAPI): `cd insights-service && pip install -r requirements.txt && uvicorn app.main:app --reload`
 
 ## Branching and commits
 

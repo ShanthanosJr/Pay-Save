@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - { package-ecosystem: pub,            directory: /frontend,         schedule: { interval: weekly } }
+  - { package-ecosystem: npm,            directory: /backend,          schedule: { interval: weekly } }
+  - { package-ecosystem: pip,            directory: /insights-service, schedule: { interval: weekly } }
+  - { package-ecosystem: github-actions, directory: /,                 schedule: { interval: weekly } }

@@ -1,0 +1,38 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Env and secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+google-services.json
+GoogleService-Info.plist
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+.pytest_cache/
+
+# Flutter / Dart
+frontend/.dart_tool/
+frontend/build/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+*.g.dart.bak
+
+# Infra
+infra/cdk.out/
+.terraform/
+*.tfstate*

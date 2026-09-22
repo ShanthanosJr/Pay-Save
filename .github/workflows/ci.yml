@@ -1,0 +1,65 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: ci, POSTGRES_PASSWORD: ci, POSTGRES_DB: ci }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply migrations
+        run: for f in backend/db/migrations/*.sql; do psql "postgresql://ci:ci@localhost:5432/ci" -v ON_ERROR_STOP=1 -f "$f"; done
+      - name: Ledger is append-only
+        env: { DB: "postgresql://ci:ci@localhost:5432/ci" }
+        run: |
+          psql "$DB" -c "TRUNCATE ledger_entries" 2>&1 | grep -q "append-only"
+          test "$(psql "$DB" -tAc "SELECT count(*) FROM pg_trigger WHERE tgname IN ('ledger_no_update','ledger_no_delete')")" = "2"
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        if: hashFiles('frontend/pubspec.yaml') != ''
+        with: { channel: stable, cache: true }
+      - if: hashFiles('frontend/pubspec.yaml') != ''
+        working-directory: frontend
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        if: hashFiles('backend/package.json') != ''
+        with: { node-version: 22, cache: npm, cache-dependency-path: backend/package-lock.json }
+      - if: hashFiles('backend/package.json') != ''
+        working-directory: backend
+        run: |
+          npm ci
+          npm run lint --if-present
+          npm test --if-present
+
+  insights:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: hashFiles('insights-service/requirements.txt') != ''
+        with: { python-version: "3.12" }
+      - if: hashFiles('insights-service/requirements.txt') != ''
+        working-directory: insights-service
+        run: |
+          pip install -r requirements.txt
+          pytest -q

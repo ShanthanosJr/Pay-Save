@@ -14,7 +14,7 @@ jobs:
         ports: ["5432:5432"]
         options: --health-cmd pg_isready --health-interval 5s --health-retries 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Apply migrations
         run: for f in backend/db/migrations/*.sql; do psql "postgresql://ci:ci@localhost:5432/ci" -v ON_ERROR_STOP=1 -f "$f"; done
       - name: Ledger is append-only
@@ -26,7 +26,7 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         if: hashFiles('frontend/pubspec.yaml') != ''
         with: { channel: stable, cache: true }
@@ -40,7 +40,7 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         if: hashFiles('backend/package.json') != ''
         with: { node-version: 22, cache: npm, cache-dependency-path: backend/package-lock.json }
@@ -54,7 +54,7 @@ jobs:
   insights:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         if: hashFiles('insights-service/requirements.txt') != ''
         with: { python-version: "3.12" }

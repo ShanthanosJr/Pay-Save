@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: hashFiles('backend/package.json') != ''
         with: { node-version: 22, cache: npm, cache-dependency-path: backend/package-lock.json }
       - if: hashFiles('backend/package.json') != ''

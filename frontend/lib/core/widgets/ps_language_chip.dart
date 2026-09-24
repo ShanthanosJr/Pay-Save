@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
-/// Language choice chip for the Welcome screen (design-system §4.1).
-/// Selected = green fill; touch target kept >= 48dp tall (NFR-06 / rule 12).
+/// Language choice over the hero photo. Selected = white, others translucent.
+/// Kept >= 48dp tall.
 class PsLanguageChip extends StatelessWidget {
   const PsLanguageChip({
     super.key,
@@ -26,20 +26,20 @@ class PsLanguageChip extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.chip),
         child: Container(
-          constraints: const BoxConstraints(minHeight: AppSpace.minTouch),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          alignment: Alignment.center,
+          height: AppSpace.minTouch,
+          constraints: const BoxConstraints(minWidth: AppSpace.minTouch),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.green : Colors.transparent,
-            border: Border.all(
-              color: selected ? AppColors.green : AppColors.divider,
-            ),
+            color: selected ? AppColors.surface : AppColors.scrim,
             borderRadius: BorderRadius.circular(AppRadii.chip),
           ),
-          child: Text(
-            label,
-            style: AppText.section.copyWith(
-              color: selected ? AppColors.textPrimary : AppColors.textTertiary,
+          child: Center(
+            widthFactor: 1,
+            child: Text(
+              label,
+              style: AppText.label.copyWith(
+                color: selected ? AppColors.ink : AppColors.onDark,
+              ),
             ),
           ),
         ),

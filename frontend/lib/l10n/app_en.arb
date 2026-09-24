@@ -1,131 +1,146 @@
 {
   "@@locale": "en",
 
-  "wordmark": "PAY&SAVE",
-  "@wordmark": { "description": "App wordmark on the Welcome screen. Same across all locales." },
-
-  "welcomeTitleLine1": "Pay Together.",
-  "@welcomeTitleLine1": { "description": "First line of the Welcome screen headline." },
-
-  "welcomeTitleLine2": "Save Together.",
-  "@welcomeTitleLine2": { "description": "Second line of the Welcome screen headline." },
-
-  "welcomeSubtitle": "Keep your seettu records clear for everyone",
-  "@welcomeSubtitle": { "description": "Welcome screen subtitle under the headline." },
-
+  "wordmark": "Pay&Save",
+  "heroTagline": "Community savings, recorded for everyone",
+  "welcomeTitlePlain": "Pay",
+  "welcomeTitleAccent": "Together",
+  "welcomeTitleLine2": "Save Together",
+  "heroCardTitle": "Verified",
+  "heroCardSubtitle": "Every payment on record",
   "languageEnglish": "English",
-  "@languageEnglish": { "description": "Language chip label, always shown in English regardless of the current locale." },
-
   "languageSinhala": "සිංහල",
-  "@languageSinhala": { "description": "Language chip label, always shown in Sinhala regardless of the current locale." },
-
   "languageTamil": "தமிழ்",
-  "@languageTamil": { "description": "Language chip label, always shown in Tamil regardless of the current locale." },
+  "logIn": "Log in",
+  "createAccount": "Create account",
+  "continueLabel": "Continue",
+  "backLabel": "Back",
 
-  "getStarted": "Get started",
-  "@getStarted": { "description": "Primary button on the Welcome screen." },
+  "loginTitlePlain": "Welcome",
+  "loginTitleAccent": "back",
+  "loginSubtitle": "Log in with your phone number or email and your password.",
+  "identifierLabel": "Phone number or email",
+  "identifierHint": "07X XXX XXXX or you@email.com",
+  "passwordLabel": "Password",
+  "passwordHint": "Your password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "noAccountPrompt": "New to Pay&Save?",
+  "haveAccountPrompt": "Already have an account?",
 
-  "goodMorning": "Good morning, {name}",
-  "@goodMorning": {
-    "description": "Home screen greeting.",
-    "placeholders": { "name": { "type": "String", "example": "Nadeeshi" } }
+  "registerStep": "Step {current} of {total}",
+  "@registerStep": {
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
   },
+  "regDetailsTitlePlain": "Tell us",
+  "regDetailsTitleAccent": "about you",
+  "regDetailsSubtitle": "Enter your details exactly as shown on your national ID card.",
+  "fullNameLabel": "Full name",
+  "fullNameHint": "As on your ID card",
+  "ageLabel": "Age",
+  "ageHint": "18 or over",
+  "nicLabel": "ID card number",
+  "nicHint": "200012345678 or 901234567V",
 
+  "regPhoneTitlePlain": "Verify",
+  "regPhoneTitleAccent": "your phone",
+  "regPhoneSubtitle": "We will send a 6-digit code by SMS to confirm this number is yours.",
+  "phoneLabel": "Mobile number",
+  "phoneHint": "07X XXX XXXX",
+  "sendCode": "Send code",
+  "otpSentTo": "Code sent to {phone}",
+  "@otpSentTo": { "placeholders": { "phone": { "type": "String" } } },
+  "enterCode": "Enter the 6-digit code",
+  "otpFieldLabel": "Verification code",
+  "verifyCode": "Verify",
+  "resendIn": "Resend code in {seconds}s",
+  "@resendIn": { "placeholders": { "seconds": { "type": "int" } } },
+  "resendCode": "Resend code",
+  "changeNumber": "Change number",
+  "devCodeNotice": "Test code: {code}",
+  "@devCodeNotice": { "placeholders": { "code": { "type": "String" } } },
+
+  "regCredTitlePlain": "Secure",
+  "regCredTitleAccent": "your account",
+  "regCredSubtitle": "You will use your email or phone number with this password to log in.",
+  "emailLabel": "Email",
+  "emailHint": "you@email.com",
+  "createPasswordLabel": "Create password",
+  "createPasswordHint": "8+ characters, letters and a number",
+  "confirmPasswordLabel": "Confirm password",
+
+  "errRequired": "This field is required",
+  "errNameShort": "Enter your full name",
+  "errAgeRange": "Age must be between 18 and 120",
+  "errNicFormat": "Enter a valid ID number (9 digits and V or X, or 12 digits)",
+  "errPhoneFormat": "Enter a valid Sri Lankan mobile number",
+  "errEmailFormat": "Enter a valid email address",
+  "errPasswordWeak": "Use 8 or more characters with letters and a number",
+  "errPasswordMismatch": "Passwords do not match",
+  "errIdentifier": "Enter your phone number or email",
+  "errInvalidCredentials": "Incorrect phone, email or password",
+  "errPhoneTaken": "This phone number is already registered. Try logging in.",
+  "errEmailTaken": "This email is already registered.",
+  "errNicTaken": "This ID card number is already registered.",
+  "errInvalidCode": "That code is incorrect or has expired",
+  "errTooManyAttempts": "Too many attempts. Please wait a few minutes and try again.",
+  "errAccountLocked": "Too many failed log-ins. Try again in 15 minutes.",
+  "errNetwork": "Can't reach the server. Check your connection.",
+  "errGeneric": "Something went wrong. Please try again.",
+
+  "greeting": "Hello, {name}",
+  "@greeting": { "placeholders": { "name": { "type": "String" } } },
   "searchHint": "Find a payment or circle",
-  "@searchHint": { "description": "Placeholder text in the home search field." },
-
+  "filterLabel": "Filter",
   "thisCycle": "This cycle",
-  "@thisCycle": { "description": "Section title above the hero cycle card." },
-
   "cycleOf": "Cycle {current} of {total}",
   "@cycleOf": {
-    "description": "Hero card cycle counter.",
-    "placeholders": {
-      "current": { "type": "int", "example": "3" },
-      "total": { "type": "int", "example": "5" }
-    }
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
   },
-
   "dueInDays": "Due {date} · {days} days",
   "@dueInDays": {
-    "description": "Hero card due-date caption while the cycle is not yet overdue.",
-    "placeholders": {
-      "date": { "type": "String", "example": "20 Sep" },
-      "days": { "type": "int", "example": "3" }
-    }
+    "placeholders": { "date": { "type": "String" }, "days": { "type": "int" } }
   },
-
   "payNow": "Pay now",
-  "@payNow": { "description": "Primary action on the hero cycle card in the due state." },
-
   "viewRecord": "View record",
-  "@viewRecord": { "description": "Outline button on the hero cycle card once a contribution already exists for the cycle." },
-
-  "statusDue": "Due",
-  "@statusDue": { "description": "Status badge word for a contribution not yet recorded." },
-
-  "statusPendingSync": "Saved on this phone · not yet confirmed",
-  "@statusPendingSync": { "description": "Status badge caption while an offline record waits to sync." },
-
-  "statusRecorded": "Waiting for organizer to verify",
-  "@statusRecorded": { "description": "Status badge caption once a contribution is recorded but not yet verified." },
-
   "statusVerified": "Verified",
-  "@statusVerified": { "description": "Status badge word once the organizer has verified a contribution." },
-
   "chipTurnOrder": "Turn order",
-  "@chipTurnOrder": { "description": "Home screen quick-link chip." },
-
   "chipHistory": "History",
-  "@chipHistory": { "description": "Home screen quick-link chip." },
-
   "chipSavings": "Savings",
-  "@chipSavings": { "description": "Home screen quick-link chip." },
-
   "chipReminders": "Reminders",
-  "@chipReminders": { "description": "Home screen quick-link chip." },
-
   "turnOrderTile": "Turn order",
-  "@turnOrderTile": { "description": "Grid tile title on the home screen." },
-
   "nextYourTurn": "Next: You",
-  "@nextYourTurn": { "description": "Grid tile subtitle announcing the member's own upcoming turn." },
-
   "cycleNumberShort": "cycle {number}",
-  "@cycleNumberShort": {
-    "description": "Grid tile caption naming a cycle number.",
-    "placeholders": { "number": { "type": "int", "example": "5" } }
-  },
-
+  "@cycleNumberShort": { "placeholders": { "number": { "type": "int" } } },
   "mySavingsTile": "My savings",
-  "@mySavingsTile": { "description": "Grid tile title on the home screen." },
-
   "verifiedCount": "{count} verified",
-  "@verifiedCount": {
-    "description": "Grid tile caption counting verified contributions.",
-    "placeholders": { "count": { "type": "int", "example": "3" } }
-  },
-
-  "navHome": "Home",
-  "@navHome": { "description": "Bottom navigation label." },
-
-  "navCircles": "Circles",
-  "@navCircles": { "description": "Bottom navigation label." },
-
-  "navHistory": "History",
-  "@navHistory": { "description": "Bottom navigation label." },
-
-  "navSettings": "Settings",
-  "@navSettings": { "description": "Bottom navigation label." },
-
+  "@verifiedCount": { "placeholders": { "count": { "type": "int" } } },
   "arithmeticSummary": "{count} {statusWord} × LKR {unit} = LKR {total}",
   "@arithmeticSummary": {
-    "description": "Every total is shown with its arithmetic (NFR-07), e.g. 3 verified x LKR 5,000 = LKR 15,000.",
     "placeholders": {
-      "count": { "type": "int", "example": "3" },
-      "statusWord": { "type": "String", "example": "verified" },
-      "unit": { "type": "String", "example": "5,000" },
-      "total": { "type": "String", "example": "15,000" }
+      "count": { "type": "int" },
+      "statusWord": { "type": "String" },
+      "unit": { "type": "String" },
+      "total": { "type": "String" }
     }
-  }
+  },
+  "navHome": "Home",
+  "navCircles": "Circles",
+  "navHistory": "History",
+  "navProfile": "Profile",
+
+  "profileTitle": "Profile",
+  "profilePhone": "Mobile number",
+  "profileNic": "ID card number",
+  "profileEmail": "Email",
+  "profileAge": "Age",
+  "profileLanguage": "Language",
+  "verifiedBadge": "Verified",
+  "notVerifiedBadge": "Not verified",
+  "verifyEmail": "Verify email",
+  "emailVerifyTitle": "Verify your email",
+  "emailVerifySent": "We sent a 6-digit code to {email}",
+  "@emailVerifySent": { "placeholders": { "email": { "type": "String" } } },
+  "emailVerifiedToast": "Email verified",
+  "logOut": "Log out"
 }

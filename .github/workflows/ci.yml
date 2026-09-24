@@ -39,17 +39,33 @@ jobs:
 
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: ci, POSTGRES_PASSWORD: ci, POSTGRES_DB: ci }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      JWT_ACCESS_SECRET: ci-access-secret-ci-access-secret-0000
+      JWT_REFRESH_SECRET: ci-refresh-secret-ci-refresh-secret-111
+      PII_ENCRYPTION_KEY: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=
+      PII_HMAC_KEY: CQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQk=
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         if: hashFiles('backend/package.json') != ''
         with: { node-version: 22, cache: npm, cache-dependency-path: backend/package-lock.json }
+      - name: Apply migrations
+        if: hashFiles('backend/package.json') != ''
+        run: backend/db/apply.sh
       - if: hashFiles('backend/package.json') != ''
         working-directory: backend
         run: |
           npm ci
           npm run lint --if-present
           npm test --if-present
+          npm run test:e2e --if-present
 
   insights:
     runs-on: ubuntu-latest

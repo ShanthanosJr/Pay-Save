@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_typography.dart';
 
-/// A horizontally scrollable row of quick-link chips (design-system §4.2).
+/// Filter chips: selected = ink fill, others white (ALL / RENT / SALE on Foreal).
+/// Each chip is at least 48dp tall.
 class PsChipRow extends StatelessWidget {
   const PsChipRow({super.key, required this.labels, this.selectedIndex = 0, this.onSelected});
 
@@ -17,11 +19,31 @@ class PsChipRow extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: labels.length,
         separatorBuilder: (context, index) => const SizedBox(width: AppSpace.s),
-        itemBuilder: (context, i) => ChoiceChip(
-          label: Text(labels[i]),
-          selected: i == selectedIndex,
-          onSelected: (_) => onSelected?.call(i),
-        ),
+        itemBuilder: (context, i) {
+          final selected = i == selectedIndex;
+          return Semantics(
+            button: true,
+            selected: selected,
+            child: Material(
+              color: selected ? AppColors.ink : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadii.chip),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(AppRadii.chip),
+                onTap: () => onSelected?.call(i),
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Text(
+                    labels[i].toUpperCase(),
+                    style: AppText.label.copyWith(
+                      color: selected ? AppColors.onDark : AppColors.ink,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

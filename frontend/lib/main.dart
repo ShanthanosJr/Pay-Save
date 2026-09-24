@@ -22,9 +22,7 @@ class PayAndSaveApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Pay&Save',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.dark,
+      theme: AppTheme.light,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [

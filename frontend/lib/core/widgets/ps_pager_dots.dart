@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Active dot is a 16x4 white pill, inactive dots are 4x4 (design-system §3).
+/// Active dot is a 16x4 ink pill, inactive dots are 4x4.
 class PsPagerDots extends StatelessWidget {
   const PsPagerDots({super.key, required this.count, required this.activeIndex});
 
@@ -20,7 +20,7 @@ class PsPagerDots extends StatelessWidget {
           width: active ? 16 : 4,
           height: 4,
           decoration: BoxDecoration(
-            color: active ? AppColors.textPrimary : AppColors.textTertiary,
+            color: active ? AppColors.ink : AppColors.border,
             borderRadius: BorderRadius.circular(2),
           ),
         );

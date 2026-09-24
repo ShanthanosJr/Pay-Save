@@ -39,12 +39,12 @@ dependencies:
   drift: ^2.35.0
   sqlite3_flutter_libs: ^0.6.0+eol
   dio: ^5.11.1
-  google_fonts: ^8.2.1
   intl: ^0.20.3
   uuid: ^4.6.0
   socket_io_client: ^3.1.6
   flutter_localizations:
     sdk: flutter
+  flutter_secure_storage: ^11.2.0
 
 dev_dependencies:
   flutter_test:
@@ -74,10 +74,21 @@ flutter:
   assets:
     - assets/images/
 
-  # Noto Sans Sinhala / Noto Sans Tamil back every text style as a
-  # fallback (docs/design-system.md §2) since Montserrat/Poppins carry
-  # no Sinhala or Tamil glyphs. Family names must match app_typography.dart.
+  # Inter Tight / Inter / Instrument Serif carry no Sinhala or Tamil glyphs,
+  # so Noto Sans Sinhala / Tamil back every text style as a fallback.
+  # Family names must match app_typography.dart.
   fonts:
+    - family: Inter Tight
+      fonts:
+        - asset: assets/fonts/InterTight.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: Instrument Serif
+      fonts:
+        - asset: assets/fonts/InstrumentSerif-Regular.ttf
+        - asset: assets/fonts/InstrumentSerif-Italic.ttf
+          style: italic
     - family: Noto Sans Sinhala
       fonts:
         - asset: assets/fonts/NotoSansSinhala-Regular.ttf

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
-/// Every total is shown with its parts (NFR-07): "3 verified x LKR 5,000 =
-/// LKR 15,000", never a bare number. Tapping it is meant to list the
-/// underlying entries (wired up once the ledger API exists).
+/// Every total is shown with its parts: "3 verified × LKR 5,000 = LKR 15,000",
+/// never a bare number.
 class PsArithmeticRow extends StatelessWidget {
   const PsArithmeticRow({
     super.key,
@@ -13,12 +12,8 @@ class PsArithmeticRow extends StatelessWidget {
     this.onTap,
   });
 
-  /// The full sentence, e.g. "3 verified × LKR 5,000 = LKR 15,000".
   final String summary;
-
-  /// The bold trailing amount, e.g. "LKR 15,000", shown in textPrimary.
   final String totalLabel;
-
   final VoidCallback? onTap;
 
   @override
@@ -27,18 +22,11 @@ class PsArithmeticRow extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadii.chip),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpace.s),
+        padding: const EdgeInsets.symmetric(vertical: AppSpace.m),
         child: Row(
           children: [
-            Expanded(
-              child: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(text: summary, style: AppText.caption.copyWith(color: AppColors.textSecondary)),
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: Text(summary, style: AppText.caption)),
+            const SizedBox(width: AppSpace.s),
             Text(totalLabel, style: AppText.bodyStrong),
           ],
         ),

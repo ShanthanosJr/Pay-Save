@@ -2,96 +2,77 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// Pay&Save ships dark-only, matching the reference design.
+/// Light, airy theme matching the Foreal template.
 abstract final class AppTheme {
-  static ThemeData get dark {
-    const scheme = ColorScheme.dark(
-      primary: AppColors.green,
-      onPrimary: AppColors.textPrimary,
-      secondary: AppColors.greenBright,
+  static ThemeData get light {
+    const scheme = ColorScheme.light(
+      primary: AppColors.ink,
+      onPrimary: AppColors.onDark,
+      secondary: AppColors.terracotta,
       surface: AppColors.surface,
-      onSurface: AppColors.textPrimary,
+      onSurface: AppColors.ink,
       error: AppColors.statusDue,
-      outline: AppColors.divider,
+      outline: AppColors.border,
     );
+
+    OutlineInputBorder border(Color c, [double w = 1]) => OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadii.field),
+          borderSide: BorderSide(color: c, width: w),
+        );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.bg,
       textTheme: AppText.textTheme,
       materialTapTargetSize: MaterialTapTargetSize.padded,
-      dividerColor: AppColors.divider,
+      dividerColor: AppColors.hairline,
+      splashFactory: InkRipple.splashFactory,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.bg,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppText.section,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
-      ),
-      cardTheme: const CardThemeData(
-        color: AppColors.surface,
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppRadii.tile)),
-        ),
+        titleTextStyle: AppText.title,
+        iconTheme: const IconThemeData(color: AppColors.ink),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.searchFill,
-        hintStyle: AppText.body.copyWith(color: AppColors.searchText),
-        prefixIconColor: AppColors.searchText,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppRadii.search)),
-          borderSide: BorderSide.none,
-        ),
-      ),
-      chipTheme: ChipThemeData(
-        backgroundColor: AppColors.bg,
-        selectedColor: AppColors.green,
-        labelStyle: AppText.section.copyWith(color: AppColors.textTertiary),
-        secondaryLabelStyle: AppText.section,
-        side: BorderSide.none,
-        showCheckmark: false,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppRadii.chip)),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
-          minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: AppColors.green, width: 1.5),
-          textStyle: AppText.button,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(AppRadii.button)),
-          ),
-        ),
+        fillColor: AppColors.surface,
+        hintStyle: AppText.small.copyWith(color: AppColors.placeholder),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: border(AppColors.hairline),
+        enabledBorder: border(AppColors.hairline),
+        focusedBorder: border(AppColors.ink, 1.5),
+        errorBorder: border(AppColors.statusDue),
+        focusedErrorBorder: border(AppColors.statusDue, 1.5),
+        errorStyle: AppText.caption.copyWith(color: AppColors.statusDue),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.bg,
-        indicatorColor: AppColors.green.withValues(alpha: 0.25),
-        height: 68,
-        // Labels always shown: icon-only nav fails NFR-06.
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: AppColors.ink,
+        height: 72,
+        // Labels always shown: icon-only nav fails low-digital-confidence users.
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (s) => AppText.caption.copyWith(
-            color: s.contains(WidgetState.selected)
-                ? AppColors.textPrimary
-                : AppColors.textTertiary,
+            color: s.contains(WidgetState.selected) ? AppColors.ink : AppColors.inkMuted,
+            fontWeight: s.contains(WidgetState.selected) ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (s) => IconThemeData(
-            color: s.contains(WidgetState.selected)
-                ? AppColors.textPrimary
-                : AppColors.textTertiary,
+            color: s.contains(WidgetState.selected) ? AppColors.onDark : AppColors.inkMuted,
           ),
         ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.ink,
+        contentTextStyle: AppText.small.copyWith(color: AppColors.onDark),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.button)),
       ),
     );
   }

@@ -9,6 +9,7 @@ import { AppModule } from './../src/app.module';
 import { configureApp } from './../src/app.setup';
 import { CLOCK, Clock } from './../src/common/clock/clock';
 import { OTP_SENDER, OtpPurpose, OtpSender } from './../src/otp/otp-sender';
+import { createTestDatabase, TestDatabase } from './support/test-db';
 
 class RecordingSender implements OtpSender {
   sent: { purpose: OtpPurpose; target: string; code: string }[] = [];
@@ -76,13 +77,21 @@ async function createApp(env: Record<string, string> = {}): Promise<Ctx> {
 describe('Auth (e2e)', () => {
   let ctx: Ctx;
   let pool: Pool;
+  let db: TestDatabase;
+  const savedUrl = process.env.DATABASE_URL;
   const http = () => request(ctx.app.getHttpServer());
 
-  beforeAll(() => {
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  // Own database: the shared dev DB may hold circles whose append-only
+  // ledger rows reference users, which would block this suite's cleanup.
+  beforeAll(async () => {
+    db = await createTestDatabase(savedUrl as string);
+    process.env.DATABASE_URL = db.url;
+    pool = new Pool({ connectionString: db.url });
   });
   afterAll(async () => {
     await pool.end();
+    process.env.DATABASE_URL = savedUrl;
+    await db.drop();
   });
 
   beforeEach(async () => {

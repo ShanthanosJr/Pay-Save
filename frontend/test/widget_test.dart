@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
+import 'package:pay_and_save/core/circles/circles_providers.dart';
 import 'package:pay_and_save/main.dart';
 
+import 'support/fake_circles.dart';
 import 'support/fakes.dart';
 
 Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
   WidgetTester tester, {
   bool signedIn = false,
+  FakeCirclesApi? circles,
 }) async {
   tester.view.physicalSize = const Size(390 * 2, 844 * 2);
   tester.view.devicePixelRatio = 2;
@@ -22,6 +25,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
     overrides: [
       authApiProvider.overrideWithValue(api),
       tokenStoreProvider.overrideWithValue(store),
+      circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
     ],
     child: const PayAndSaveApp(),
   ));
@@ -210,39 +214,6 @@ void main() {
 
     expect(store.tokens, isNull);
     expect(find.text('Create account'), findsOneWidget);
-  });
-
-  testWidgets('Home shows the due contribution with Pay now and the arithmetic', (tester) async {
-    await pumpApp(tester, signedIn: true);
-    expect(find.text('Contribution due'), findsOneWidget);
-    expect(find.text('3 verified × LKR 5,000 = LKR 15,000'), findsOneWidget);
-
-    await tester.tap(find.widgetWithText(InkWell, 'Pay now'));
-    await tester.pumpAndSettle();
-    expect(find.text('Record your payment'), findsOneWidget);
-    expect(find.text('Mobile wallet'), findsOneWidget);
-  });
-
-  testWidgets('Circle tab lists members with icon-and-word status', (tester) async {
-    await pumpApp(tester, signedIn: true);
-    await tester.tap(find.text('Circles'));
-    await tester.pumpAndSettle();
-    expect(find.text('Friends Seettu'), findsWidgets);
-    expect(find.text('Kamala Silva'), findsOneWidget);
-    expect(find.text('Nadeeshi Perera (You)'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle_rounded), findsWidgets);
-  });
-
-  testWidgets('History shows a correction and an empty pending filter', (tester) async {
-    await pumpApp(tester, signedIn: true);
-    await tester.tap(find.text('History'));
-    await tester.pumpAndSettle();
-    expect(find.text('Correction · PS-1024'), findsOneWidget);
-    expect(find.text('Corrected'), findsOneWidget);
-
-    await tester.tap(find.text('Pending'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nothing waiting'), findsOneWidget);
   });
 
   testWidgets('Text size setting scales the app text', (tester) async {

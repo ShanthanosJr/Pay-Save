@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/api_config.dart';
@@ -25,14 +26,16 @@ class AuthLoggedIn extends AuthState {
 
 final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());
 
-final authApiProvider = Provider<AuthApi>((ref) {
-  final dio = buildApiClient(
+/// The one authenticated HTTP client every feature API shares.
+final apiClientProvider = Provider<Dio>((ref) {
+  return buildApiClient(
     baseUrl: apiBaseUrl,
     tokens: ref.watch(tokenStoreProvider),
     onSessionExpired: () => ref.read(authControllerProvider.notifier).sessionExpired(),
   );
-  return AuthApi(dio);
 });
+
+final authApiProvider = Provider<AuthApi>((ref) => AuthApi(ref.watch(apiClientProvider)));
 
 final authControllerProvider =
     NotifierProvider<AuthController, AuthState>(AuthController.new);

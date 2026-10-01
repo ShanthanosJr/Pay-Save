@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../core/auth/auth_controller.dart';
 import '../../core/theme/app_colors.dart';
@@ -11,7 +10,10 @@ import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_logo.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../l10n/gen/app_localizations.dart';
-import '../circle/sample_circle.dart';
+import '../../core/circles/circle_labels.dart';
+import '../../core/circles/circle_models.dart';
+import '../../core/circles/circles_providers.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Forest header for signed-in screens: logo, notifications, profile.
 class BrandHeader extends ConsumerWidget {
@@ -30,7 +32,6 @@ class BrandHeader extends ConsumerWidget {
         PsGlassIconButton(
           icon: Icons.notifications_rounded,
           label: l10n.notificationsLabel,
-          badge: '2',
           onTap: () => showNotificationsSheet(context),
         ),
         const SizedBox(width: 10),
@@ -55,45 +56,39 @@ class BrandHeader extends ConsumerWidget {
 
 void showNotificationsSheet(BuildContext context) {
   final l10n = AppLocalizations.of(context);
-  final date = DateFormat.MMMd(l10n.localeName).format(SampleCircle.dueDate);
   showPsSheet<void>(
     context: context,
     title: l10n.notificationsLabel,
-    builder: (ctx) => Column(children: [
-      PsListRow(
-        icon: Icons.priority_high_rounded,
-        tone: PsBadgeTone.danger,
-        title: l10n.contributionDueTitle,
-        subtitle: '${l10n.cycleOf(SampleCircle.currentCycle, SampleCircle.totalCycles)} · '
-            '${l10n.dueInDays(date, SampleCircle.daysLeft)}',
-        trailing: Semantics(
-          label: l10n.unreadLabel,
-          child: Container(
-            width: 10,
-            height: 10,
-            decoration: const BoxDecoration(color: AppColors.info, shape: BoxShape.circle),
+    subtitle: l10n.recentActivity,
+    builder: (ctx) => Consumer(builder: (ctx, ref, _) {
+      final circle = ref.watch(activeCircleProvider).value;
+      if (circle == null) return Text(l10n.noActivity, style: AppText.body);
+      final entries = ref.watch(ledgerProvider((circleId: circle.id, all: false))).value ?? const <LedgerEntry>[];
+      final recent = entries.where((e) => e.type != LedgerType.memberAdded).take(6).toList();
+      if (recent.isEmpty) return Text(l10n.noActivity, style: AppText.body);
+      return Column(children: [
+        for (final e in recent)
+          PsListRow(
+            icon: switch (e.type) {
+              LedgerType.contributionVerified => Icons.verified_rounded,
+              LedgerType.correction => Icons.undo_rounded,
+              LedgerType.payout => Icons.south_west_rounded,
+              LedgerType.cycleClosed => Icons.lock_rounded,
+              LedgerType.turnOrderSet => Icons.format_list_numbered_rounded,
+              _ => Icons.receipt_long_rounded,
+            },
+            tone: e.type == LedgerType.correction ? PsBadgeTone.warning : PsBadgeTone.forest,
+            title: switch (e.type) {
+              LedgerType.contributionVerified => l10n.heroCardTitle,
+              LedgerType.correction => l10n.entryCorrection,
+              LedgerType.payout => l10n.entryPayout(e.cycleNumber ?? 0),
+              LedgerType.cycleClosed => l10n.entryCycleClosed(e.cycleNumber ?? 0),
+              LedgerType.turnOrderSet => l10n.entryTurnOrder,
+              _ => l10n.entryContribution(e.cycleNumber ?? 0),
+            },
+            subtitle: '${e.reference} · ${dateTime(l10n, e.createdAt)}',
           ),
-        ),
-      ),
-      PsListRow(
-        icon: Icons.check_rounded,
-        title: l10n.heroCardTitle,
-        subtitle: l10n.notifVerifiedBody('PS-1038', 3),
-        trailing: Semantics(
-          label: l10n.unreadLabel,
-          child: Container(
-            width: 10,
-            height: 10,
-            decoration: const BoxDecoration(color: AppColors.info, shape: BoxShape.circle),
-          ),
-        ),
-      ),
-      PsListRow(
-        icon: Icons.swap_vert_rounded,
-        tone: PsBadgeTone.mint,
-        title: l10n.notifTurnTitle,
-        subtitle: l10n.receivesInCycle(SampleCircle.myTurn),
-      ),
-    ]),
+      ]);
+    }),
   );
 }

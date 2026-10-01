@@ -7,7 +7,6 @@ class Validators {
 
   final AppLocalizations l10n;
 
-  static final _nic = RegExp(r'^(\d{9}[vVxX]|\d{12})$');
   static final _email = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]{2,}$');
 
   String? required(String? v) => (v == null || v.trim().isEmpty) ? l10n.errRequired : null;
@@ -28,7 +27,7 @@ class Validators {
   String? nic(String? v) {
     final t = v?.trim() ?? '';
     if (t.isEmpty) return l10n.errRequired;
-    return _nic.hasMatch(t) ? null : l10n.errNicFormat;
+    return isValidNic(t) ? null : l10n.errNicFormat;
   }
 
   String? phone(String? v) {
@@ -61,6 +60,18 @@ class Validators {
     if (t.contains('@')) return _email.hasMatch(t) ? null : l10n.errEmailFormat;
     return normalizePhone(t) == null ? l10n.errPhoneFormat : null;
   }
+}
+
+/// Mirrors the server: the NIC's day-of-year code must be 001–366 (or
+/// 501–866, the female offset), and a 12-digit NIC starts with a year ≥ 1900.
+bool isValidNic(String input) {
+  final nic = input.trim().toUpperCase();
+  bool day(int d) => (d >= 1 && d <= 366) || (d >= 501 && d <= 866);
+  if (RegExp(r'^\d{9}[VX]$').hasMatch(nic)) return day(int.parse(nic.substring(2, 5)));
+  if (RegExp(r'^\d{12}$').hasMatch(nic)) {
+    return int.parse(nic.substring(0, 4)) >= 1900 && day(int.parse(nic.substring(4, 7)));
+  }
+  return false;
 }
 
 /// Returns +947XXXXXXXX for 07XXXXXXXX / 947XXXXXXXX / +947XXXXXXXX, else null.

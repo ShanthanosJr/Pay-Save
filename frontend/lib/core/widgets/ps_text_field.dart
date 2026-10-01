@@ -51,7 +51,10 @@ class _PsTextFieldState extends State<PsTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: AppText.label),
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(widget.label, style: AppText.label.copyWith(color: AppColors.inkMuted)),
+        ),
         const SizedBox(height: AppSpace.s),
         TextFormField(
           controller: widget.controller,
@@ -64,7 +67,7 @@ class _PsTextFieldState extends State<PsTextField> {
           onFieldSubmitted: widget.onSubmitted,
           maxLength: widget.maxLength,
           style: AppText.bodyStrong,
-          cursorColor: AppColors.ink,
+          cursorColor: AppColors.forest600,
           decoration: InputDecoration(
             hintText: widget.hint,
             prefixText: widget.prefixText,

@@ -72,22 +72,25 @@ class PsOtpFieldState extends State<PsOtpField> {
                 final filled = i < text.length;
                 final active = _focus.hasFocus && i == text.length.clamp(0, widget.length - 1);
                 return Container(
-                  width: 46,
-                  height: 58,
+                  width: 48,
+                  height: 60,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(AppRadii.field),
+                    boxShadow: active ? AppColors.cardShadow : null,
                     border: Border.all(
                       color: widget.hasError
-                          ? AppColors.statusDue
+                          ? AppColors.danger
                           : active
-                              ? AppColors.ink
-                              : AppColors.hairline,
-                      width: active || widget.hasError ? 1.5 : 1,
+                              ? AppColors.forest600
+                              : filled
+                                  ? AppColors.strokeStrong
+                                  : AppColors.stroke,
+                      width: active || widget.hasError ? 1.6 : 1,
                     ),
                   ),
-                  child: Text(filled ? text[i] : '', style: AppText.amount),
+                  child: Text(filled ? text[i] : '', style: AppText.figureSmall),
                 );
               }),
             ),

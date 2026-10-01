@@ -1,21 +1,13 @@
 {
   "@@locale": "en",
-
   "wordmark": "Pay&Save",
   "heroTagline": "Community savings, recorded for everyone",
-  "welcomeTitlePlain": "Pay",
-  "welcomeTitleAccent": "Together",
-  "welcomeTitleLine2": "Save Together",
-  "heroCardTitle": "Verified",
-  "heroCardSubtitle": "Every payment on record",
   "languageEnglish": "English",
   "languageSinhala": "සිංහල",
   "languageTamil": "தமிழ்",
   "logIn": "Log in",
   "createAccount": "Create account",
   "continueLabel": "Continue",
-  "backLabel": "Back",
-
   "loginTitlePlain": "Welcome",
   "loginTitleAccent": "back",
   "loginSubtitle": "Log in with your phone number or email and your password.",
@@ -26,11 +18,16 @@
   "showPassword": "Show password",
   "hidePassword": "Hide password",
   "noAccountPrompt": "New to Pay&Save?",
-  "haveAccountPrompt": "Already have an account?",
-
   "registerStep": "Step {current} of {total}",
   "@registerStep": {
-    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
   "regDetailsTitlePlain": "Tell us",
   "regDetailsTitleAccent": "about you",
@@ -41,7 +38,6 @@
   "ageHint": "18 or over",
   "nicLabel": "ID card number",
   "nicHint": "200012345678 or 901234567V",
-
   "regPhoneTitlePlain": "Verify",
   "regPhoneTitleAccent": "your phone",
   "regPhoneSubtitle": "We will send a 6-digit code by SMS to confirm this number is yours.",
@@ -49,17 +45,33 @@
   "phoneHint": "07X XXX XXXX",
   "sendCode": "Send code",
   "otpSentTo": "Code sent to {phone}",
-  "@otpSentTo": { "placeholders": { "phone": { "type": "String" } } },
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
   "enterCode": "Enter the 6-digit code",
   "otpFieldLabel": "Verification code",
-  "verifyCode": "Verify",
   "resendIn": "Resend code in {seconds}s",
-  "@resendIn": { "placeholders": { "seconds": { "type": "int" } } },
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "resendCode": "Resend code",
   "changeNumber": "Change number",
   "devCodeNotice": "Test code: {code}",
-  "@devCodeNotice": { "placeholders": { "code": { "type": "String" } } },
-
+  "@devCodeNotice": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "regCredTitlePlain": "Secure",
   "regCredTitleAccent": "your account",
   "regCredSubtitle": "You will use your email or phone number with this password to log in.",
@@ -68,7 +80,6 @@
   "createPasswordLabel": "Create password",
   "createPasswordHint": "8+ characters, letters and a number",
   "confirmPasswordLabel": "Confirm password",
-
   "errRequired": "This field is required",
   "errNameShort": "Enter your full name",
   "errAgeRange": "Age must be between 18 and 120",
@@ -87,49 +98,70 @@
   "errAccountLocked": "Too many failed log-ins. Try again in 15 minutes.",
   "errNetwork": "Can't reach the server. Check your connection.",
   "errGeneric": "Something went wrong. Please try again.",
-
   "greeting": "Hello, {name}",
-  "@greeting": { "placeholders": { "name": { "type": "String" } } },
-  "searchHint": "Find a payment or circle",
-  "filterLabel": "Filter",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "thisCycle": "This cycle",
   "cycleOf": "Cycle {current} of {total}",
   "@cycleOf": {
-    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
   "dueInDays": "Due {date} · {days} days",
   "@dueInDays": {
-    "placeholders": { "date": { "type": "String" }, "days": { "type": "int" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "payNow": "Pay now",
   "viewRecord": "View record",
   "statusVerified": "Verified",
-  "chipTurnOrder": "Turn order",
-  "chipHistory": "History",
-  "chipSavings": "Savings",
-  "chipReminders": "Reminders",
-  "turnOrderTile": "Turn order",
-  "nextYourTurn": "Next: You",
-  "cycleNumberShort": "cycle {number}",
-  "@cycleNumberShort": { "placeholders": { "number": { "type": "int" } } },
   "mySavingsTile": "My savings",
   "verifiedCount": "{count} verified",
-  "@verifiedCount": { "placeholders": { "count": { "type": "int" } } },
+  "@verifiedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "arithmeticSummary": "{count} {statusWord} × LKR {unit} = LKR {total}",
   "@arithmeticSummary": {
     "placeholders": {
-      "count": { "type": "int" },
-      "statusWord": { "type": "String" },
-      "unit": { "type": "String" },
-      "total": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "statusWord": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
     }
   },
   "navHome": "Home",
   "navCircles": "Circles",
   "navHistory": "History",
   "navProfile": "Profile",
-
-  "profileTitle": "Profile",
   "profilePhone": "Mobile number",
   "profileNic": "ID card number",
   "profileEmail": "Email",
@@ -137,10 +169,441 @@
   "profileLanguage": "Language",
   "verifiedBadge": "Verified",
   "notVerifiedBadge": "Not verified",
-  "verifyEmail": "Verify email",
   "emailVerifyTitle": "Verify your email",
   "emailVerifySent": "We sent a 6-digit code to {email}",
-  "@emailVerifySent": { "placeholders": { "email": { "type": "String" } } },
+  "@emailVerifySent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "emailVerifiedToast": "Email verified",
-  "logOut": "Log out"
+  "logOut": "Log out",
+  "welcomeHeadline1": "Pay together.",
+  "welcomeHeadline2": "Save together.",
+  "heroCardTitle": "Payment verified",
+  "heroCardSubtitle": "Every payment on record, for everyone",
+  "notificationsLabel": "Notifications",
+  "openProfile": "Open profile",
+  "seeMore": "See more",
+  "contributionDueTitle": "Contribution due",
+  "dashboardTitle": "Dashboard",
+  "statusDue": "Due",
+  "statusOverdue": "Overdue",
+  "statusAwaiting": "Awaiting verification",
+  "statusSavedOffline": "Saved on this phone",
+  "statusCorrected": "Corrected",
+  "collectionTitle": "Circle collection",
+  "collectionOf": "of LKR {total} this cycle",
+  "@collectionOf": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cycleLabel": "Cycle {number}",
+  "@cycleLabel": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "turnOrderTitle": "Turn order",
+  "turnCurrent": "Receiving now",
+  "turnNext": "Next",
+  "youLabel": "You",
+  "receivesInCycle": "Receives in cycle {number}",
+  "@receivesInCycle": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "recordPaymentTitle": "Record your payment",
+  "recordPaymentSubtitle": "Pay {name} for cycle {cycle}, then record how you paid.",
+  "@recordPaymentSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "amountLabel": "Amount",
+  "methodLabel": "How did you pay?",
+  "methodCash": "Cash",
+  "methodBank": "Bank transfer",
+  "methodWallet": "Mobile wallet",
+  "recordPaymentCta": "Record payment",
+  "circleMembers": "Members",
+  "membersVerifiedSummary": "{paid} of {total} verified this cycle",
+  "@membersVerifiedSummary": {
+    "placeholders": {
+      "paid": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "contributionLabel": "Contribution",
+  "intervalLabel": "Interval",
+  "intervalMonthly": "Monthly",
+  "turnRuleLabel": "Turn rule",
+  "turnRuleFixed": "Fixed order",
+  "organizerLabel": "Organizer",
+  "turnNumber": "Turn {number}",
+  "@turnNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "circleCodeLabel": "Circle code {code}",
+  "@circleCodeLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "filterAll": "All",
+  "filterVerified": "Verified",
+  "filterPending": "Pending",
+  "entryContribution": "Cycle {number} contribution",
+  "@entryContribution": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "entryCorrection": "Correction",
+  "correctsRef": "Corrects {reference}",
+  "@correctsRef": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyPendingTitle": "Nothing waiting",
+  "emptyPendingBody": "Payments you record appear here until your organizer verifies them.",
+  "recordsAppendOnly": "Records are never edited. Mistakes are fixed with a correction entry.",
+  "verifiedMember": "Verified member",
+  "textSizeLabel": "Display and text size",
+  "textStandard": "Standard",
+  "textEnhanced": "Enhanced",
+  "textMaximised": "Maximised",
+  "accountGroup": "Account",
+  "logOutConfirmTitle": "Log out of Pay&Save?",
+  "logOutConfirmBody": "Your records stay safe. Log back in any time with your phone or email.",
+  "cancelLabel": "Cancel",
+  "settingsTitle": "Settings",
+  "verifyShort": "Verify",
+  "noCirclesTitle": "Start your first circle",
+  "noCirclesBody": "Create a seettu and invite members, or join one with the code your organizer shared.",
+  "createCircle": "Create a circle",
+  "joinCircle": "Join with a code",
+  "switchCircle": "Switch circle",
+  "myCircles": "My circles",
+  "draftTitle": "Waiting to start",
+  "draftBodyOrganizer": "{joined} of {planned} members have joined. Share the code, set the turn order, then start.",
+  "@draftBodyOrganizer": {
+    "placeholders": {
+      "joined": {
+        "type": "int"
+      },
+      "planned": {
+        "type": "int"
+      }
+    }
+  },
+  "draftBodyMember": "{joined} of {planned} members have joined. Your organizer will start the circle.",
+  "@draftBodyMember": {
+    "placeholders": {
+      "joined": {
+        "type": "int"
+      },
+      "planned": {
+        "type": "int"
+      }
+    }
+  },
+  "joinCodeLabel": "Join code",
+  "copyCode": "Copy code",
+  "codeCopied": "Code copied",
+  "shareCodeHint": "Members enter this code under Join with a code.",
+  "completedTitle": "Circle completed",
+  "completedBody": "Every member has received a payout. Your records stay available.",
+  "recordedBody": "{reference} · recorded {date}",
+  "@recordedBody": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "verifiedBody": "{reference} · verified {date}",
+  "@verifiedBody": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "toVerifyTitle": "Payments to verify",
+  "toVerifyBody": "{count} waiting for you",
+  "@toVerifyBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "legendUnpaid": "Not paid yet",
+  "retry": "Try again",
+  "createTitlePlain": "New",
+  "createTitleAccent": "circle",
+  "createSubtitle": "Set the rules once. Every member sees the same rules.",
+  "circleNameLabel": "Circle name",
+  "circleNameHint": "e.g. Office Seettu",
+  "contributionAmountLabel": "Each member pays (LKR)",
+  "amountHint": "5000",
+  "errAmount": "Enter an amount from LKR 1 to LKR 1,000,000",
+  "intervalWeekly": "Weekly",
+  "intervalFortnightly": "Every two weeks",
+  "membersCountLabel": "Number of members",
+  "membersCountHelp": "One payout per member, so this is also the number of cycles.",
+  "errMembersCount": "Choose between 2 and 60 members",
+  "firstDueLabel": "First payment due",
+  "turnRuleLottery": "Lottery",
+  "turnRuleNeed": "Need-based",
+  "turnRuleFixedHelp": "You arrange the order before starting.",
+  "turnRuleLotteryHelp": "A fair draw that any member can check.",
+  "turnRuleNeedHelp": "You order members by need before starting.",
+  "createSummary": "{members} members × LKR {amount} = LKR {pot} per payout",
+  "@createSummary": {
+    "placeholders": {
+      "members": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "pot": {
+        "type": "String"
+      }
+    }
+  },
+  "createCta": "Create circle",
+  "joinTitlePlain": "Join a",
+  "joinTitleAccent": "circle",
+  "joinSubtitle": "Enter the 8-character code your organizer shared with you.",
+  "joinCodeHint": "e.g. K7P2 QXMH",
+  "joinCta": "Join circle",
+  "errJoinCode": "Enter the 8-character code",
+  "errInvalidJoinCode": "No circle matches that code.",
+  "errCircleStarted": "This circle has already started.",
+  "errCircleFull": "This circle is full.",
+  "errAlreadyMember": "You are already in this circle.",
+  "errNotEnoughMembers": "At least 2 members are needed to start.",
+  "errAlreadyRecorded": "A payment is already recorded for this cycle.",
+  "errPendingVerifications": "Verify or reject the waiting payments first.",
+  "turnOrderSetupTitle": "Set the turn order",
+  "moveUp": "Move {name} up",
+  "@moveUp": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moveDown": "Move {name} down",
+  "@moveDown": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "startCircle": "Start circle",
+  "startConfirmTitle": "Start {name}?",
+  "@startConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "startConfirmBody": "The turn order and due dates are fixed once the circle starts, and no one else can join.",
+  "drawOrder": "Draw order",
+  "lotteryCommitBody": "This fingerprint locks the draw before anyone sees the result. Members can check it after the reveal.",
+  "lotteryFingerprint": "Draw fingerprint",
+  "lotterySeed": "Draw seed (revealed)",
+  "revealAndStart": "Reveal order and start",
+  "cyclesTitle": "Payout schedule",
+  "cycleUpcoming": "Upcoming",
+  "cycleClosed": "Paid out",
+  "cycleCurrent": "Current",
+  "closeCycle": "Close cycle {number}",
+  "@closeCycle": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "closeCycleBody": "{name} receives LKR {amount} from {count} verified payments.",
+  "@closeCycleBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closeUnpaidList": "Not paid this cycle",
+  "closeAcknowledge": "Close with {count} unpaid",
+  "@closeAcknowledge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closeConfirm": "Close and record payout",
+  "recordForMember": "Record cash payment",
+  "recordForMemberSubtitle": "For {name}, cycle {cycle}. They will see this in their passbook.",
+  "@recordForMemberSubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "methodLankaqr": "LANKAQR",
+  "providerLabel": "Which wallet?",
+  "providerOther": "Other",
+  "receiptRefLabel": "Reference (optional)",
+  "receiptRefHintBank": "Bank transfer reference",
+  "receiptRefHintWallet": "Transaction ID",
+  "receiptRefHintCash": "Receipt number, if any",
+  "recordedSuccessBody": "Reference {reference} · {time}. Your organizer will verify it.",
+  "@recordedSuccessBody": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "recordSafety": "Stored on our servers with a tamper-evident fingerprint. Do not pay again for this cycle.",
+  "doneLabel": "Done",
+  "verifyQueueTitlePlain": "Verify",
+  "verifyQueueTitleAccent": "payments",
+  "verifyQueueSubtitle": "Check each payment against your bank, wallet or cash book before you verify it.",
+  "rejectAction": "Reject",
+  "rejectTitle": "Reject {reference}?",
+  "@rejectTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectBody": "The original record stays. A correction is added and the member can record again.",
+  "rejectReasonLabel": "Reason (the member sees this)",
+  "rejectReasonHint": "e.g. No transfer received",
+  "errReason": "Give a short reason",
+  "verifiedToast": "{reference} verified",
+  "@verifiedToast": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectedToast": "{reference} rejected",
+  "@rejectedToast": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "queueEmptyTitle": "All caught up",
+  "queueEmptyBody": "No payments are waiting for you.",
+  "recordedBy": "Recorded by {name}",
+  "@recordedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scopeMine": "Mine",
+  "scopeAll": "Everyone",
+  "entryVerification": "Verification",
+  "entryPayout": "Payout · cycle {number}",
+  "@entryPayout": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "entryMemberAdded": "{name} joined",
+  "@entryMemberAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "entryTurnOrder": "Turn order set",
+  "entryCycleClosed": "Cycle {number} closed",
+  "@entryCycleClosed": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "historyEmptyTitle": "No records yet",
+  "historyEmptyBody": "Payments you record appear here, like a passbook.",
+  "recentActivity": "Recent activity",
+  "noActivity": "Nothing new yet.",
+  "payeeLine": "Pays {name} this cycle",
+  "@payeeLine": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

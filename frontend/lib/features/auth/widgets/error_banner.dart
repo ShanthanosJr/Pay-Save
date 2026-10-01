@@ -13,15 +13,15 @@ class ErrorBanner extends StatelessWidget {
     return Semantics(
       liveRegion: true,
       child: Container(
-        padding: const EdgeInsets.all(AppSpace.m),
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         decoration: BoxDecoration(
-          color: const Color(0x1AC0392B),
+          color: AppColors.dangerSoft,
           borderRadius: BorderRadius.circular(AppRadii.field),
         ),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Icon(Icons.error_outline, size: 20, color: AppColors.statusDue),
-          const SizedBox(width: AppSpace.s),
-          Expanded(child: Text(message, style: AppText.small.copyWith(color: AppColors.statusDue))),
+          const Icon(Icons.error_rounded, size: 20, color: AppColors.danger),
+          const SizedBox(width: 10),
+          Expanded(child: Text(message, style: AppText.footnote.copyWith(color: AppColors.danger))),
         ]),
       ),
     );

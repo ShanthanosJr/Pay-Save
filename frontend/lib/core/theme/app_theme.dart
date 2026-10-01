@@ -1,18 +1,19 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// Light, airy theme matching the Foreal template.
+/// Forest theme: deep green header, light rounded sheet, white bordered cards.
 abstract final class AppTheme {
   static ThemeData get light {
     const scheme = ColorScheme.light(
       primary: AppColors.ink,
-      onPrimary: AppColors.onDark,
-      secondary: AppColors.terracotta,
+      onPrimary: AppColors.onForest,
+      secondary: AppColors.forest600,
       surface: AppColors.surface,
       onSurface: AppColors.ink,
-      error: AppColors.statusDue,
-      outline: AppColors.border,
+      error: AppColors.danger,
+      outline: AppColors.stroke,
     );
 
     OutlineInputBorder border(Color c, [double w = 1]) => OutlineInputBorder(
@@ -24,56 +25,69 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.bg,
+      scaffoldBackgroundColor: AppColors.canvas,
       textTheme: AppText.textTheme,
       materialTapTargetSize: MaterialTapTargetSize.padded,
-      dividerColor: AppColors.hairline,
-      splashFactory: InkRipple.splashFactory,
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.bg,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: AppText.title,
-        iconTheme: const IconThemeData(color: AppColors.ink),
-      ),
+      dividerColor: AppColors.stroke,
+      splashFactory: InkSparkle.splashFactory,
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      }),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        hintStyle: AppText.small.copyWith(color: AppColors.placeholder),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: border(AppColors.hairline),
-        enabledBorder: border(AppColors.hairline),
-        focusedBorder: border(AppColors.ink, 1.5),
-        errorBorder: border(AppColors.statusDue),
-        focusedErrorBorder: border(AppColors.statusDue, 1.5),
-        errorStyle: AppText.caption.copyWith(color: AppColors.statusDue),
+        hintStyle: AppText.body.copyWith(color: AppColors.inkSubtle),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
+        border: border(AppColors.stroke),
+        enabledBorder: border(AppColors.stroke),
+        focusedBorder: border(AppColors.forest600, 1.6),
+        errorBorder: border(AppColors.danger),
+        focusedErrorBorder: border(AppColors.danger, 1.6),
+        errorStyle: AppText.caption.copyWith(color: AppColors.danger),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: AppColors.ink,
-        height: 72,
-        // Labels always shown: icon-only nav fails low-digital-confidence users.
+        indicatorColor: AppColors.mintSoft,
+        indicatorShape: const StadiumBorder(),
+        elevation: 0,
+        height: 76,
+        // Labels always shown: icon-only nav fails users with low digital confidence.
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (s) => AppText.caption.copyWith(
-            color: s.contains(WidgetState.selected) ? AppColors.ink : AppColors.inkMuted,
+            color: s.contains(WidgetState.selected) ? AppColors.ink : AppColors.inkSubtle,
             fontWeight: s.contains(WidgetState.selected) ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (s) => IconThemeData(
-            color: s.contains(WidgetState.selected) ? AppColors.onDark : AppColors.inkMuted,
+            size: 24,
+            color: s.contains(WidgetState.selected) ? AppColors.forest700 : AppColors.inkSubtle,
           ),
         ),
       ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        modalBarrierColor: AppColors.scrim,
+      ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.ink,
-        contentTextStyle: AppText.small.copyWith(color: AppColors.onDark),
+        contentTextStyle: AppText.callout.copyWith(color: AppColors.onForest),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.button)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.field)),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.ink,
+          minimumSize: const Size(AppSpace.minTouch, AppSpace.minTouch),
+          textStyle: AppText.label,
+        ),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColors.forest600),
     );
   }
 }

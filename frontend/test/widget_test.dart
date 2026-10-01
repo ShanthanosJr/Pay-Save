@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
+import 'package:pay_and_save/core/circles/circles_providers.dart';
 import 'package:pay_and_save/main.dart';
 
+import 'support/fake_circles.dart';
 import 'support/fakes.dart';
 
 Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
   WidgetTester tester, {
   bool signedIn = false,
+  FakeCirclesApi? circles,
 }) async {
   tester.view.physicalSize = const Size(390 * 2, 844 * 2);
   tester.view.devicePixelRatio = 2;
@@ -22,6 +25,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
     overrides: [
       authApiProvider.overrideWithValue(api),
       tokenStoreProvider.overrideWithValue(store),
+      circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
     ],
     child: const PayAndSaveApp(),
   ));
@@ -184,7 +188,8 @@ void main() {
     expect(find.text('+9477*****21'), findsOneWidget);
     expect(find.text('nadeeshi@example.com'), findsOneWidget);
 
-    await tester.tap(find.text('Verify email'));
+    await tester.tap(find.text('Verify'));
+    await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     expect(find.text('Verify your email'), findsOneWidget);
 
@@ -199,10 +204,31 @@ void main() {
     await tester.tap(find.text('Profile').last);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Log out'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    expect(find.text('Log out of Pay&Save?'), findsOneWidget);
+    expect(store.tokens, isNotNull);
+    await tester.tap(find.text('Log out').last);
     await tester.pumpAndSettle();
 
     expect(store.tokens, isNull);
     expect(find.text('Create account'), findsOneWidget);
+  });
+
+  testWidgets('Text size setting scales the app text', (tester) async {
+    await pumpApp(tester, signedIn: true);
+    await tester.tap(find.text('Profile').last);
+    await tester.pumpAndSettle();
+    final before = tester.getSize(find.text('Nadeeshi Perera')).height;
+
+    await tester.ensureVisible(find.text('Maximised'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Maximised'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Nadeeshi Perera'));
+    await tester.pumpAndSettle();
+    final after = tester.getSize(find.text('Nadeeshi Perera')).height;
+    expect(after, greaterThan(before * 1.2));
   });
 }

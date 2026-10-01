@@ -91,7 +91,7 @@ class _RegisterDetailsScreenState extends ConsumerState<RegisterDetailsScreen> {
               onSubmitted: (_) => _next(),
             ),
             const SizedBox(height: 32),
-            PsButton(label: l10n.continueLabel, onPressed: _next, trailing: Icons.arrow_forward),
+            PsButton(label: l10n.continueLabel, onPressed: _next, trailingIcon: Icons.arrow_forward_rounded),
           ],
         ),
       ),

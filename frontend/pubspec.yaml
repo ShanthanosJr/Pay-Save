@@ -74,7 +74,7 @@ flutter:
   assets:
     - assets/images/
 
-  # Inter Tight / Inter / Instrument Serif carry no Sinhala or Tamil glyphs,
+  # Inter Tight / Inter carry no Sinhala or Tamil glyphs,
   # so Noto Sans Sinhala / Tamil back every text style as a fallback.
   # Family names must match app_typography.dart.
   fonts:
@@ -84,11 +84,6 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter.ttf
-    - family: Instrument Serif
-      fonts:
-        - asset: assets/fonts/InstrumentSerif-Regular.ttf
-        - asset: assets/fonts/InstrumentSerif-Italic.ttf
-          style: italic
     - family: Noto Sans Sinhala
       fonts:
         - asset: assets/fonts/NotoSansSinhala-Regular.ttf

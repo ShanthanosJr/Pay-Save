@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import 'accent_title.dart';
+import '../../../core/widgets/ps_button.dart';
+import '../../../core/widgets/ps_forest_page.dart';
+import '../../../core/widgets/ps_logo.dart';
+import '../../../core/widgets/ps_section.dart';
+import '../../../l10n/gen/app_localizations.dart';
 
-/// Shared frame for login and the registration steps.
+/// Shared frame for login and the registration steps: forest header with
+/// back button and logo, light sheet with step bars, title and form.
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
     super.key,
@@ -30,75 +35,56 @@ class AuthScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.fromLTRB(AppSpace.screen, AppSpace.s, AppSpace.screen, AppSpace.xxl),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight - AppSpace.s - AppSpace.xxl),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: AppSpace.minTouch,
-                        child: Row(children: [
-                          if (onBack != null)
-                            Semantics(
-                              button: true,
-                              label: MaterialLocalizations.of(context).backButtonTooltip,
-                              child: InkWell(
-                                onTap: onBack,
-                                borderRadius: BorderRadius.circular(AppRadii.chip),
-                                child: const SizedBox(
-                                  width: AppSpace.minTouch,
-                                  height: AppSpace.minTouch,
-                                  child: Icon(Icons.arrow_back, color: AppColors.ink),
-                                ),
-                              ),
-                            ),
-                          const Spacer(),
-                          if (stepLabel != null) Text(stepLabel!, style: AppText.caption),
-                        ]),
-                      ),
-                      if (step != null && totalSteps != null) ...[
-                        const SizedBox(height: AppSpace.s),
-                        Row(
-                          children: List.generate(totalSteps!, (i) {
-                            return Expanded(
-                              child: Container(
-                                height: 4,
-                                margin: EdgeInsets.only(right: i == totalSteps! - 1 ? 0 : 6),
-                                decoration: BoxDecoration(
-                                  color: i < step! ? AppColors.ink : AppColors.hairline,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
-                      const SizedBox(height: AppSpace.xxl),
-                      AccentTitle(plain: titlePlain, accent: titleAccent),
-                      const SizedBox(height: AppSpace.m),
-                      Text(subtitle, style: AppText.body),
-                      const SizedBox(height: AppSpace.xxl),
-                      child,
-                      if (footer != null) ...[
-                        const SizedBox(height: AppSpace.xxl),
-                        Center(child: footer!),
-                      ],
-                    ],
+      backgroundColor: AppColors.forest800,
+      body: PsForestPage(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
+        header: Row(children: [
+          if (onBack != null)
+            PsGlassIconButton(
+              icon: Icons.arrow_back_rounded,
+              label: MaterialLocalizations.of(context).backButtonTooltip,
+              onTap: onBack!,
+            )
+          else
+            const SizedBox(width: AppSpace.minTouch),
+          Expanded(child: Center(child: PsLogo(size: 28, wordmark: l10n.wordmark))),
+          SizedBox(
+            width: AppSpace.minTouch,
+            child: stepLabel == null
+                ? null
+                : Text(
+                    '$step/$totalSteps',
+                    textAlign: TextAlign.end,
+                    semanticsLabel: stepLabel,
+                    style: AppText.label.copyWith(color: AppColors.onForestMuted),
                   ),
-                ),
-              ),
-            ),
           ),
-        ),
+        ]),
+        children: [
+          if (step != null && totalSteps != null) ...[
+            PsStepBars(step: step!, total: totalSteps!),
+            const SizedBox(height: AppSpace.m),
+            Text(stepLabel ?? '', style: AppText.caption),
+            const SizedBox(height: AppSpace.l),
+          ],
+          Semantics(
+            header: true,
+            child: Text.rich(TextSpan(children: [
+              TextSpan(text: '$titlePlain ', style: AppText.display),
+              TextSpan(text: titleAccent, style: AppText.display.copyWith(color: AppColors.forest600)),
+            ])),
+          ),
+          const SizedBox(height: AppSpace.m),
+          Text(subtitle, style: AppText.body),
+          const SizedBox(height: AppSpace.xxl + 4),
+          child,
+          if (footer != null) ...[
+            const SizedBox(height: AppSpace.xxl),
+            Center(child: footer!),
+          ],
+        ],
       ),
     );
   }

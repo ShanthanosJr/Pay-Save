@@ -151,7 +151,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                 else ...[
                   Center(
                     child: _cooldown > 0
-                        ? Text(l10n.resendIn(_cooldown), style: AppText.small)
+                        ? Text(l10n.resendIn(_cooldown), style: AppText.footnote)
                         : TextButton(
                             style: TextButton.styleFrom(
                               foregroundColor: AppColors.ink,
@@ -171,7 +171,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                         minimumSize: const Size(AppSpace.minTouch, AppSpace.minTouch),
                       ),
                       onPressed: _changeNumber,
-                      child: Text(l10n.changeNumber, style: AppText.small),
+                      child: Text(l10n.changeNumber, style: AppText.footnote),
                     ),
                   ),
                 ],

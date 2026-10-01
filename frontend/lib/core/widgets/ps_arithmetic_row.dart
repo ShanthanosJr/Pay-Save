@@ -8,26 +8,28 @@ class PsArithmeticRow extends StatelessWidget {
   const PsArithmeticRow({
     super.key,
     required this.summary,
-    required this.totalLabel,
     this.onTap,
   });
 
   final String summary;
-  final String totalLabel;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadii.chip),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpace.m),
+      borderRadius: BorderRadius.circular(AppRadii.small),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.mintSoft,
+          borderRadius: BorderRadius.circular(AppRadii.small),
+        ),
         child: Row(
           children: [
-            Expanded(child: Text(summary, style: AppText.caption)),
-            const SizedBox(width: AppSpace.s),
-            Text(totalLabel, style: AppText.bodyStrong),
+            const Icon(Icons.functions_rounded, size: 18, color: AppColors.forest700),
+            const SizedBox(width: 8),
+            Expanded(child: Text(summary, style: AppText.label.copyWith(color: AppColors.forest800))),
           ],
         ),
       ),

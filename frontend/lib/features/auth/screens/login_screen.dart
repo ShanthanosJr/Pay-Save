@@ -66,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       footer: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          Text('${l10n.noAccountPrompt} ', style: AppText.small),
+          Text('${l10n.noAccountPrompt} ', style: AppText.footnote),
           TextButton(
             style: TextButton.styleFrom(
               foregroundColor: AppColors.ink,

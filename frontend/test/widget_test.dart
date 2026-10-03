@@ -1,37 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pay_and_save/core/auth/auth_controller.dart';
-import 'package:pay_and_save/core/circles/circles_providers.dart';
-import 'package:pay_and_save/main.dart';
 
-import 'support/fake_circles.dart';
-import 'support/fakes.dart';
-
-Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
-  WidgetTester tester, {
-  bool signedIn = false,
-  FakeCirclesApi? circles,
-}) async {
-  tester.view.physicalSize = const Size(390 * 2, 844 * 2);
-  tester.view.devicePixelRatio = 2;
-  addTearDown(tester.view.reset);
-
-  final api = FakeAuthApi();
-  final store = MemoryTokenStore();
-  if (signedIn) store.tokens = testTokens;
-
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      authApiProvider.overrideWithValue(api),
-      tokenStoreProvider.overrideWithValue(store),
-      circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
-    ],
-    child: const PayAndSaveApp(),
-  ));
-  await tester.pumpAndSettle();
-  return (tester, api, store);
-}
+import 'support/pump.dart';
 
 void main() {
   testWidgets('Welcome shows brand, language chips and both entry buttons', (tester) async {

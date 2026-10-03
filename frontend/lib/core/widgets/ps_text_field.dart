@@ -22,6 +22,10 @@ class PsTextField extends StatefulWidget {
     this.hideLabel = 'Hide',
     this.prefixText,
     this.maxLength,
+    this.maxLines = 1,
+    this.showCounter = false,
+    this.helper,
+    this.enabled = true,
   });
 
   final String label;
@@ -38,6 +42,10 @@ class PsTextField extends StatefulWidget {
   final String hideLabel;
   final String? prefixText;
   final int? maxLength;
+  final int maxLines;
+  final bool showCounter;
+  final String? helper;
+  final bool enabled;
 
   @override
   State<PsTextField> createState() => _PsTextFieldState();
@@ -66,13 +74,18 @@ class _PsTextFieldState extends State<PsTextField> {
           autofillHints: widget.autofillHints,
           onFieldSubmitted: widget.onSubmitted,
           maxLength: widget.maxLength,
+          maxLines: widget.obscure ? 1 : widget.maxLines,
+          minLines: 1,
+          enabled: widget.enabled,
           style: AppText.bodyStrong,
           cursorColor: AppColors.forest600,
           decoration: InputDecoration(
             hintText: widget.hint,
             prefixText: widget.prefixText,
             prefixStyle: AppText.bodyStrong,
-            counterText: '',
+            counterText: widget.showCounter ? null : '',
+            helperText: widget.helper,
+            helperMaxLines: 2,
             suffixIcon: widget.obscure
                 ? Semantics(
                     button: true,

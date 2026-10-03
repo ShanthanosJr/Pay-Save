@@ -9,6 +9,16 @@ class Validators {
 
   static final _email = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]{2,}$');
 
+  static final _username = RegExp(r'^[a-z0-9._]{3,30}$');
+
+  /// Optional; '@' and case are ignored, as on the server.
+  String? username(String? v) {
+    final t = normalizeUsername(v ?? '');
+    return t.isEmpty || _username.hasMatch(t) ? null : l10n.errUsernameFormat;
+  }
+
+  static String normalizeUsername(String v) => v.trim().replaceFirst(RegExp('^@'), '').toLowerCase();
+
   String? required(String? v) => (v == null || v.trim().isEmpty) ? l10n.errRequired : null;
 
   String? fullName(String? v) {

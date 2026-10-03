@@ -8,20 +8,31 @@ import '../../features/auth/screens/register_credentials_screen.dart';
 import '../../features/auth/screens/register_details_screen.dart';
 import '../../features/auth/screens/register_phone_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/chats/chat_thread_screen.dart';
+import '../../features/chats/chats_screen.dart';
 import '../../features/circle/circle_screen.dart';
 import '../../features/circle/create_circle_screen.dart';
 import '../../features/circle/join_circle_screen.dart';
 import '../../features/circle/verify_queue_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/member_home_screen.dart';
+import '../../features/people/people_list_screen.dart';
+import '../../features/people/person_profile_screen.dart';
+import '../../features/profile/change_phone_screen.dart';
+import '../../features/profile/edit_profile_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../auth/auth_controller.dart';
+import '../social/social_providers.dart';
 import '../theme/app_colors.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
-  ref.listen(authControllerProvider, (prev, next) => refresh.value++);
+  // Only sign-in status changes re-run redirects; a profile edit must not
+  // rebuild the route stack (it raced with pop() on the edit screen).
+  ref.listen(authControllerProvider, (prev, next) {
+    if (prev.runtimeType != next.runtimeType) refresh.value++;
+  });
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -30,8 +41,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      const signedInPaths = {'/home', '/circle', '/history', '/profile'};
-      final signedInArea = signedInPaths.contains(loc) || loc.startsWith('/circles/');
+      const signedInRoots = ['/home', '/circle', '/circles', '/history', '/chats', '/profile', '/people'];
+      final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
       if (auth is AuthUnknown) return loc == '/splash' ? null : '/splash';
       if (auth is AuthLoggedIn) return signedInArea ? null : '/home';
@@ -70,9 +81,35 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             GoRoute(path: '/history', builder: (context, state) => const HistoryScreen()),
           ]),
           StatefulShellBranch(routes: [
+            GoRoute(path: '/chats', builder: (context, state) => const ChatsScreen()),
+          ]),
+          StatefulShellBranch(routes: [
             GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
           ]),
         ],
+      ),
+      // Full-screen pages pushed over the tabs (no bottom navigation).
+      GoRoute(path: '/profile/edit', builder: (context, state) => const EditProfileScreen()),
+      GoRoute(path: '/profile/phone', builder: (context, state) => const ChangePhoneScreen()),
+      GoRoute(
+        path: '/people/:id',
+        builder: (context, state) => PersonProfileScreen(userId: state.pathParameters['id']!),
+        routes: [
+          GoRoute(
+            path: 'followers',
+            builder: (context, state) =>
+                PeopleListScreen(userId: state.pathParameters['id']!, kind: PeopleListKind.followers),
+          ),
+          GoRoute(
+            path: 'following',
+            builder: (context, state) =>
+                PeopleListScreen(userId: state.pathParameters['id']!, kind: PeopleListKind.following),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/chats/:id',
+        builder: (context, state) => ChatThreadScreen(chatId: state.pathParameters['id']!),
       ),
     ],
   );

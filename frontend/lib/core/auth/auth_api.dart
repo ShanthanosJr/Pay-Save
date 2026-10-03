@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import '../api/api_exception.dart';
 import 'auth_models.dart';
@@ -144,5 +146,44 @@ class AuthApi {
 
   Future<void> updateLanguage(String language) => _call(() async {
         await _dio.patch<void>('/users/me', data: {'language': language});
+      });
+
+  /// Only the keys passed are changed. An empty string clears username/bio/city.
+  Future<UserProfile> updateProfile({
+    String? fullName,
+    int? age,
+    String? username,
+    String? bio,
+    String? city,
+  }) =>
+      _call(() async {
+        final r = await _dio.patch<Map<String, dynamic>>('/users/me', data: {
+          'fullName': ?fullName,
+          'age': ?age,
+          'username': ?username,
+          'bio': ?bio,
+          'city': ?city,
+        });
+        return UserProfile.fromJson(r.data!);
+      });
+
+  /// [phoneVerificationToken] comes from [verifyPhoneOtp] for the new number.
+  Future<UserProfile> changePhone(String phone, String phoneVerificationToken) => _call(() async {
+        final r = await _dio.post<Map<String, dynamic>>(
+          '/users/me/phone',
+          data: {'phone': phone, 'phoneVerificationToken': phoneVerificationToken},
+        );
+        return UserProfile.fromJson(r.data!);
+      });
+
+  Future<UserProfile> uploadAvatar(Uint8List bytes, String filename) => _call(() async {
+        final form = FormData.fromMap({'file': MultipartFile.fromBytes(bytes, filename: filename)});
+        final r = await _dio.put<Map<String, dynamic>>('/users/me/avatar', data: form);
+        return UserProfile.fromJson(r.data!);
+      });
+
+  Future<UserProfile> removeAvatar() => _call(() async {
+        final r = await _dio.delete<Map<String, dynamic>>('/users/me/avatar');
+        return UserProfile.fromJson(r.data!);
       });
 }

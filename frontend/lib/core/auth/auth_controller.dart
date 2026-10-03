@@ -84,6 +84,11 @@ class AuthController extends Notifier<AuthState> {
     state = AuthLoggedIn(await _api.me());
   }
 
+  /// Replaces the signed-in user after a profile edit.
+  void setUser(UserProfile user) {
+    if (state is AuthLoggedIn) state = AuthLoggedIn(user);
+  }
+
   void markEmailVerified() {
     final s = state;
     if (s is AuthLoggedIn) state = AuthLoggedIn(s.user.copyWith(emailVerified: true));

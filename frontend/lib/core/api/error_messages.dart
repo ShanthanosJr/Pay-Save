@@ -36,6 +36,17 @@ String messageFor(AppLocalizations l10n, Object error) {
     case 'OTP_LOCKED':
     case 'OTP_COOLDOWN':
       return l10n.errTooManyAttempts;
+    case 'USERNAME_TAKEN':
+      return l10n.errUsernameTaken;
+    case 'IMAGE_TOO_LARGE':
+      return l10n.errImageTooLarge;
+    case 'UNSUPPORTED_IMAGE':
+    case 'IMAGE_REQUIRED':
+      return l10n.errUnsupportedImage;
+    case 'BLOCKED':
+      return l10n.errBlocked;
+    case 'NOT_FOUND':
+      return l10n.personNotFound;
   }
   return switch (e.statusCode) {
     401 => l10n.errInvalidCredentials,

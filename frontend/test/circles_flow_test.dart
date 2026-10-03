@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
 import 'package:pay_and_save/core/circles/circles_providers.dart';
+import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/circle/join_circle_screen.dart';
 import 'package:pay_and_save/main.dart';
 
@@ -20,6 +21,7 @@ Future<FakeCirclesApi> pumpSignedIn(WidgetTester tester, FakeSeed seed) async {
       authApiProvider.overrideWithValue(FakeAuthApi()),
       tokenStoreProvider.overrideWithValue(store),
       circlesApiProvider.overrideWithValue(circles),
+      socialApiProvider.overrideWithValue(FakeSocialApi()),
     ],
     child: const PayAndSaveApp(),
   ));

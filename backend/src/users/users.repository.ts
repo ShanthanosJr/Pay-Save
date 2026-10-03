@@ -19,7 +19,21 @@ export interface UserRecord {
   failedLoginCount: number;
   lockedUntil: Date | null;
   language: Language;
+  username: string | null;
+  bio: string | null;
+  city: string | null;
+  avatarUpdatedAt: Date | null;
+  isCommunityOfficer: boolean;
   createdAt: Date;
+}
+
+export interface ProfilePatch {
+  fullName?: string;
+  age?: number;
+  username?: string | null;
+  bio?: string | null;
+  city?: string | null;
+  language?: Language;
 }
 
 export interface NewUser {
@@ -50,12 +64,17 @@ interface Row {
   failed_login_count: number;
   locked_until: Date | null;
   language: Language;
+  username: string | null;
+  bio: string | null;
+  city: string | null;
+  avatar_updated_at: Date | null;
+  is_community_officer: boolean;
   created_at: Date;
 }
 
 const COLUMNS = `id, full_name, display_name, age, phone_encrypted, phone_hash, nic_encrypted, email,
   email_verified_at, phone_verified_at, password_hash, refresh_token_hash, failed_login_count,
-  locked_until, language, created_at`;
+  locked_until, language, username, bio, city, avatar_updated_at, is_community_officer, created_at`;
 
 const toUser = (r: Row): UserRecord => ({
   id: r.id,
@@ -72,8 +91,22 @@ const toUser = (r: Row): UserRecord => ({
   failedLoginCount: r.failed_login_count,
   lockedUntil: r.locked_until,
   language: r.language,
+  username: r.username,
+  bio: r.bio,
+  city: r.city,
+  avatarUpdatedAt: r.avatar_updated_at,
+  isCommunityOfficer: r.is_community_officer,
   createdAt: r.created_at,
 });
+
+const PATCH_COLUMNS: Record<keyof ProfilePatch, string> = {
+  fullName: 'full_name',
+  age: 'age',
+  username: 'username',
+  bio: 'bio',
+  city: 'city',
+  language: 'language',
+};
 
 @Injectable()
 export class UsersRepository {
@@ -190,10 +223,34 @@ export class UsersRepository {
     );
   }
 
-  async updateLanguage(userId: string, language: Language): Promise<void> {
+  /** Applies only the keys present in `patch`; full_name also feeds display_name. */
+  async updateProfile(userId: string, patch: ProfilePatch): Promise<void> {
+    const sets: string[] = [];
+    const params: unknown[] = [userId];
+    for (const [key, column] of Object.entries(PATCH_COLUMNS)) {
+      const value = patch[key as keyof ProfilePatch];
+      if (value === undefined) continue;
+      params.push(value);
+      sets.push(`${column} = $${params.length}`);
+      if (key === 'fullName') sets.push(`display_name = $${params.length}`);
+    }
+    if (sets.length === 0) return;
     await this.pool.query(
-      'UPDATE users SET language = $2, updated_at = now() WHERE id = $1',
-      [userId, language],
+      `UPDATE users SET ${sets.join(', ')}, updated_at = now() WHERE id = $1`,
+      params,
+    );
+  }
+
+  async updatePhone(
+    userId: string,
+    phoneEncrypted: Buffer,
+    phoneHash: string,
+    verifiedAt: Date,
+  ): Promise<void> {
+    await this.pool.query(
+      `UPDATE users SET phone_encrypted = $2, phone_hash = $3, phone_verified_at = $4, updated_at = now()
+       WHERE id = $1`,
+      [userId, phoneEncrypted, phoneHash, verifiedAt],
     );
   }
 }

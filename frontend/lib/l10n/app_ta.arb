@@ -264,5 +264,324 @@
   "historyEmptyBody": "நீங்கள் பதிவுசெய்யும் கட்டணங்கள் கணக்குப் புத்தகம் போல இங்கே தோன்றும்.",
   "recentActivity": "சமீபத்திய செயல்பாடு",
   "noActivity": "இன்னும் புதிதாக எதுவும் இல்லை.",
-  "payeeLine": "இந்தச் சுழற்சியில் {name}-க்குச் செலுத்தப்படும்"
+  "payeeLine": "இந்தச் சுழற்சியில் {name}-க்குச் செலுத்தப்படும்",
+  "backLabel": "பின்செல்",
+  "haveAccountPrompt": "ஏற்கனவே கணக்கு உள்ளதா?",
+  "verifyCode": "உறுதிப்படுத்து",
+  "profileTitle": "சுயவிவரம்",
+  "verifyEmail": "மின்னஞ்சலை உறுதிப்படுத்து",
+  "unreadLabel": "படிக்காதது",
+  "needsAttention": "உங்கள் கவனம் தேவை",
+  "collectionChartLabel": "ஒவ்வொரு சுழற்சிக்கும் உறுதிப்படுத்தப்பட்ட சேகரிப்பு",
+  "recordPaymentSoon": "கட்டணப் பதிவு அடுத்த புதுப்பிப்பில் திறக்கப்படும்.",
+  "notifVerifiedBody": "{reference} · சுழற்சி {cycle}",
+  "notifTurnTitle": "அடுத்த முறை உங்களுடையது",
+  "navChats": "அரட்டை",
+  "@navChats": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatsBadgeLabel": "படிக்காத செய்திகள் {count}",
+  "@chatsBadgeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "editProfile": "சுயவிவரத்தைத் திருத்து",
+  "@editProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addUsernamePrompt": "பயனர்பெயரைச் சேர்க்கவும்",
+  "@addUsernamePrompt": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followersLabel": "பின்தொடர்பவர்கள்",
+  "@followersLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followingLabel": "பின்தொடர்கிறார்",
+  "@followingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharedCirclesLabel": "இணைந்த வட்டங்கள்",
+  "@sharedCirclesLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "privateDetailsTitle": "தனிப்பட்ட விவரங்கள்",
+  "@privateDetailsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "privateDetailsNote": "இவற்றை நீங்கள் மட்டுமே பார்க்க முடியும். அவை உங்கள் பொது சுயவிவரத்தில் ஒருபோதும் தோன்றாது.",
+  "@privateDetailsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhotoLabel": "சுயவிவரப் படத்தை மாற்று",
+  "@changePhotoLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoTake": "புகைப்படம் எடு",
+  "@photoTake": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoChoose": "கேலரியிலிருந்து தேர்வு செய்",
+  "@photoChoose": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoRemove": "படத்தை அகற்று",
+  "@photoRemove": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoUpdatedToast": "சுயவிவரப் படம் புதுப்பிக்கப்பட்டது",
+  "@photoUpdatedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoRemovedToast": "சுயவிவரப் படம் அகற்றப்பட்டது",
+  "@photoRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changeLabel": "மாற்று",
+  "@changeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "memberSince": "{date} முதல் உறுப்பினர்",
+  "@memberSince": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameLabel": "பயனர்பெயர்",
+  "@usernameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameHint": "எ.கா. nadeeshi.p",
+  "@usernameHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameHelper": "3–30 எழுத்துகள், எண்கள், புள்ளிகள் அல்லது அடிக்கோடுகள். மற்றவர்கள் இதன் மூலம் உங்களைக் கண்டுபிடிக்கலாம்.",
+  "@usernameHelper": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bioLabel": "உங்களைப் பற்றி",
+  "@bioLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bioHint": "உங்களைப் பற்றி ஒரு வரி",
+  "@bioHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cityLabel": "நகரம்",
+  "@cityLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cityHint": "எ.கா. கண்டி",
+  "@cityHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "lockedFieldsNote": "மின்னஞ்சல், கடவுச்சொல் மற்றும் தேசிய அடையாள அட்டையை இங்கே மாற்ற முடியாது. அடையாள அட்டை உங்கள் அடையாளத்துடன் இணைக்கப்பட்டுள்ளது.",
+  "@lockedFieldsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "saveChanges": "மாற்றங்களைச் சேமி",
+  "@saveChanges": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "profileSavedToast": "சுயவிவரம் சேமிக்கப்பட்டது",
+  "@profileSavedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUsernameFormat": "3–30 எழுத்துகள், எண்கள், புள்ளிகள் அல்லது அடிக்கோடுகளைப் பயன்படுத்தவும்.",
+  "@errUsernameFormat": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUsernameTaken": "அந்தப் பயனர்பெயர் ஏற்கனவே எடுக்கப்பட்டுள்ளது.",
+  "@errUsernameTaken": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errImageTooLarge": "அந்தப் படம் மிகப் பெரியது. சிறியதைத் தேர்ந்தெடுக்கவும்.",
+  "@errImageTooLarge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUnsupportedImage": "JPEG, PNG அல்லது WebP படத்தைப் பயன்படுத்தவும்.",
+  "@errUnsupportedImage": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errBlocked": "இந்த நபரைப் பின்தொடரவோ செய்தி அனுப்பவோ முடியாது.",
+  "@errBlocked": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhoneTitle": "தொலைபேசி எண்ணை மாற்று",
+  "@changePhoneTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhoneSubtitle": "புதிய எண் உங்களுடையது என உறுதிப்படுத்த அதற்கு ஒரு குறியீட்டை அனுப்புவோம்.",
+  "@changePhoneSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "newPhoneLabel": "புதிய தொலைபேசி எண்",
+  "@newPhoneLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "phoneChangedToast": "தொலைபேசி எண் புதுப்பிக்கப்பட்டது",
+  "@phoneChangedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatsTitle": "செய்திகள்",
+  "@chatsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "searchPeopleHint": "பெயர் அல்லது பயனர்பெயரால் தேடு",
+  "@searchPeopleHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "clearSearch": "தேடலை அழி",
+  "@clearSearch": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "suggestedForYou": "உங்களுக்குப் பரிந்துரைக்கப்பட்டவை",
+  "@suggestedForYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonSharedCircle": "உங்களுடன் ஒரு வட்டத்தில்",
+  "@reasonSharedCircle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonMutual": "நீங்கள் பின்தொடரும் {count} பேர் பின்தொடர்கிறார்கள்",
+  "@reasonMutual": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonFollowsYou": "உங்களைப் பின்தொடர்கிறார்",
+  "@reasonFollowsYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonNew": "Pay&Save-க்குப் புதியவர்",
+  "@reasonNew": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followAction": "பின்தொடர்",
+  "@followAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followingAction": "பின்தொடர்கிறீர்கள்",
+  "@followingAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followBackAction": "திரும்பப் பின்தொடர்",
+  "@followBackAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageAction": "செய்தி",
+  "@messageAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noChatsTitle": "இன்னும் செய்திகள் இல்லை",
+  "@noChatsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noChatsBody": "மேலே ஒருவரைத் தேடி வணக்கம் சொல்லுங்கள்.",
+  "@noChatsBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPeopleFound": "“{query}” க்கு யாரும் கிடைக்கவில்லை",
+  "@noPeopleFound": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "youPrefix": "நீங்கள்: {message}",
+  "@youPrefix": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unreadCount": "படிக்காதவை {count}",
+  "@unreadCount": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadFailed": "இதை ஏற்ற முடியவில்லை.",
+  "@loadFailed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "retryLabel": "மீண்டும் முயற்சி செய்",
+  "@retryLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockUser": "தடு",
+  "@blockUser": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unblockUser": "தடையை நீக்கு",
+  "@unblockUser": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockConfirmTitle": "{name} ஐத் தடுக்கவா?",
+  "@blockConfirmTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockConfirmBody": "அவர்களால் உங்களைக் கண்டுபிடிக்கவோ, உங்கள் சுயவிவரத்தைப் பார்க்கவோ, பின்தொடரவோ, செய்தி அனுப்பவோ முடியாது. அவர்களுக்குத் தெரிவிக்கப்படாது.",
+  "@blockConfirmBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockedNotice": "நீங்கள் இந்த நபரைத் தடுத்துள்ளீர்கள். அவர்களின் சுயவிவரத்தைப் பார்க்கவும் செய்தி அனுப்பவும் தடையை நீக்கவும்.",
+  "@blockedNotice": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockedToast": "தடுக்கப்பட்டது",
+  "@blockedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unblockedToast": "தடை நீக்கப்பட்டது",
+  "@unblockedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "moreActions": "மேலும் செயல்கள்",
+  "@moreActions": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "profilePrivacyNote": "தொலைபேசி, மின்னஞ்சல், அடையாள அட்டை மற்றும் வயது சுயவிவரங்களில் ஒருபோதும் காட்டப்படாது.",
+  "@profilePrivacyNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "personNotFound": "இந்தச் சுயவிவரம் கிடைக்கவில்லை.",
+  "@personNotFound": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPeopleYet": "இங்கே இன்னும் யாரும் இல்லை.",
+  "@noPeopleYet": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageHint": "ஒரு செய்தியை எழுது",
+  "@messageHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendLabel": "அனுப்பு",
+  "@sendLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendingLabel": "அனுப்புகிறது",
+  "@sendingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notSentRetry": "அனுப்பப்படவில்லை · மீண்டும் முயல தட்டவும்",
+  "@notSentRetry": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "seenLabel": "பார்க்கப்பட்டது",
+  "@seenLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadEarlier": "முந்தைய செய்திகளை ஏற்று",
+  "@loadEarlier": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatBlockedNotice": "இந்த அரட்டையில் செய்தி அனுப்ப முடியாது.",
+  "@chatBlockedNotice": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatEmpty": "{name} க்கு வணக்கம் சொல்லுங்கள்",
+  "@chatEmpty": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "viewProfile": "சுயவிவரத்தைப் பார்",
+  "@viewProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageFromYou": "நீங்கள் சொன்னது: {message}",
+  "@messageFromYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageFromPeer": "{name} சொன்னது: {message}",
+  "@messageFromPeer": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  }
 }

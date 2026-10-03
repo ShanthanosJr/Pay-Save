@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/api/error_messages.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/auth/auth_models.dart';
 import '../../core/providers/locale_provider.dart';
 import '../../core/providers/text_scale_provider.dart';
+import '../../core/social/social_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_button.dart';
@@ -15,40 +17,81 @@ import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_otp_field.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_sheet.dart';
-import '../../core/widgets/ps_status_badge.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
+import '../people/profile_header.dart';
 import '../shell/brand_header.dart';
+import 'profile_photo.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  bool _photoBusy = false;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = ref.watch(authControllerProvider);
     if (auth is! AuthLoggedIn) return const SizedBox.shrink();
     final user = auth.user;
+    final public = ref.watch(publicProfileProvider(user.id)).value;
     final locale = ref.watch(localeProvider);
     final textSize = ref.watch(textScaleProvider);
 
     return PsForestPage(
       header: const BrandHeader(),
       children: [
-        Center(child: PsAvatar(name: user.fullName, size: 104, ring: true, tone: AppColors.mint)),
-        const SizedBox(height: AppSpace.l),
-        Text(user.fullName, textAlign: TextAlign.center, style: AppText.display),
-        const SizedBox(height: AppSpace.m),
-        if (user.phoneVerified)
-          Center(
-            child: PsStatusPill(
-              label: l10n.verifiedMember,
-              tone: PsPillTone.success,
-              icon: Icons.verified_user_rounded,
-            ),
+        ProfileHeader(
+          name: user.fullName,
+          avatarUrl: user.avatarUrl,
+          username: user.username,
+          verified: user.phoneVerified,
+          bio: user.bio,
+          city: user.city,
+          memberSince: public?.memberSince,
+          followers: public?.followersCount,
+          following: public?.followingCount,
+          sharedCircles: public?.sharedCircles,
+          onFollowers: () => context.push('/people/${user.id}/followers'),
+          onFollowing: () => context.push('/people/${user.id}/following'),
+          photoBusy: _photoBusy,
+          onEditPhoto: () => showProfilePhotoSheet(
+            context,
+            ref,
+            onBusy: (v) {
+              if (mounted) setState(() => _photoBusy = v);
+            },
           ),
-        const SizedBox(height: AppSpace.xxl),
+          onAddUsername: () => context.push('/profile/edit'),
+          isMe: true,
+        ),
+        const SizedBox(height: AppSpace.l),
+        PsButton(
+          label: l10n.editProfile,
+          icon: Icons.edit_outlined,
+          variant: PsButtonVariant.secondary,
+          compact: true,
+          onPressed: () => context.push('/profile/edit'),
+        ),
+        const SizedBox(height: AppSpace.xxxl),
 
+        PsSectionHeader(title: l10n.privateDetailsTitle),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: AppSpace.m),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.lock_outline_rounded, size: 18, color: AppColors.inkMuted),
+              const SizedBox(width: AppSpace.s),
+              Expanded(child: Text(l10n.privateDetailsNote, style: AppText.footnote)),
+            ],
+          ),
+        ),
         PsInfoRow(
           label: l10n.profilePhone,
           value: user.phoneMasked,
@@ -84,16 +127,19 @@ class ProfileScreen extends ConsumerWidget {
         const SizedBox(height: AppSpace.xl),
         PsGroupLabel(l10n.profileLanguage),
         PsSegmented<String>(
-          segments: [
-            ('en', l10n.languageEnglish),
-            ('si', l10n.languageSinhala),
-            ('ta', l10n.languageTamil),
-          ],
+          segments: [('en', l10n.languageEnglish), ('si', l10n.languageSinhala), ('ta', l10n.languageTamil)],
           selected: locale.languageCode,
           onChanged: (code) => ref.read(localeProvider.notifier).set(Locale(code)),
         ),
         const SizedBox(height: AppSpace.xl),
         PsGroupLabel(l10n.accountGroup),
+        PsListRow(
+          icon: Icons.phone_iphone_rounded,
+          tone: PsBadgeTone.mint,
+          title: l10n.changePhoneTitle,
+          showChevron: true,
+          onTap: () => context.push('/profile/phone'),
+        ),
         PsListRow(
           icon: Icons.logout_rounded,
           tone: PsBadgeTone.danger,

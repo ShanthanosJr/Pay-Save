@@ -10,6 +10,7 @@ import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_logo.dart';
 import '../../core/widgets/ps_sheet.dart';
+import '../../core/widgets/ps_user_avatar.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../circle/sample_circle.dart';
 
@@ -21,7 +22,7 @@ class BrandHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final auth = ref.watch(authControllerProvider);
-    final name = auth is AuthLoggedIn ? auth.user.fullName : '';
+    final user = auth is AuthLoggedIn ? auth.user : null;
 
     return Row(
       children: [
@@ -44,7 +45,7 @@ class BrandHeader extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: const BoxDecoration(color: AppColors.glassStrong, shape: BoxShape.circle),
-              child: PsAvatar(name: name, size: 44),
+              child: PsUserAvatar(name: user?.fullName ?? '', avatarUrl: user?.avatarUrl, size: 44),
             ),
           ),
         ),

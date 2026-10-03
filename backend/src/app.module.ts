@@ -10,6 +10,7 @@ import type { AppConfig } from './config/app-config';
 import { AppConfigModule } from './config/app-config.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { SocialModule } from './social/social.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
     HealthModule,
     AuthModule,
     UsersModule,
+    SocialModule,
   ],
   controllers: [AppController],
   providers: [

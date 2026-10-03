@@ -168,6 +168,9 @@ describe('Auth (e2e)', () => {
       });
       expect(Object.keys(regBody.user).sort()).toEqual([
         'age',
+        'avatarUrl',
+        'bio',
+        'city',
         'createdAt',
         'email',
         'emailVerified',
@@ -177,6 +180,7 @@ describe('Auth (e2e)', () => {
         'nicMasked',
         'phoneMasked',
         'phoneVerified',
+        'username',
       ]);
 
       const me = await http()

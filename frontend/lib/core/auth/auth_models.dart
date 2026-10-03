@@ -21,6 +21,10 @@ class UserProfile {
     required this.phoneVerified,
     required this.nicMasked,
     required this.language,
+    this.username,
+    this.bio,
+    this.city,
+    this.avatarUrl,
   });
 
   final String id;
@@ -32,6 +36,12 @@ class UserProfile {
   final bool phoneVerified;
   final String nicMasked;
   final String language;
+  final String? username;
+  final String? bio;
+  final String? city;
+
+  /// Server-relative, versioned (`/users/<id>/avatar?v=…`); null = no photo.
+  final String? avatarUrl;
 
   String get firstName => fullName.trim().split(RegExp(r'\s+')).first;
 
@@ -45,6 +55,10 @@ class UserProfile {
         phoneVerified: phoneVerified,
         nicMasked: nicMasked,
         language: language ?? this.language,
+        username: username,
+        bio: bio,
+        city: city,
+        avatarUrl: avatarUrl,
       );
 
   factory UserProfile.fromJson(Map<String, dynamic> j) => UserProfile(
@@ -57,6 +71,10 @@ class UserProfile {
         phoneVerified: j['phoneVerified'] as bool? ?? false,
         nicMasked: j['nicMasked'] as String? ?? '',
         language: j['language'] as String? ?? 'en',
+        username: j['username'] as String?,
+        bio: j['bio'] as String?,
+        city: j['city'] as String?,
+        avatarUrl: j['avatarUrl'] as String?,
       );
 }
 

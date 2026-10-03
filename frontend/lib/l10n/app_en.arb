@@ -329,5 +329,155 @@
   },
   "notifTurnTitle": "Your turn is next",
   "settingsTitle": "Settings",
-  "verifyShort": "Verify"
+  "verifyShort": "Verify",
+  "navChats": "Chats",
+  "chatsBadgeLabel": "{count} unread messages",
+  "@chatsBadgeLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "editProfile": "Edit profile",
+  "addUsernamePrompt": "Add a username",
+  "followersLabel": "Followers",
+  "followingLabel": "Following",
+  "sharedCirclesLabel": "Circles together",
+  "privateDetailsTitle": "Private details",
+  "privateDetailsNote": "Only you can see these. They never appear on your public profile.",
+  "changePhotoLabel": "Change profile photo",
+  "photoTake": "Take a photo",
+  "photoChoose": "Choose from gallery",
+  "photoRemove": "Remove photo",
+  "photoUpdatedToast": "Profile photo updated",
+  "photoRemovedToast": "Profile photo removed",
+  "changeLabel": "Change",
+  "memberSince": "Member since {date}",
+  "@memberSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "usernameLabel": "Username",
+  "usernameHint": "e.g. nadeeshi.p",
+  "usernameHelper": "3–30 letters, numbers, dots or underscores. People can find you by it.",
+  "bioLabel": "Bio",
+  "bioHint": "A line about you",
+  "cityLabel": "City or town",
+  "cityHint": "e.g. Kandy",
+  "lockedFieldsNote": "Email, password and NIC can't be changed here. NIC is tied to your identity.",
+  "saveChanges": "Save changes",
+  "profileSavedToast": "Profile saved",
+  "errUsernameFormat": "Use 3–30 letters, numbers, dots or underscores.",
+  "errUsernameTaken": "That username is taken.",
+  "errImageTooLarge": "That photo is too large. Choose a smaller one.",
+  "errUnsupportedImage": "Use a JPEG, PNG or WebP photo.",
+  "errBlocked": "You can't follow or message this person.",
+  "changePhoneTitle": "Change phone number",
+  "changePhoneSubtitle": "We'll send a code to your new number to confirm it's yours.",
+  "newPhoneLabel": "New phone number",
+  "phoneChangedToast": "Phone number updated",
+  "chatsTitle": "Messages",
+  "searchPeopleHint": "Search by name or username",
+  "clearSearch": "Clear search",
+  "suggestedForYou": "Suggested for you",
+  "reasonSharedCircle": "In a circle with you",
+  "reasonMutual": "Followed by {count} you follow",
+  "@reasonMutual": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonFollowsYou": "Follows you",
+  "reasonNew": "New to Pay&Save",
+  "followAction": "Follow",
+  "followingAction": "Following",
+  "followBackAction": "Follow back",
+  "messageAction": "Message",
+  "noChatsTitle": "No messages yet",
+  "noChatsBody": "Search for someone above and say hello.",
+  "noPeopleFound": "No one found for “{query}”",
+  "@noPeopleFound": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "youPrefix": "You: {message}",
+  "@youPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "unreadCount": "{count} unread",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "loadFailed": "Couldn't load this.",
+  "retryLabel": "Try again",
+  "blockUser": "Block",
+  "unblockUser": "Unblock",
+  "blockConfirmTitle": "Block {name}?",
+  "@blockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blockConfirmBody": "They won't be able to find you, see your profile, follow you or message you. They won't be told.",
+  "blockedNotice": "You blocked this person. Unblock to see their profile and message them.",
+  "blockedToast": "Blocked",
+  "unblockedToast": "Unblocked",
+  "moreActions": "More actions",
+  "profilePrivacyNote": "Phone, email, NIC and age are never shown on profiles.",
+  "personNotFound": "This profile isn't available.",
+  "noPeopleYet": "No one here yet.",
+  "messageHint": "Write a message",
+  "sendLabel": "Send",
+  "sendingLabel": "Sending",
+  "notSentRetry": "Not sent · Tap to retry",
+  "seenLabel": "Seen",
+  "loadEarlier": "Load earlier messages",
+  "chatBlockedNotice": "You can't send messages in this chat.",
+  "chatEmpty": "Say hello to {name}",
+  "@chatEmpty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "viewProfile": "View profile",
+  "messageFromYou": "You said: {message}",
+  "@messageFromYou": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "messageFromPeer": "{name} said: {message}",
+  "@messageFromPeer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  }
 }

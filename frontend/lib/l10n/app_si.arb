@@ -162,5 +162,313 @@
   "notifVerifiedBody": "{reference} · චක්‍රය {cycle}",
   "notifTurnTitle": "ඊළඟ වාරය ඔබේයි",
   "settingsTitle": "සැකසුම්",
-  "verifyShort": "තහවුරු කරන්න"
+  "verifyShort": "තහවුරු කරන්න",
+  "navChats": "කතාබස්",
+  "@navChats": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatsBadgeLabel": "නොකියවූ පණිවිඩ {count}",
+  "@chatsBadgeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "editProfile": "පැතිකඩ සංස්කරණය",
+  "@editProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addUsernamePrompt": "පරිශීලක නාමයක් එක් කරන්න",
+  "@addUsernamePrompt": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followersLabel": "අනුගාමිකයන්",
+  "@followersLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followingLabel": "අනුගමනය කරන",
+  "@followingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharedCirclesLabel": "එක්ව සිටින කවයන්",
+  "@sharedCirclesLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "privateDetailsTitle": "පුද්ගලික විස්තර",
+  "@privateDetailsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "privateDetailsNote": "මේවා දැකිය හැක්කේ ඔබට පමණි. ඒවා කිසි විටෙක ඔබේ පොදු පැතිකඩේ නොපෙන්වයි.",
+  "@privateDetailsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhotoLabel": "පැතිකඩ ඡායාරූපය වෙනස් කරන්න",
+  "@changePhotoLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoTake": "ඡායාරූපයක් ගන්න",
+  "@photoTake": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoChoose": "ගැලරියෙන් තෝරන්න",
+  "@photoChoose": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoRemove": "ඡායාරූපය ඉවත් කරන්න",
+  "@photoRemove": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoUpdatedToast": "පැතිකඩ ඡායාරූපය යාවත්කාලීන කළා",
+  "@photoUpdatedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "photoRemovedToast": "පැතිකඩ ඡායාරූපය ඉවත් කළා",
+  "@photoRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changeLabel": "වෙනස් කරන්න",
+  "@changeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "memberSince": "{date} සිට සාමාජික",
+  "@memberSince": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameLabel": "පරිශීලක නාමය",
+  "@usernameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameHint": "උදා. nadeeshi.p",
+  "@usernameHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "usernameHelper": "අකුරු, ඉලක්කම්, තිත් හෝ යටි ඉරි 3–30. අනෙක් අයට ඔබව සොයා ගත හැක්කේ මෙයිනි.",
+  "@usernameHelper": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bioLabel": "ඔබ ගැන",
+  "@bioLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bioHint": "ඔබ ගැන පේළියක්",
+  "@bioHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cityLabel": "නගරය",
+  "@cityLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cityHint": "උදා. මහනුවර",
+  "@cityHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "lockedFieldsNote": "ඊමේල්, මුරපදය සහ ජාතික හැඳුනුම්පත මෙහිදී වෙනස් කළ නොහැක. හැඳුනුම්පත ඔබේ අනන්‍යතාවයට බැඳී ඇත.",
+  "@lockedFieldsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "saveChanges": "වෙනස්කම් සුරකින්න",
+  "@saveChanges": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "profileSavedToast": "පැතිකඩ සුරැකුණා",
+  "@profileSavedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUsernameFormat": "අකුරු, ඉලක්කම්, තිත් හෝ යටි ඉරි 3–30ක් භාවිතා කරන්න.",
+  "@errUsernameFormat": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUsernameTaken": "එම පරිශීලක නාමය දැනටමත් භාවිතයේ ඇත.",
+  "@errUsernameTaken": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errImageTooLarge": "එම ඡායාරූපය විශාල වැඩියි. කුඩා එකක් තෝරන්න.",
+  "@errImageTooLarge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUnsupportedImage": "JPEG, PNG හෝ WebP ඡායාරූපයක් භාවිතා කරන්න.",
+  "@errUnsupportedImage": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errBlocked": "ඔබට මෙම පුද්ගලයා අනුගමනය කිරීමට හෝ පණිවිඩ යැවීමට නොහැක.",
+  "@errBlocked": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhoneTitle": "දුරකථන අංකය වෙනස් කරන්න",
+  "@changePhoneTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePhoneSubtitle": "නව අංකය ඔබේ බව තහවුරු කිරීමට අපි එයට කේතයක් යවන්නෙමු.",
+  "@changePhoneSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "newPhoneLabel": "නව දුරකථන අංකය",
+  "@newPhoneLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "phoneChangedToast": "දුරකථන අංකය යාවත්කාලීන කළා",
+  "@phoneChangedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatsTitle": "පණිවිඩ",
+  "@chatsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "searchPeopleHint": "නමෙන් හෝ පරිශීලක නාමයෙන් සොයන්න",
+  "@searchPeopleHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "clearSearch": "සෙවීම හිස් කරන්න",
+  "@clearSearch": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "suggestedForYou": "ඔබට යෝජිත",
+  "@suggestedForYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonSharedCircle": "ඔබ සමඟ කවයක",
+  "@reasonSharedCircle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonMutual": "ඔබ අනුගමනය කරන {count} දෙනෙක් අනුගමනය කරයි",
+  "@reasonMutual": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonFollowsYou": "ඔබව අනුගමනය කරයි",
+  "@reasonFollowsYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reasonNew": "Pay&Save වෙත අලුත්",
+  "@reasonNew": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followAction": "අනුගමනය",
+  "@followAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followingAction": "අනුගමනය කරයි",
+  "@followingAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "followBackAction": "ආපසු අනුගමනය",
+  "@followBackAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageAction": "පණිවිඩය",
+  "@messageAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noChatsTitle": "තවම පණිවිඩ නැත",
+  "@noChatsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noChatsBody": "ඉහතින් කෙනෙකු සොයා ආයුබෝවන් කියන්න.",
+  "@noChatsBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPeopleFound": "“{query}” සඳහා කිසිවෙකු හමු නොවීය",
+  "@noPeopleFound": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "youPrefix": "ඔබ: {message}",
+  "@youPrefix": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unreadCount": "නොකියවූ {count}",
+  "@unreadCount": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadFailed": "මෙය පූරණය කළ නොහැකි විය.",
+  "@loadFailed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "retryLabel": "නැවත උත්සාහ කරන්න",
+  "@retryLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockUser": "අවහිර කරන්න",
+  "@blockUser": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unblockUser": "අවහිරය ඉවත් කරන්න",
+  "@unblockUser": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockConfirmTitle": "{name} අවහිර කරන්නද?",
+  "@blockConfirmTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockConfirmBody": "ඔවුන්ට ඔබව සොයා ගැනීමට, ඔබේ පැතිකඩ බැලීමට, අනුගමනය කිරීමට හෝ පණිවිඩ යැවීමට නොහැකි වේ. ඔවුන්ට මේ ගැන දැනුම් නොදේ.",
+  "@blockConfirmBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockedNotice": "ඔබ මෙම පුද්ගලයා අවහිර කර ඇත. ඔවුන්ගේ පැතිකඩ බැලීමට සහ පණිවිඩ යැවීමට අවහිරය ඉවත් කරන්න.",
+  "@blockedNotice": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "blockedToast": "අවහිර කළා",
+  "@blockedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "unblockedToast": "අවහිරය ඉවත් කළා",
+  "@unblockedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "moreActions": "තවත් ක්‍රියා",
+  "@moreActions": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "profilePrivacyNote": "දුරකථන අංකය, ඊමේල්, හැඳුනුම්පත සහ වයස කිසි විටෙක පැතිකඩවල නොපෙන්වයි.",
+  "@profilePrivacyNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "personNotFound": "මෙම පැතිකඩ ලබා ගත නොහැක.",
+  "@personNotFound": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPeopleYet": "තවම මෙහි කිසිවෙකු නැත.",
+  "@noPeopleYet": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageHint": "පණිවිඩයක් ලියන්න",
+  "@messageHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendLabel": "යවන්න",
+  "@sendLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendingLabel": "යවමින්",
+  "@sendingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notSentRetry": "යැවුණේ නැත · නැවත උත්සාහයට තට්ටු කරන්න",
+  "@notSentRetry": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "seenLabel": "දුටුවා",
+  "@seenLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadEarlier": "පෙර පණිවිඩ පූරණය කරන්න",
+  "@loadEarlier": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatBlockedNotice": "ඔබට මෙම කතාබහේ පණිවිඩ යැවිය නොහැක.",
+  "@chatBlockedNotice": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatEmpty": "{name} ට ආයුබෝවන් කියන්න",
+  "@chatEmpty": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "viewProfile": "පැතිකඩ බලන්න",
+  "@viewProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageFromYou": "ඔබ කීවේ: {message}",
+  "@messageFromYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "messageFromPeer": "{name} කීවේ: {message}",
+  "@messageFromPeer": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  }
 }

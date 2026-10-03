@@ -26,12 +26,14 @@ class AuthLoggedIn extends AuthState {
 
 final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());
 
-/// The one authenticated Dio (bearer token + refresh-on-401) shared by every API.
-final apiClientProvider = Provider<Dio>((ref) => buildApiClient(
-      baseUrl: apiBaseUrl,
-      tokens: ref.watch(tokenStoreProvider),
-      onSessionExpired: () => ref.read(authControllerProvider.notifier).sessionExpired(),
-    ));
+/// The one authenticated HTTP client every feature API shares.
+final apiClientProvider = Provider<Dio>((ref) {
+  return buildApiClient(
+    baseUrl: apiBaseUrl,
+    tokens: ref.watch(tokenStoreProvider),
+    onSessionExpired: () => ref.read(authControllerProvider.notifier).sessionExpired(),
+  );
+});
 
 final authApiProvider = Provider<AuthApi>((ref) => AuthApi(ref.watch(apiClientProvider)));
 

@@ -16,6 +16,7 @@ class PsListRow extends StatelessWidget {
     this.onTap,
     this.showChevron = false,
     this.titleColor,
+    this.below,
   });
 
   final String title;
@@ -27,6 +28,7 @@ class PsListRow extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showChevron;
   final Color? titleColor;
+  final Widget? below;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,7 @@ class PsListRow extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(subtitle!, style: AppText.footnote),
                       ],
+                      if (below != null) ...[const SizedBox(height: 8), below!],
                     ],
                   ),
                 ),

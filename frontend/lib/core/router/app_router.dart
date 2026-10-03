@@ -11,6 +11,9 @@ import '../../features/auth/screens/welcome_screen.dart';
 import '../../features/chats/chat_thread_screen.dart';
 import '../../features/chats/chats_screen.dart';
 import '../../features/circle/circle_screen.dart';
+import '../../features/circle/create_circle_screen.dart';
+import '../../features/circle/join_circle_screen.dart';
+import '../../features/circle/verify_queue_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/member_home_screen.dart';
 import '../../features/people/people_list_screen.dart';
@@ -38,7 +41,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      const signedInRoots = ['/home', '/circle', '/history', '/chats', '/profile', '/people'];
+      const signedInRoots = ['/home', '/circle', '/circles', '/history', '/chats', '/profile', '/people'];
       final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
       if (auth is AuthUnknown) return loc == '/splash' ? null : '/splash';
@@ -59,6 +62,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/register/details', builder: (context, state) => const RegisterDetailsScreen()),
       GoRoute(path: '/register/phone', builder: (context, state) => const RegisterPhoneScreen()),
       GoRoute(path: '/register/credentials', builder: (context, state) => const RegisterCredentialsScreen()),
+      GoRoute(path: '/circles/new', builder: (context, state) => const CreateCircleScreen()),
+      GoRoute(path: '/circles/join', builder: (context, state) => const JoinCircleScreen()),
+      GoRoute(
+        path: '/circles/:id/verify',
+        builder: (context, state) => VerifyQueueScreen(circleId: state.pathParameters['id']!),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

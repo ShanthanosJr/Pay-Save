@@ -36,6 +36,10 @@ void main() {
       expect(v.nic('200012345678'), isNull);
       expect(v.nic('90123456V'), isNotNull);
       expect(v.nic('2000123456789'), isNotNull);
+      expect(v.nic('200099912345'), isNotNull, reason: 'day code 999 is not a date');
+      expect(v.nic('200056712345'), isNull, reason: 'female offset 501–866 is valid');
+      expect(v.nic('189912312345'), isNotNull, reason: 'year before 1900');
+      expect(v.nic('909991234V'), isNotNull);
       expect(v.nic(''), isNotNull);
     });
 

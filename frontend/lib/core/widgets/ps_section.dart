@@ -92,7 +92,8 @@ class PsSegmented<T> extends StatelessWidget {
                     ),
                     child: Text(
                       label,
-                      maxLines: 1,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       style: AppText.label.copyWith(
                         color: value == selected

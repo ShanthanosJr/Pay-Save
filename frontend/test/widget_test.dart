@@ -158,6 +158,8 @@ void main() {
     expect(find.text('+9477*****21'), findsOneWidget);
     expect(find.text('nadeeshi@example.com'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Verify'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Verify'));
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();

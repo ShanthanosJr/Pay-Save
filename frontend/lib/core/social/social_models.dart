@@ -9,6 +9,7 @@ class Person {
     this.verified = false,
     this.isFollowing = false,
     this.followsYou = false,
+    this.palStatus = PalStatus.none,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class Person {
   final bool verified;
   final bool isFollowing;
   final bool followsYou;
+  final PalStatus palStatus;
 
   factory Person.fromJson(Map<String, dynamic> j) => Person(
     id: j['id'] as String,
@@ -27,10 +29,26 @@ class Person {
     verified: j['verified'] as bool? ?? false,
     isFollowing: j['isFollowing'] as bool? ?? false,
     followsYou: j['followsYou'] as bool? ?? false,
+    palStatus: PalStatus.parse(j['palStatus']),
   );
 }
 
-enum SuggestionReason { sharedCircle, mutual, followsYou, newMember }
+/// My pal relation to someone. [outgoing] = I asked them, [incoming] = they asked me.
+enum PalStatus {
+  none,
+  pals,
+  outgoing,
+  incoming;
+
+  static PalStatus parse(Object? v) => switch (v) {
+    'pals' => pals,
+    'outgoing' => outgoing,
+    'incoming' => incoming,
+    _ => none,
+  };
+}
+
+enum SuggestionReason { sharedCircle, mutualPals, followsYou, newMember }
 
 class Suggestion {
   const Suggestion({required this.person, required this.reason, this.sharedCircles = 0, this.mutualCount = 0});
@@ -44,7 +62,7 @@ class Suggestion {
     person: Person.fromJson(j),
     reason: switch (j['reason']) {
       'shared_circle' => SuggestionReason.sharedCircle,
-      'mutual' => SuggestionReason.mutual,
+      'mutual_pals' => SuggestionReason.mutualPals,
       'follows_you' => SuggestionReason.followsYou,
       _ => SuggestionReason.newMember,
     },
@@ -61,6 +79,7 @@ class PublicProfile {
     this.city,
     this.followersCount = 0,
     this.followingCount = 0,
+    this.palsCount = 0,
     this.sharedCircles = 0,
     this.isMe = false,
     this.blockedByMe = false,
@@ -72,6 +91,7 @@ class PublicProfile {
   final DateTime memberSince;
   final int followersCount;
   final int followingCount;
+  final int palsCount;
   final int sharedCircles;
   final bool isMe;
   final bool blockedByMe;
@@ -83,6 +103,7 @@ class PublicProfile {
     memberSince: DateTime.parse(j['memberSince'] as String),
     followersCount: (j['followersCount'] as num?)?.toInt() ?? 0,
     followingCount: (j['followingCount'] as num?)?.toInt() ?? 0,
+    palsCount: (j['palsCount'] as num?)?.toInt() ?? 0,
     sharedCircles: (j['sharedCircles'] as num?)?.toInt() ?? 0,
     isMe: j['isMe'] as bool? ?? false,
     blockedByMe: j['blockedByMe'] as bool? ?? false,
@@ -152,5 +173,31 @@ class MessagePage {
   factory MessagePage.fromJson(Map<String, dynamic> j) => MessagePage(
     messages: [for (final m in j['messages'] as List<dynamic>) ChatMessage.fromJson(m as Map<String, dynamic>)],
     peerLastReadSeq: (j['peerLastReadSeq'] as num?)?.toInt() ?? 0,
+  );
+}
+
+class PalRequest {
+  const PalRequest({required this.person, required this.requestedAt, this.mutualPals = 0});
+
+  final Person person;
+  final DateTime requestedAt;
+  final int mutualPals;
+
+  factory PalRequest.fromJson(Map<String, dynamic> j) => PalRequest(
+    person: Person.fromJson(j),
+    requestedAt: DateTime.parse(j['requestedAt'] as String).toLocal(),
+    mutualPals: (j['mutualPals'] as num?)?.toInt() ?? 0,
+  );
+}
+
+class PalRequests {
+  const PalRequests({this.received = const [], this.sent = const []});
+
+  final List<PalRequest> received;
+  final List<PalRequest> sent;
+
+  factory PalRequests.fromJson(Map<String, dynamic> j) => PalRequests(
+    received: [for (final r in j['received'] as List<dynamic>) PalRequest.fromJson(r as Map<String, dynamic>)],
+    sent: [for (final r in j['sent'] as List<dynamic>) PalRequest.fromJson(r as Map<String, dynamic>)],
   );
 }

@@ -17,6 +17,7 @@ import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_status_badge.dart';
 import '../../l10n/gen/app_localizations.dart';
+import 'pal_actions.dart';
 import 'profile_header.dart';
 
 /// Another member's public profile: follow, message, block.
@@ -51,6 +52,11 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
     _refreshMine();
     ref.invalidate(suggestionsProvider);
   });
+
+  Future<void> _pal(PublicProfile p, PalAction action) async {
+    await runPalAction(context, ref, p.person, action, onStart: () => setState(() => _busy = true));
+    if (mounted) setState(() => _busy = false);
+  }
 
   Future<void> _message() => _run(() async {
     final router = GoRouter.of(context);
@@ -169,11 +175,11 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
               city: p.blockedByMe ? null : p.city,
               memberSince: p.memberSince,
               followers: p.followersCount,
-              following: p.followingCount,
+              pals: p.palsCount,
               sharedCircles: p.sharedCircles,
               isMe: p.isMe,
               onFollowers: p.blockedByMe ? null : () => context.push('/people/${p.person.id}/followers'),
-              onFollowing: p.blockedByMe ? null : () => context.push('/people/${p.person.id}/following'),
+              onPals: p.blockedByMe ? null : () => context.push('/people/${p.person.id}/pals'),
               badge: p.person.followsYou && !p.isMe
                   ? PsStatusPill(
                       label: l10n.reasonFollowsYou,
@@ -202,7 +208,45 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
                 loading: _busy,
                 onPressed: () => _setBlocked(false),
               ),
-            ] else
+            ] else ...[
+              if (p.person.palStatus == PalStatus.incoming) ...[
+                _Notice(icon: Icons.group_add_rounded, text: l10n.wantsToBePals(p.person.fullName)),
+                const SizedBox(height: AppSpace.m),
+                Row(
+                  children: [
+                    Expanded(
+                      child: PsButton(
+                        label: l10n.ignorePalAction,
+                        variant: PsButtonVariant.secondary,
+                        compact: true,
+                        onPressed: _busy ? null : () => _pal(p, PalAction.ignore),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpace.m),
+                    Expanded(
+                      child: PsButton(
+                        label: l10n.acceptPalAction,
+                        icon: Icons.check_rounded,
+                        compact: true,
+                        onPressed: _busy ? null : () => _pal(p, PalAction.accept),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else
+                Builder(
+                  builder: (context) {
+                    final (label, icon, variant) = palButtonStyle(l10n, p.person.palStatus);
+                    return PsButton(
+                      label: label,
+                      icon: icon,
+                      variant: variant,
+                      compact: true,
+                      onPressed: _busy ? null : () => _pal(p, primaryPalAction(p.person.palStatus)),
+                    );
+                  },
+                ),
+              const SizedBox(height: AppSpace.m),
               Row(
                 children: [
                   Expanded(
@@ -210,8 +254,8 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
                       label: p.person.isFollowing
                           ? l10n.followingAction
                           : (p.person.followsYou ? l10n.followBackAction : l10n.followAction),
-                      icon: p.person.isFollowing ? Icons.check_rounded : Icons.person_add_alt_1_rounded,
-                      variant: p.person.isFollowing ? PsButtonVariant.secondary : PsButtonVariant.primary,
+                      icon: p.person.isFollowing ? Icons.check_rounded : Icons.add_rounded,
+                      variant: PsButtonVariant.secondary,
                       compact: true,
                       onPressed: _busy ? null : () => _toggleFollow(p),
                     ),
@@ -228,6 +272,7 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
                   ),
                 ],
               ),
+            ],
             const SizedBox(height: AppSpace.xxxl),
             _Notice(icon: Icons.lock_outline_rounded, text: l10n.profilePrivacyNote),
           ],

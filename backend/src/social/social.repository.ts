@@ -14,6 +14,15 @@ export interface PersonRow {
   verified: boolean;
   is_following: boolean;
   follows_you: boolean;
+  pal_status: PalStatus;
+}
+
+/** The viewer's pal relation to a person; 'outgoing' = I asked, 'incoming' = they asked. */
+export type PalStatus = 'none' | 'pals' | 'outgoing' | 'incoming';
+
+export interface PalRequestRow extends PersonRow {
+  requested_at: Date;
+  mutual_pals: number;
 }
 
 export interface SuggestionRow extends PersonRow {
@@ -27,6 +36,7 @@ export interface ProfileRow extends PersonRow {
   created_at: Date;
   followers_count: number;
   following_count: number;
+  pals_count: number;
   shared_circles: number;
   blocked_by_me: boolean;
   blocked_me: boolean;
@@ -55,7 +65,25 @@ const PERSON = `
   u.id, COALESCE(u.full_name, u.display_name) AS name, u.username, u.avatar_updated_at,
   u.phone_verified_at IS NOT NULL AS verified,
   EXISTS (SELECT 1 FROM user_follows f WHERE f.follower_id = $1 AND f.followee_id = u.id) AS is_following,
-  EXISTS (SELECT 1 FROM user_follows f WHERE f.follower_id = u.id AND f.followee_id = $1) AS follows_you`;
+  EXISTS (SELECT 1 FROM user_follows f WHERE f.follower_id = u.id AND f.followee_id = $1) AS follows_you,
+  CASE
+    WHEN EXISTS (SELECT 1 FROM pals p
+                 WHERE p.user_low = LEAST($1::uuid, u.id) AND p.user_high = GREATEST($1::uuid, u.id)) THEN 'pals'
+    WHEN EXISTS (SELECT 1 FROM pal_requests r WHERE r.from_user = $1 AND r.to_user = u.id) THEN 'outgoing'
+    WHEN EXISTS (SELECT 1 FROM pal_requests r
+                 WHERE r.from_user = u.id AND r.to_user = $1 AND r.ignored_at IS NULL) THEN 'incoming'
+    ELSE 'none'
+  END AS pal_status`;
+
+/** Pals as directed edges (a -> b and b -> a), so "pals of X" is a plain join. */
+const PAL_EDGES = `(SELECT user_low AS a, user_high AS b FROM pals
+                    UNION ALL SELECT user_high AS a, user_low AS b FROM pals)`;
+
+const MUTUAL_PALS = `(
+  SELECT count(*)::int FROM ${PAL_EDGES} e1 JOIN ${PAL_EDGES} e2 ON e2.b = e1.b
+  WHERE e1.a = $1 AND e2.a = u.id)`;
+
+const PALS_COUNT = `(SELECT count(*)::int FROM pals p WHERE p.user_low = u.id OR p.user_high = u.id)`;
 
 const NOT_BLOCKED = `NOT EXISTS (
   SELECT 1 FROM user_blocks b
@@ -98,21 +126,27 @@ export class SocialRepository {
     return rows;
   }
 
-  /** People who share a circle, are followed by people you follow, or follow you. */
+  /**
+   * People you might add as pals: shared circles first, then pals of your
+   * pals, then people who follow you. Existing pals and open requests in
+   * either direction are left out (incoming ones live on the requests page).
+   */
   async suggestions(me: string, limit: number): Promise<SuggestionRow[]> {
     const { rows } = await this.pool.query<SuggestionRow>(
       `WITH mutual AS (
-         SELECT f2.followee_id AS user_id, count(*)::int AS n
-         FROM user_follows f1 JOIN user_follows f2 ON f2.follower_id = f1.followee_id
-         WHERE f1.follower_id = $1 GROUP BY 1
+         SELECT e2.b AS user_id, count(*)::int AS n
+         FROM ${PAL_EDGES} e1 JOIN ${PAL_EDGES} e2 ON e2.a = e1.b
+         WHERE e1.a = $1 AND e2.b <> $1 GROUP BY 1
        )
        SELECT * FROM (
          SELECT ${PERSON}, ${SHARED_CIRCLES} AS shared_circles,
                 COALESCE(m.n, 0) AS mutual_count, u.created_at
          FROM users u LEFT JOIN mutual m ON m.user_id = u.id
          WHERE u.id <> $1 AND ${NOT_BLOCKED} AND NOT u.is_community_officer
+           AND NOT EXISTS (SELECT 1 FROM pal_requests r
+                           WHERE (r.from_user = $1 AND r.to_user = u.id) OR (r.from_user = u.id AND r.to_user = $1))
        ) p
-       WHERE NOT p.is_following
+       WHERE p.pal_status = 'none'
        ORDER BY p.shared_circles DESC, p.mutual_count DESC, p.follows_you DESC, p.created_at DESC
        LIMIT $2`,
       [me, limit],
@@ -125,6 +159,7 @@ export class SocialRepository {
       `SELECT ${PERSON}, u.bio, u.city, u.created_at,
               (SELECT count(*)::int FROM user_follows f WHERE f.followee_id = u.id) AS followers_count,
               (SELECT count(*)::int FROM user_follows f WHERE f.follower_id = u.id) AS following_count,
+              ${PALS_COUNT} AS pals_count,
               ${SHARED_CIRCLES} AS shared_circles,
               EXISTS (SELECT 1 FROM user_blocks b WHERE b.blocker_id = $1 AND b.blocked_id = u.id) AS blocked_by_me,
               EXISTS (SELECT 1 FROM user_blocks b WHERE b.blocker_id = u.id AND b.blocked_id = $1) AS blocked_me
@@ -154,6 +189,148 @@ export class SocialRepository {
     return rows;
   }
 
+  async pals(me: string, id: string, limit: number): Promise<PersonRow[]> {
+    const { rows } = await this.pool.query<PersonRow>(
+      `SELECT ${PERSON} FROM pals x
+       JOIN users u ON u.id = CASE WHEN x.user_low = $2 THEN x.user_high ELSE x.user_low END
+       WHERE (x.user_low = $2 OR x.user_high = $2) AND ${NOT_BLOCKED}
+       ORDER BY x.since DESC LIMIT $3`,
+      [me, id, limit],
+    );
+    return rows;
+  }
+
+  // ---------- pal requests ----------
+
+  /** Requests waiting for `me`, and ones `me` sent (ignored ones still look pending to the sender). */
+  async palRequests(
+    me: string,
+    box: 'received' | 'sent',
+    limit: number,
+  ): Promise<PalRequestRow[]> {
+    const received = box === 'received';
+    const { rows } = await this.pool.query<PalRequestRow>(
+      `SELECT ${PERSON}, r.created_at AS requested_at, ${MUTUAL_PALS} AS mutual_pals
+       FROM pal_requests r JOIN users u ON u.id = ${received ? 'r.from_user' : 'r.to_user'}
+       WHERE ${received ? 'r.to_user = $1 AND r.ignored_at IS NULL' : 'r.from_user = $1'} AND ${NOT_BLOCKED}
+       ORDER BY r.created_at DESC LIMIT $2`,
+      [me, limit],
+    );
+    return rows;
+  }
+
+  async receivedPalRequestCount(me: string): Promise<number> {
+    const { rows } = await this.pool.query<{ n: number }>(
+      'SELECT count(*)::int AS n FROM pal_requests WHERE to_user = $1 AND ignored_at IS NULL',
+      [me],
+    );
+    return rows[0].n;
+  }
+
+  async sentPalRequestCount(me: string): Promise<number> {
+    const { rows } = await this.pool.query<{ n: number }>(
+      'SELECT count(*)::int AS n FROM pal_requests WHERE from_user = $1',
+      [me],
+    );
+    return rows[0].n;
+  }
+
+  /**
+   * Sends a pal request. If they already asked me, this accepts instead.
+   * A request they ignored stays as it is until `cooldownDays` have passed.
+   */
+  async requestPal(
+    me: string,
+    id: string,
+    cooldownDays: number,
+  ): Promise<'pals' | 'outgoing'> {
+    return this.tx(async (c) => {
+      if (await this.palsIn(c, me, id)) return 'pals';
+      const theirs = await c.query(
+        'SELECT 1 FROM pal_requests WHERE from_user = $2 AND to_user = $1 FOR UPDATE',
+        [me, id],
+      );
+      if (theirs.rows.length > 0) {
+        await this.makePals(c, me, id);
+        return 'pals';
+      }
+      await c.query(
+        `INSERT INTO pal_requests (from_user, to_user) VALUES ($1, $2)
+         ON CONFLICT (from_user, to_user) DO UPDATE
+           SET created_at = now(), ignored_at = NULL
+           WHERE pal_requests.ignored_at IS NOT NULL
+             AND pal_requests.ignored_at < now() - make_interval(days => $3)`,
+        [me, id, cooldownDays],
+      );
+      return 'outgoing';
+    });
+  }
+
+  /** False if `id` has no request waiting for `me`. */
+  async acceptPal(me: string, id: string): Promise<boolean> {
+    return this.tx(async (c) => {
+      const { rows } = await c.query(
+        'SELECT 1 FROM pal_requests WHERE from_user = $2 AND to_user = $1 FOR UPDATE',
+        [me, id],
+      );
+      if (rows.length === 0) return false;
+      await this.makePals(c, me, id);
+      return true;
+    });
+  }
+
+  async ignorePal(me: string, id: string): Promise<boolean> {
+    const { rowCount } = await this.pool.query(
+      `UPDATE pal_requests SET ignored_at = now()
+       WHERE from_user = $2 AND to_user = $1 AND ignored_at IS NULL`,
+      [me, id],
+    );
+    return rowCount === 1;
+  }
+
+  async withdrawPal(me: string, id: string): Promise<boolean> {
+    const { rowCount } = await this.pool.query(
+      'DELETE FROM pal_requests WHERE from_user = $1 AND to_user = $2',
+      [me, id],
+    );
+    return rowCount === 1;
+  }
+
+  async removePal(me: string, id: string): Promise<boolean> {
+    const { rowCount } = await this.pool.query(
+      'DELETE FROM pals WHERE user_low = LEAST($1::uuid, $2::uuid) AND user_high = GREATEST($1::uuid, $2::uuid)',
+      [me, id],
+    );
+    return rowCount === 1;
+  }
+
+  private async palsIn(c: PoolClient, a: string, b: string): Promise<boolean> {
+    const { rows } = await c.query(
+      'SELECT 1 FROM pals WHERE user_low = LEAST($1::uuid, $2::uuid) AND user_high = GREATEST($1::uuid, $2::uuid)',
+      [a, b],
+    );
+    return rows.length > 0;
+  }
+
+  /** Pals follow each other, as LinkedIn connections do; requests between them are spent. */
+  private async makePals(c: PoolClient, a: string, b: string): Promise<void> {
+    await c.query(
+      `DELETE FROM pal_requests
+       WHERE (from_user = $1 AND to_user = $2) OR (from_user = $2 AND to_user = $1)`,
+      [a, b],
+    );
+    await c.query(
+      `INSERT INTO pals (user_low, user_high) VALUES (LEAST($1::uuid, $2::uuid), GREATEST($1::uuid, $2::uuid))
+       ON CONFLICT DO NOTHING`,
+      [a, b],
+    );
+    await c.query(
+      `INSERT INTO user_follows (follower_id, followee_id) VALUES ($1, $2), ($2, $1)
+       ON CONFLICT DO NOTHING`,
+      [a, b],
+    );
+  }
+
   async follow(me: string, id: string): Promise<void> {
     await this.pool.query(
       'INSERT INTO user_follows (follower_id, followee_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
@@ -168,7 +345,7 @@ export class SocialRepository {
     );
   }
 
-  /** Blocking also ends any follow in either direction. */
+  /** Blocking also ends follows, pals and pal requests in either direction. */
   async block(me: string, id: string): Promise<void> {
     await this.tx(async (c) => {
       await c.query(
@@ -178,6 +355,15 @@ export class SocialRepository {
       await c.query(
         `DELETE FROM user_follows
          WHERE (follower_id = $1 AND followee_id = $2) OR (follower_id = $2 AND followee_id = $1)`,
+        [me, id],
+      );
+      await c.query(
+        `DELETE FROM pal_requests
+         WHERE (from_user = $1 AND to_user = $2) OR (from_user = $2 AND to_user = $1)`,
+        [me, id],
+      );
+      await c.query(
+        'DELETE FROM pals WHERE user_low = LEAST($1::uuid, $2::uuid) AND user_high = GREATEST($1::uuid, $2::uuid)',
         [me, id],
       );
     });

@@ -31,6 +31,22 @@ describe('Profile, people and chat (e2e)', () => {
   let c: TestUser;
   const http = () => request(app.getHttpServer());
 
+  const becomePals = async (x: TestUser, y: TestUser) => {
+    await http().put(`/people/${y.id}/pal`).set(x.auth).expect(200);
+    await http().post(`/people/${x.id}/pal/accept`).set(y.auth).expect(200);
+  };
+  const statusOf = async (viewer: TestUser, target: TestUser) =>
+    (
+      (await http().get(`/people/${target.id}`).set(viewer.auth)).body as {
+        palStatus: string;
+      }
+    ).palStatus;
+  const requests = async (u: TestUser) =>
+    (await http().get('/people/pal-requests').set(u.auth).expect(200)).body as {
+      received: { id: string; mutualPals: number }[];
+      sent: { id: string }[];
+    };
+
   beforeAll(() => {
     pool = new Pool({ connectionString: process.env.DATABASE_URL });
   });
@@ -312,7 +328,7 @@ describe('Profile, people and chat (e2e)', () => {
       await http().get('/people/search').set(a.auth).expect(400);
     });
 
-    it('ranks people from my circles first, then friends of friends', async () => {
+    it('ranks people from my circles first, then pals of my pals', async () => {
       const circle = await pool.query<{ id: string }>(
         `INSERT INTO circles (public_code, name, contribution_minor, interval, turn_rule, planned_cycles, created_by)
          VALUES ('E2E-SOC', 'E2E circle', 500000, 'monthly', 'fixed', 5, $1) RETURNING id`,
@@ -323,8 +339,8 @@ describe('Profile, people and chat (e2e)', () => {
         [circle.rows[0].id, a.id, c.id],
       );
       const d = await registerUser(app, sender, 4, 'Dilan Perera');
-      await http().put(`/people/${b.id}/follow`).set(a.auth).expect(200);
-      await http().put(`/people/${d.id}/follow`).set(b.auth).expect(200);
+      await becomePals(a, b);
+      await becomePals(b, d);
 
       const res = await http()
         .get('/people/suggestions')
@@ -340,9 +356,145 @@ describe('Profile, people and chat (e2e)', () => {
         reason: 'shared_circle',
         sharedCircles: 1,
       });
-      expect(list[1]).toMatchObject({ id: d.id, reason: 'mutual' });
-      expect(list.map((p) => p.id)).not.toContain(b.id); // already followed
+      expect(list[1]).toMatchObject({
+        id: d.id,
+        reason: 'mutual_pals',
+        mutualCount: 1,
+      });
+      expect(list.map((p) => p.id)).not.toContain(b.id); // already pals
       expect(list.map((p) => p.id)).not.toContain(a.id);
+    });
+  });
+
+  describe('pals', () => {
+    it('request → accept makes two members pals who also follow each other', async () => {
+      const sent = await http()
+        .put(`/people/${b.id}/pal`)
+        .set(a.auth)
+        .expect(200);
+      expect(sent.body).toMatchObject({ palStatus: 'outgoing', palsCount: 0 });
+      expect(await statusOf(b, a)).toBe('incoming');
+      expect(
+        (await http().get('/people/pal-requests/count').set(b.auth)).body,
+      ).toEqual({ received: 1 });
+
+      const inbox = await requests(b);
+      expect(inbox.received.map((r) => r.id)).toEqual([a.id]);
+      expect(inbox.sent).toEqual([]);
+      for (const key of SENSITIVE)
+        expect(inbox.received[0]).not.toHaveProperty(key);
+      expect((await requests(a)).sent.map((r) => r.id)).toEqual([b.id]);
+
+      // sending twice is harmless
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+
+      const accepted = await http()
+        .post(`/people/${a.id}/pal/accept`)
+        .set(b.auth)
+        .expect(200);
+      expect(accepted.body).toMatchObject({
+        palStatus: 'pals',
+        palsCount: 1,
+        isFollowing: true,
+        followsYou: true,
+      });
+      expect(await statusOf(a, b)).toBe('pals');
+      expect(await requests(a)).toEqual({ received: [], sent: [] });
+      expect(await requests(b)).toEqual({ received: [], sent: [] });
+
+      const list = await http()
+        .get(`/people/${a.id}/pals`)
+        .set(c.auth)
+        .expect(200);
+      expect((list.body as { id: string }[]).map((p) => p.id)).toEqual([b.id]);
+    });
+
+    it('ignoring is silent and blocks re-sending for three weeks', async () => {
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+      await http().post(`/people/${a.id}/pal/ignore`).set(b.auth).expect(200);
+
+      expect(await statusOf(a, b)).toBe('outgoing'); // sender is not told
+      expect(await statusOf(b, a)).toBe('none');
+      expect((await requests(b)).received).toEqual([]);
+
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+      expect((await requests(b)).received).toEqual([]); // still ignored
+
+      await pool.query(
+        "UPDATE pal_requests SET ignored_at = now() - interval '22 days' WHERE from_user = $1",
+        [a.id],
+      );
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+      expect((await requests(b)).received.map((r) => r.id)).toEqual([a.id]);
+    });
+
+    it('if both ask, they become pals at once', async () => {
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+      const res = await http()
+        .put(`/people/${a.id}/pal`)
+        .set(b.auth)
+        .expect(200);
+      expect(res.body).toMatchObject({ palStatus: 'pals' });
+    });
+
+    it('withdraw, remove and the error cases', async () => {
+      await http().put(`/people/${b.id}/pal`).set(a.auth).expect(200);
+      const withdrawn = await http()
+        .delete(`/people/${b.id}/pal`)
+        .set(a.auth)
+        .expect(200);
+      expect(withdrawn.body).toMatchObject({ palStatus: 'none' });
+      expect((await requests(b)).received).toEqual([]);
+
+      await becomePals(a, b);
+      await http().delete(`/people/${a.id}/pal`).set(b.auth).expect(200);
+      expect(await statusOf(a, b)).toBe('none');
+
+      const none = await http()
+        .post(`/people/${b.id}/pal/accept`)
+        .set(a.auth)
+        .expect(404);
+      expect(none.body).toMatchObject({ code: 'NO_PAL_REQUEST' });
+      await http().post(`/people/${b.id}/pal/ignore`).set(a.auth).expect(404);
+      await http().delete(`/people/${b.id}/pal`).set(a.auth).expect(404);
+      await http().put(`/people/${a.id}/pal`).set(a.auth).expect(400);
+      await http().put(`/people/${randomUUID()}/pal`).set(a.auth).expect(404);
+    });
+
+    it('blocking ends pals and cancels requests both ways', async () => {
+      await becomePals(a, b);
+      await http().put(`/people/${a.id}/pal`).set(c.auth).expect(200);
+      await http().put(`/people/${b.id}/block`).set(a.auth).expect(204);
+      await http().put(`/people/${c.id}/block`).set(a.auth).expect(204);
+
+      const mine = await http().get(`/people/${a.id}`).set(a.auth);
+      expect(mine.body).toMatchObject({ palsCount: 0 });
+      expect(await requests(a)).toEqual({ received: [], sent: [] });
+      await http().put(`/people/${a.id}/pal`).set(b.auth).expect(404);
+      const blocked = await http()
+        .put(`/people/${b.id}/pal`)
+        .set(a.auth)
+        .expect(403);
+      expect(blocked.body).toMatchObject({ code: 'BLOCKED' });
+    });
+
+    it('search shows pal status; suggestions skip pals and open requests', async () => {
+      await http().put(`/people/${c.id}/pal`).set(a.auth).expect(200);
+      const found = await http()
+        .get('/people/search')
+        .query({ q: 'chathuri' })
+        .set(a.auth);
+      expect((found.body as { palStatus: string }[])[0].palStatus).toBe(
+        'outgoing',
+      );
+      const sugg = await http().get('/people/suggestions').set(a.auth);
+      expect((sugg.body as { id: string }[]).map((p) => p.id)).not.toContain(
+        c.id,
+      );
+      const theirs = await http().get('/people/suggestions').set(c.auth);
+      expect((theirs.body as { id: string }[]).map((p) => p.id)).not.toContain(
+        a.id,
+      );
     });
   });
 

@@ -628,14 +628,6 @@
   },
   "notifTurnTitle": "Your turn is next",
   "navChats": "Chats",
-  "chatsBadgeLabel": "{count} unread messages",
-  "@chatsBadgeLabel": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "editProfile": "Edit profile",
   "addUsernamePrompt": "Add a username",
   "followersLabel": "Followers",
@@ -682,14 +674,6 @@
   "clearSearch": "Clear search",
   "suggestedForYou": "Suggested for you",
   "reasonSharedCircle": "In a circle with you",
-  "reasonMutual": "Followed by {count} you follow",
-  "@reasonMutual": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "reasonFollowsYou": "Follows you",
   "reasonNew": "New to Pay&Save",
   "followAction": "Follow",
@@ -776,5 +760,107 @@
         "type": "String"
       }
     }
-  }
+  },
+  "palsLabel": "Pals",
+  "addPalAction": "Add pal",
+  "palPendingAction": "Pending",
+  "acceptPalAction": "Accept",
+  "ignorePalAction": "Ignore",
+  "withdrawAction": "Withdraw",
+  "withdrawPalTitle": "Withdraw your pal request to {name}?",
+  "@withdrawPalTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawPalBody": "They won't be told. You can send a new request later.",
+  "removePalTitle": "Remove {name} as a pal?",
+  "@removePalTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removePalBody": "They won't be told. You'll keep following each other unless you unfollow.",
+  "removePalAction": "Remove pal",
+  "palRequestsTitle": "Pal requests",
+  "palRequestsSubtitle": "Requests you've received and sent",
+  "palRequestsWaiting": "{count} waiting for you",
+  "@palRequestsWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "palRequestsReceived": "Received ({count})",
+  "@palRequestsReceived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "palRequestsSent": "Sent ({count})",
+  "@palRequestsSent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noReceivedPalRequests": "No pal requests right now.",
+  "noSentPalRequests": "You have no pending requests.",
+  "mutualPalsCount": "{count, plural, =1{1 mutual pal} other{{count} mutual pals}}",
+  "@mutualPalsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sentOn": "Sent {date}",
+  "@sentOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "palRequestSentToast": "Pal request sent",
+  "nowPalsToast": "You and {name} are now pals",
+  "@nowPalsToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "palRequestIgnoredToast": "Request ignored",
+  "palRemovedToast": "Pal removed",
+  "requestWithdrawnToast": "Request withdrawn",
+  "wantsToBePals": "{name} wants to be your pal",
+  "@wantsToBePals": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "socialBadgeLabel": "{messages} unread messages, {requests} pal requests",
+  "@socialBadgeLabel": {
+    "placeholders": {
+      "messages": {
+        "type": "int"
+      },
+      "requests": {
+        "type": "int"
+      }
+    }
+  },
+  "errNoPalRequest": "That request is no longer available.",
+  "errTooManyPalRequests": "You have too many pending requests. Withdraw some first."
 }

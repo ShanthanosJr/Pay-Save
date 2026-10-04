@@ -53,6 +53,44 @@ class SocialApi {
     return PublicProfile.fromJson(r.data!);
   });
 
+  Future<List<Person>> pals(String id) => _call(() async {
+    final r = await _dio.get<List<dynamic>>('/people/$id/pals');
+    return _list(r.data).map(Person.fromJson).toList();
+  });
+
+  /// Sends a pal request; if they already asked me, we become pals at once.
+  Future<PublicProfile> requestPal(String id) => _call(() async {
+    final r = await _dio.put<Map<String, dynamic>>('/people/$id/pal');
+    return PublicProfile.fromJson(r.data!);
+  });
+
+  /// Withdraws my pending request, or removes an existing pal.
+  Future<PublicProfile> endPal(String id) => _call(() async {
+    final r = await _dio.delete<Map<String, dynamic>>('/people/$id/pal');
+    return PublicProfile.fromJson(r.data!);
+  });
+
+  Future<PublicProfile> acceptPal(String id) => _call(() async {
+    final r = await _dio.post<Map<String, dynamic>>('/people/$id/pal/accept');
+    return PublicProfile.fromJson(r.data!);
+  });
+
+  /// Declines quietly: the sender is not told.
+  Future<PublicProfile> ignorePal(String id) => _call(() async {
+    final r = await _dio.post<Map<String, dynamic>>('/people/$id/pal/ignore');
+    return PublicProfile.fromJson(r.data!);
+  });
+
+  Future<PalRequests> palRequests() => _call(() async {
+    final r = await _dio.get<Map<String, dynamic>>('/people/pal-requests');
+    return PalRequests.fromJson(r.data!);
+  });
+
+  Future<int> palRequestCount() => _call(() async {
+    final r = await _dio.get<Map<String, dynamic>>('/people/pal-requests/count');
+    return (r.data!['received'] as num).toInt();
+  });
+
   Future<void> setBlocked(String id, bool block) => _call(() async {
     if (block) {
       await _dio.put<void>('/people/$id/block');

@@ -27,7 +27,11 @@ class PeopleListScreen extends ConsumerWidget {
     return Scaffold(
       body: PsForestPage(
         header: PsBackHeader(
-          title: kind == PeopleListKind.followers ? l10n.followersLabel : l10n.followingLabel,
+          title: switch (kind) {
+            PeopleListKind.followers => l10n.followersLabel,
+            PeopleListKind.following => l10n.followingLabel,
+            PeopleListKind.pals => l10n.palsLabel,
+          },
           backLabel: l10n.backLabel,
         ),
         children: [

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:pay_and_save/core/social/social_models.dart';
+
 import 'support/fakes.dart';
 import 'support/pump.dart';
 
@@ -189,6 +191,98 @@ void main() {
       await pumpApp(tester, signedIn: true, social: FakeSocialApi()..unread = 3);
       final badge = tester.widgetList<Badge>(find.byType(Badge)).first;
       expect(badge.isLabelVisible, isTrue);
+      expect(find.descendant(of: find.byType(Badge), matching: find.text('3')), findsWidgets);
+    });
+  });
+
+  group('pals', () {
+    testWidgets('my profile shows Followers and Pals, plus the requests entry', (tester) async {
+      await pumpApp(tester, signedIn: true, social: FakeSocialApi()..palStatus['u2'] = PalStatus.incoming);
+      await openTab(tester, 'Profile');
+
+      expect(find.text('Followers'), findsOneWidget);
+      expect(find.text('Pals'), findsOneWidget);
+      expect(find.text('Following'), findsNothing);
+      expect(find.text('3'), findsWidgets); // 3 pals in the fake
+      expect(find.text('Pal requests'), findsOneWidget);
+      expect(find.text('1 waiting for you'), findsOneWidget);
+    });
+
+    testWidgets('a suggestion card sends a pal request and then shows Pending', (tester) async {
+      final social = FakeSocialApi();
+      await pumpApp(tester, signedIn: true, social: social);
+      await openTab(tester, 'Chats');
+
+      await tester.tap(find.text('Add pal'));
+      await tester.pumpAndSettle();
+      expect(social.palCalls, ['request:u3']);
+      expect(find.text('Pal request sent'), findsOneWidget);
+      expect(find.text('Pending'), findsOneWidget);
+      expect(find.text('Ruwan Jayasuriya'), findsOneWidget); // card stays
+
+      // tapping Pending offers to withdraw, and asks first
+      await tester.tap(find.text('Pending'));
+      await tester.pumpAndSettle();
+      expect(find.text('Withdraw your pal request to Ruwan Jayasuriya?'), findsOneWidget);
+      await tester.tap(find.widgetWithText(InkWell, 'Withdraw'));
+      await tester.pumpAndSettle();
+      expect(social.palCalls, ['request:u3', 'end:u3']);
+      expect(find.text('Add pal'), findsOneWidget);
+    });
+
+    testWidgets('accepting an incoming request on their profile makes you pals', (tester) async {
+      final social = FakeSocialApi()..palStatus['u2'] = PalStatus.incoming;
+      await pumpApp(tester, signedIn: true, social: social);
+      await openTab(tester, 'Chats');
+      await tester.enterText(find.byType(TextField).first, 'kam');
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('@kamala'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Kamala Silva wants to be your pal'), findsOneWidget);
+      expect(find.text('5'), findsOneWidget); // her pals before
+      await tapText(tester, 'Accept');
+
+      expect(social.palCalls, ['accept:u2']);
+      expect(find.text('You and Kamala Silva are now pals'), findsOneWidget);
+      expect(find.text('6'), findsOneWidget);
+      expect(find.text('Pals'), findsWidgets); // stat label + button
+      expect(find.text('Accept'), findsNothing);
+    });
+
+    testWidgets('requests screen: accept from Received, withdraw from Sent', (tester) async {
+      final social = FakeSocialApi()
+        ..palStatus['u2'] = PalStatus.incoming
+        ..palStatus['u3'] = PalStatus.outgoing;
+      await pumpApp(tester, signedIn: true, social: social);
+      await openTab(tester, 'Chats');
+      await tapText(tester, 'Pal requests');
+
+      expect(find.text('Received (1)'), findsOneWidget);
+      expect(find.text('Sent (1)'), findsOneWidget);
+      expect(find.textContaining('2 mutual pals'), findsOneWidget);
+      await tapText(tester, 'Accept');
+      expect(social.palCalls, ['accept:u2']);
+      expect(find.text('No pal requests right now.'), findsOneWidget);
+
+      await tapText(tester, 'Sent (1)');
+      expect(find.text('Ruwan Jayasuriya'), findsOneWidget);
+      await tapText(tester, 'Withdraw');
+      await tester.tap(find.widgetWithText(InkWell, 'Withdraw').last);
+      await tester.pumpAndSettle();
+      expect(social.palCalls, ['accept:u2', 'end:u3']);
+      expect(find.text('You have no pending requests.'), findsOneWidget);
+    });
+
+    testWidgets('the Chats badge adds pal requests to unread messages', (tester) async {
+      await pumpApp(
+        tester,
+        signedIn: true,
+        social: FakeSocialApi()
+          ..unread = 2
+          ..palStatus['u2'] = PalStatus.incoming,
+      );
       expect(find.descendant(of: find.byType(Badge), matching: find.text('3')), findsWidgets);
     });
   });

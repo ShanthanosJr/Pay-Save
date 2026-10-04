@@ -18,11 +18,13 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final unread = ref.watch(chatUnreadProvider);
+    final requests = ref.watch(palRequestCountProvider);
+    final total = unread + requests;
     Widget chatIcon(IconData icon) => Badge(
-          isLabelVisible: unread > 0,
+          isLabelVisible: total > 0,
           backgroundColor: AppColors.danger,
           textStyle: AppText.caption.copyWith(fontWeight: FontWeight.w700),
-          label: Text(unread > 99 ? '99+' : '$unread', semanticsLabel: l10n.chatsBadgeLabel(unread)),
+          label: Text(total > 99 ? '99+' : '$total', semanticsLabel: l10n.socialBadgeLabel(unread, requests)),
           child: Icon(icon),
         );
     return Scaffold(

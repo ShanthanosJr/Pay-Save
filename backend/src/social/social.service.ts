@@ -4,6 +4,8 @@ import { avatarUrl } from '../users/image-type';
 import {
   InboxRow,
   MessageRow,
+  PalRequestRow,
+  PalStatus,
   PersonRow,
   ProfileRow,
   SocialRepository,
@@ -18,10 +20,21 @@ export interface Person {
   verified: boolean;
   isFollowing: boolean;
   followsYou: boolean;
+  palStatus: PalStatus;
 }
 
 export type SuggestionReason =
-  'shared_circle' | 'mutual' | 'follows_you' | 'new';
+  'shared_circle' | 'mutual_pals' | 'follows_you' | 'new';
+
+export interface PalRequest extends Person {
+  requestedAt: string;
+  mutualPals: number;
+}
+
+/** Ignored requests stay pending for the sender; they may ask again after this. */
+export const PAL_REQUEST_COOLDOWN_DAYS = 21;
+/** Open outgoing requests a member may have at once (anti-spam). */
+export const MAX_PENDING_PAL_REQUESTS = 100;
 
 export interface Suggestion extends Person {
   reason: SuggestionReason;
@@ -36,6 +49,7 @@ export interface PublicProfile extends Person {
   memberSince: string;
   followersCount: number;
   followingCount: number;
+  palsCount: number;
   sharedCircles: number;
   isMe: boolean;
   blockedByMe: boolean;
@@ -65,6 +79,7 @@ const toPerson = (r: PersonRow): Person => ({
   verified: r.verified,
   isFollowing: r.is_following,
   followsYou: r.follows_you,
+  palStatus: r.pal_status,
 });
 
 const toMessage = (m: MessageRow): ChatMessage => ({
@@ -80,12 +95,14 @@ const reasonFor = (r: SuggestionRow): SuggestionReason =>
   r.shared_circles > 0
     ? 'shared_circle'
     : r.mutual_count > 0
-      ? 'mutual'
+      ? 'mutual_pals'
       : r.follows_you
         ? 'follows_you'
         : 'new';
 
 const notFound = () => new AppException(404, 'NOT_FOUND', 'Not found');
+const noRequest = () =>
+  new AppException(404, 'NO_PAL_REQUEST', 'No pal request or connection');
 
 @Injectable()
 export class SocialService {
@@ -117,6 +134,7 @@ export class SocialService {
       memberSince: r.created_at.toISOString(),
       followersCount: r.followers_count,
       followingCount: r.following_count,
+      palsCount: r.pals_count,
       sharedCircles: r.shared_circles,
       isMe: r.id === me,
       blockedByMe: r.blocked_by_me,
@@ -131,6 +149,74 @@ export class SocialService {
   async following(me: string, id: string): Promise<Person[]> {
     await this.profile(me, id);
     return (await this.repo.following(me, id, 100)).map(toPerson);
+  }
+
+  async pals(me: string, id: string): Promise<Person[]> {
+    await this.profile(me, id);
+    return (await this.repo.pals(me, id, 100)).map(toPerson);
+  }
+
+  // ---------- pal requests ----------
+
+  async palRequests(
+    me: string,
+  ): Promise<{ received: PalRequest[]; sent: PalRequest[] }> {
+    const toRequest = (r: PalRequestRow): PalRequest => ({
+      ...toPerson(r),
+      requestedAt: r.requested_at.toISOString(),
+      mutualPals: r.mutual_pals,
+    });
+    const [received, sent] = await Promise.all([
+      this.repo.palRequests(me, 'received', 200),
+      this.repo.palRequests(me, 'sent', 200),
+    ]);
+    return { received: received.map(toRequest), sent: sent.map(toRequest) };
+  }
+
+  async palRequestCount(me: string): Promise<{ received: number }> {
+    return { received: await this.repo.receivedPalRequestCount(me) };
+  }
+
+  /** Ask to be pals; if they already asked you, you become pals at once. */
+  async requestPal(me: string, id: string): Promise<PublicProfile> {
+    await this.assertOther(me, id);
+    if (await this.repo.isBlockedEitherWay(me, id))
+      throw new AppException(403, 'BLOCKED', 'You cannot add this person');
+    const current = (await this.profile(me, id)).palStatus;
+    if (
+      current === 'none' &&
+      (await this.repo.sentPalRequestCount(me)) >= MAX_PENDING_PAL_REQUESTS
+    )
+      throw new AppException(
+        429,
+        'TOO_MANY_PAL_REQUESTS',
+        'Too many pending pal requests. Withdraw some first',
+      );
+    await this.repo.requestPal(me, id, PAL_REQUEST_COOLDOWN_DAYS);
+    return this.profile(me, id);
+  }
+
+  async acceptPal(me: string, id: string): Promise<PublicProfile> {
+    await this.assertOther(me, id);
+    if (!(await this.repo.acceptPal(me, id))) throw noRequest();
+    return this.profile(me, id);
+  }
+
+  /** Quietly declines: the sender is not told and still sees "Pending". */
+  async ignorePal(me: string, id: string): Promise<PublicProfile> {
+    await this.assertOther(me, id);
+    if (!(await this.repo.ignorePal(me, id))) throw noRequest();
+    return this.profile(me, id);
+  }
+
+  /** Withdraws my pending request, or ends an existing pal connection. */
+  async endPal(me: string, id: string): Promise<PublicProfile> {
+    await this.assertOther(me, id);
+    const ended =
+      (await this.repo.withdrawPal(me, id)) ||
+      (await this.repo.removePal(me, id));
+    if (!ended) throw noRequest();
+    return this.profile(me, id);
   }
 
   async follow(me: string, id: string): Promise<PublicProfile> {

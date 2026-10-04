@@ -19,6 +19,8 @@ import '../../core/widgets/ps_search_field.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_user_avatar.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../pals/pal_requests_row.dart';
+import '../people/pal_actions.dart';
 import '../people/person_row.dart';
 import '../shell/brand_header.dart';
 
@@ -83,6 +85,8 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         if (_query.isNotEmpty)
           _SearchResults(query: _query, onOpen: _open)
         else ...[
+          const PalRequestsRow(),
+          const SizedBox(height: AppSpace.l),
           _Suggestions(onOpen: _open),
           _Inbox(onOpen: _open),
         ],
@@ -124,29 +128,30 @@ class _Suggestions extends ConsumerStatefulWidget {
 }
 
 class _SuggestionsState extends ConsumerState<_Suggestions> {
-  final _followed = <String>{};
+  /// Local status so a card shows "Pending" instead of vanishing after a request.
+  final _status = <String, PalStatus>{};
   final _busy = <String>{};
 
-  Future<void> _toggle(Person p) async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final follow = !_followed.contains(p.id);
-    setState(() => _busy.add(p.id));
-    try {
-      await ref.read(socialApiProvider).setFollowing(p.id, follow);
-      setState(() => follow ? _followed.add(p.id) : _followed.remove(p.id));
-      final me = ref.read(authControllerProvider);
-      if (me is AuthLoggedIn) ref.invalidate(publicProfileProvider(me.user.id));
-    } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(messageFor(l10n, e))));
-    } finally {
-      if (mounted) setState(() => _busy.remove(p.id));
-    }
+  Future<void> _pal(Person p, PalStatus current) async {
+    final action = primaryPalAction(current);
+    final ok = await runPalAction(
+      context,
+      ref,
+      p,
+      action,
+      keepSuggestions: true,
+      onStart: () => setState(() => _busy.add(p.id)),
+    );
+    if (!mounted) return;
+    setState(() {
+      _busy.remove(p.id);
+      if (ok) _status[p.id] = action == PalAction.request ? PalStatus.outgoing : PalStatus.none;
+    });
   }
 
   String _reason(AppLocalizations l10n, Suggestion s) => switch (s.reason) {
     SuggestionReason.sharedCircle => l10n.reasonSharedCircle,
-    SuggestionReason.mutual => l10n.reasonMutual(s.mutualCount),
+    SuggestionReason.mutualPals => l10n.mutualPalsCount(s.mutualCount),
     SuggestionReason.followsYou => l10n.reasonFollowsYou,
     SuggestionReason.newMember => l10n.reasonNew,
   };
@@ -171,7 +176,8 @@ class _SuggestionsState extends ConsumerState<_Suggestions> {
             itemBuilder: (context, i) {
               final s = list[i];
               final p = s.person;
-              final followed = _followed.contains(p.id);
+              final status = _status[p.id] ?? p.palStatus;
+              final (label, icon, variant) = palButtonStyle(l10n, status);
               return SizedBox(
                 width: 156,
                 child: PsCard(
@@ -192,13 +198,12 @@ class _SuggestionsState extends ConsumerState<_Suggestions> {
                       ),
                       const Spacer(),
                       PsButton(
-                        label: followed
-                            ? l10n.followingAction
-                            : (p.followsYou ? l10n.followBackAction : l10n.followAction),
-                        variant: followed ? PsButtonVariant.secondary : PsButtonVariant.primary,
+                        label: label,
+                        icon: icon,
+                        variant: variant,
                         compact: true,
                         loading: _busy.contains(p.id),
-                        onPressed: () => _toggle(p),
+                        onPressed: () => _pal(p, status),
                       ),
                     ],
                   ),

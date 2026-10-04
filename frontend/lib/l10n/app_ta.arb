@@ -280,10 +280,6 @@
   "@navChats": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "chatsBadgeLabel": "படிக்காத செய்திகள் {count}",
-  "@chatsBadgeLabel": {
-    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
-  },
   "editProfile": "சுயவிவரத்தைத் திருத்து",
   "@editProfile": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
@@ -440,10 +436,6 @@
   "@reasonSharedCircle": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "reasonMutual": "நீங்கள் பின்தொடரும் {count} பேர் பின்தொடர்கிறார்கள்",
-  "@reasonMutual": {
-    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
-  },
   "reasonFollowsYou": "உங்களைப் பின்தொடர்கிறார்",
   "@reasonFollowsYou": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
@@ -582,6 +574,122 @@
   },
   "messageFromPeer": "{name} சொன்னது: {message}",
   "@messageFromPeer": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palsLabel": "நண்பர்கள்",
+  "@palsLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addPalAction": "நண்பராகச் சேர்",
+  "@addPalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palPendingAction": "நிலுவையில்",
+  "@palPendingAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "acceptPalAction": "ஏற்றுக்கொள்",
+  "@acceptPalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ignorePalAction": "புறக்கணி",
+  "@ignorePalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawAction": "திரும்பப் பெறு",
+  "@withdrawAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawPalTitle": "{name} க்கு அனுப்பிய நண்பர் கோரிக்கையைத் திரும்பப் பெறவா?",
+  "@withdrawPalTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawPalBody": "அவர்களுக்குத் தெரிவிக்கப்படாது. பின்னர் புதிய கோரிக்கையை அனுப்பலாம்.",
+  "@withdrawPalBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalTitle": "{name} ஐ நண்பர்களிலிருந்து நீக்கவா?",
+  "@removePalTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalBody": "அவர்களுக்குத் தெரிவிக்கப்படாது. பின்தொடர்வதை நிறுத்தாவிட்டால் ஒருவரையொருவர் தொடர்ந்து பின்தொடர்வீர்கள்.",
+  "@removePalBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalAction": "நண்பரை நீக்கு",
+  "@removePalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsTitle": "நண்பர் கோரிக்கைகள்",
+  "@palRequestsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsSubtitle": "நீங்கள் பெற்ற மற்றும் அனுப்பிய கோரிக்கைகள்",
+  "@palRequestsSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsWaiting": "உங்களுக்காக {count} காத்திருக்கின்றன",
+  "@palRequestsWaiting": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsReceived": "பெற்றவை ({count})",
+  "@palRequestsReceived": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsSent": "அனுப்பியவை ({count})",
+  "@palRequestsSent": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noReceivedPalRequests": "இப்போது நண்பர் கோரிக்கைகள் இல்லை.",
+  "@noReceivedPalRequests": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noSentPalRequests": "நிலுவையில் உள்ள கோரிக்கைகள் இல்லை.",
+  "@noSentPalRequests": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "mutualPalsCount": "{count, plural, other{{count} பொது நண்பர்கள்}}",
+  "@mutualPalsCount": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sentOn": "{date} அனுப்பப்பட்டது",
+  "@sentOn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestSentToast": "நண்பர் கோரிக்கை அனுப்பப்பட்டது",
+  "@palRequestSentToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "nowPalsToast": "நீங்களும் {name} உம் இப்போது நண்பர்கள்",
+  "@nowPalsToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestIgnoredToast": "கோரிக்கை புறக்கணிக்கப்பட்டது",
+  "@palRequestIgnoredToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRemovedToast": "நண்பர் நீக்கப்பட்டார்",
+  "@palRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "requestWithdrawnToast": "கோரிக்கை திரும்பப் பெறப்பட்டது",
+  "@requestWithdrawnToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "wantsToBePals": "{name} உங்கள் நண்பராக விரும்புகிறார்",
+  "@wantsToBePals": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "socialBadgeLabel": "படிக்காத செய்திகள் {messages}, நண்பர் கோரிக்கைகள் {requests}",
+  "@socialBadgeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNoPalRequest": "அந்தக் கோரிக்கை இனி கிடைக்காது.",
+  "@errNoPalRequest": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errTooManyPalRequests": "நிலுவையில் உள்ள கோரிக்கைகள் அதிகம். முதலில் சிலவற்றைத் திரும்பப் பெறவும்.",
+  "@errTooManyPalRequests": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

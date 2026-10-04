@@ -280,10 +280,6 @@
   "@navChats": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "chatsBadgeLabel": "නොකියවූ පණිවිඩ {count}",
-  "@chatsBadgeLabel": {
-    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
-  },
   "editProfile": "පැතිකඩ සංස්කරණය",
   "@editProfile": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
@@ -440,10 +436,6 @@
   "@reasonSharedCircle": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "reasonMutual": "ඔබ අනුගමනය කරන {count} දෙනෙක් අනුගමනය කරයි",
-  "@reasonMutual": {
-    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
-  },
   "reasonFollowsYou": "ඔබව අනුගමනය කරයි",
   "@reasonFollowsYou": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
@@ -582,6 +574,122 @@
   },
   "messageFromPeer": "{name} කීවේ: {message}",
   "@messageFromPeer": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palsLabel": "මිතුරන්",
+  "@palsLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addPalAction": "මිතුරෙකු ලෙස එක් කරන්න",
+  "@addPalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palPendingAction": "පොරොත්තුවෙන්",
+  "@palPendingAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "acceptPalAction": "පිළිගන්න",
+  "@acceptPalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ignorePalAction": "නොසලකන්න",
+  "@ignorePalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawAction": "ඉල්ලා අස්කර ගන්න",
+  "@withdrawAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawPalTitle": "{name} වෙත යැවූ මිතුරු ඉල්ලීම ඉල්ලා අස්කර ගන්නද?",
+  "@withdrawPalTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "withdrawPalBody": "ඔවුන්ට දැනුම් නොදේ. පසුව නව ඉල්ලීමක් යැවිය හැක.",
+  "@withdrawPalBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalTitle": "{name} මිතුරන්ගෙන් ඉවත් කරන්නද?",
+  "@removePalTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalBody": "ඔවුන්ට දැනුම් නොදේ. ඔබ අනුගමනය නතර නොකරන්නේ නම් දෙදෙනාම එකිනෙකා අනුගමනය කරයි.",
+  "@removePalBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removePalAction": "මිතුරා ඉවත් කරන්න",
+  "@removePalAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsTitle": "මිතුරු ඉල්ලීම්",
+  "@palRequestsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsSubtitle": "ඔබට ලැබුණු සහ ඔබ යැවූ ඉල්ලීම්",
+  "@palRequestsSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsWaiting": "ඔබ වෙනුවෙන් {count}ක් රැඳී ඇත",
+  "@palRequestsWaiting": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsReceived": "ලැබුණු ({count})",
+  "@palRequestsReceived": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestsSent": "යැවූ ({count})",
+  "@palRequestsSent": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noReceivedPalRequests": "දැනට මිතුරු ඉල්ලීම් නැත.",
+  "@noReceivedPalRequests": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noSentPalRequests": "ඔබට පොරොත්තු ඉල්ලීම් නැත.",
+  "@noSentPalRequests": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "mutualPalsCount": "{count, plural, other{පොදු මිතුරන් {count}}}",
+  "@mutualPalsCount": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sentOn": "{date} යැවුවා",
+  "@sentOn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestSentToast": "මිතුරු ඉල්ලීම යැවුවා",
+  "@palRequestSentToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "nowPalsToast": "ඔබ සහ {name} දැන් මිතුරන්",
+  "@nowPalsToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRequestIgnoredToast": "ඉල්ලීම නොසලකා හැරියා",
+  "@palRequestIgnoredToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palRemovedToast": "මිතුරා ඉවත් කළා",
+  "@palRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "requestWithdrawnToast": "ඉල්ලීම ඉල්ලා අස්කර ගත්තා",
+  "@requestWithdrawnToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "wantsToBePals": "{name} ඔබේ මිතුරෙකු වීමට කැමතියි",
+  "@wantsToBePals": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "socialBadgeLabel": "නොකියවූ පණිවිඩ {messages}, මිතුරු ඉල්ලීම් {requests}",
+  "@socialBadgeLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNoPalRequest": "එම ඉල්ලීම තවදුරටත් නොමැත.",
+  "@errNoPalRequest": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errTooManyPalRequests": "ඔබට පොරොත්තු ඉල්ලීම් වැඩියි. පළමුව සමහරක් ඉල්ලා අස්කර ගන්න.",
+  "@errTooManyPalRequests": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

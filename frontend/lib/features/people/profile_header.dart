@@ -20,10 +20,10 @@ class ProfileHeader extends StatelessWidget {
     this.city,
     this.memberSince,
     this.followers,
-    this.following,
+    this.pals,
     this.sharedCircles,
     this.onFollowers,
-    this.onFollowing,
+    this.onPals,
     this.onEditPhoto,
     this.photoBusy = false,
     this.onAddUsername,
@@ -39,10 +39,10 @@ class ProfileHeader extends StatelessWidget {
   final String? city;
   final DateTime? memberSince;
   final int? followers;
-  final int? following;
+  final int? pals;
   final int? sharedCircles;
   final VoidCallback? onFollowers;
-  final VoidCallback? onFollowing;
+  final VoidCallback? onPals;
 
   /// When set, the photo shows a camera button (own profile only).
   final VoidCallback? onEditPhoto;
@@ -109,7 +109,7 @@ class ProfileHeader extends StatelessWidget {
               child: Row(
                 children: [
                   _Stat(count: followers, label: l10n.followersLabel, onTap: onFollowers),
-                  _Stat(count: following, label: l10n.followingLabel, onTap: onFollowing),
+                  _Stat(count: pals, label: l10n.palsLabel, onTap: onPals),
                   _Stat(count: sharedCircles, label: isMe ? l10n.navCircles : l10n.sharedCirclesLabel),
                 ],
               ),

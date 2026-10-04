@@ -167,6 +167,10 @@ class FakeSocialApi extends SocialApi {
   final searches = <String>[];
   bool failNextSend = false;
   int unread = 0;
+
+  /// My pal status with each person id; drives profiles, requests and suggestions.
+  final palStatus = <String, PalStatus>{};
+  final palCalls = <String>[];
   int _seq = 10;
   final messagesByChat = <String, List<ChatMessage>>{
     'c1': [
@@ -180,10 +184,75 @@ class FakeSocialApi extends SocialApi {
           memberSince: DateTime(2026, 1, 5),
           followersCount: 12,
           followingCount: 7,
+          palsCount: palStatus.values.where((s) => s == PalStatus.pals).length + 3,
           sharedCircles: 1,
           isMe: true,
         )
-      : kamala;
+      : PublicProfile(
+          person: _withStatus(kamala.person),
+          bio: kamala.bio,
+          city: kamala.city,
+          memberSince: kamala.memberSince,
+          followersCount: kamala.followersCount,
+          followingCount: kamala.followingCount,
+          palsCount: palStatus['u2'] == PalStatus.pals ? 6 : 5,
+          sharedCircles: kamala.sharedCircles,
+        );
+
+  Person _withStatus(Person p) => Person(
+        id: p.id,
+        fullName: p.fullName,
+        username: p.username,
+        avatarUrl: p.avatarUrl,
+        verified: p.verified,
+        isFollowing: p.isFollowing,
+        followsYou: p.followsYou,
+        palStatus: palStatus[p.id] ?? PalStatus.none,
+      );
+
+  Future<PublicProfile> _setPal(String id, String call, PalStatus next) async {
+    palCalls.add('$call:$id');
+    palStatus[id] = next;
+    return profileOf(id);
+  }
+
+  @override
+  Future<PublicProfile> requestPal(String id) =>
+      _setPal(id, 'request', palStatus[id] == PalStatus.incoming ? PalStatus.pals : PalStatus.outgoing);
+
+  @override
+  Future<PublicProfile> acceptPal(String id) => _setPal(id, 'accept', PalStatus.pals);
+
+  @override
+  Future<PublicProfile> ignorePal(String id) => _setPal(id, 'ignore', PalStatus.none);
+
+  @override
+  Future<PublicProfile> endPal(String id) => _setPal(id, 'end', PalStatus.none);
+
+  Person _byId(String id) => id == 'u2' ? kamala.person : Person(id: id, fullName: 'Ruwan Jayasuriya');
+
+  @override
+  Future<PalRequests> palRequests() async => PalRequests(
+        received: [
+          for (final e in palStatus.entries)
+            if (e.value == PalStatus.incoming)
+              PalRequest(person: _withStatus(_byId(e.key)), requestedAt: DateTime(2026, 10, 1), mutualPals: 2),
+        ],
+        sent: [
+          for (final e in palStatus.entries)
+            if (e.value == PalStatus.outgoing)
+              PalRequest(person: _withStatus(_byId(e.key)), requestedAt: DateTime(2026, 10, 2)),
+        ],
+      );
+
+  @override
+  Future<int> palRequestCount() async => palStatus.values.where((s) => s == PalStatus.incoming).length;
+
+  @override
+  Future<List<Person>> pals(String id) async => [
+        for (final e in palStatus.entries)
+          if (e.value == PalStatus.pals) _withStatus(_byId(e.key)),
+      ];
 
   @override
   Future<List<Person>> search(String q) async {

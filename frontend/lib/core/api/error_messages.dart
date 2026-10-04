@@ -45,6 +45,10 @@ String messageFor(AppLocalizations l10n, Object error) {
       return l10n.errUnsupportedImage;
     case 'BLOCKED':
       return l10n.errBlocked;
+    case 'NO_PAL_REQUEST':
+      return l10n.errNoPalRequest;
+    case 'TOO_MANY_PAL_REQUESTS':
+      return l10n.errTooManyPalRequests;
     case 'NOT_FOUND':
       return l10n.personNotFound;
   }

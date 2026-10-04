@@ -16,6 +16,7 @@ import '../../features/circle/join_circle_screen.dart';
 import '../../features/circle/verify_queue_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/member_home_screen.dart';
+import '../../features/pals/pal_requests_screen.dart';
 import '../../features/people/people_list_screen.dart';
 import '../../features/people/person_profile_screen.dart';
 import '../../features/profile/change_phone_screen.dart';
@@ -41,7 +42,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      const signedInRoots = ['/home', '/circle', '/circles', '/history', '/chats', '/profile', '/people'];
+      const signedInRoots = ['/home', '/circle', '/circles', '/history', '/chats', '/profile', '/people', '/pals'];
       final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
       if (auth is AuthUnknown) return loc == '/splash' ? null : '/splash';
@@ -105,8 +106,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) =>
                 PeopleListScreen(userId: state.pathParameters['id']!, kind: PeopleListKind.following),
           ),
+          GoRoute(
+            path: 'pals',
+            builder: (context, state) => PeopleListScreen(userId: state.pathParameters['id']!, kind: PeopleListKind.pals),
+          ),
         ],
       ),
+      GoRoute(path: '/pals/requests', builder: (context, state) => const PalRequestsScreen()),
       GoRoute(
         path: '/chats/:id',
         builder: (context, state) => ChatThreadScreen(chatId: state.pathParameters['id']!),

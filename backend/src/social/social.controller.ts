@@ -37,6 +37,16 @@ export class PeopleController {
     return this.social.search(me.id, dto.q);
   }
 
+  @Get('pal-requests')
+  palRequests(@CurrentUser() me: AuthUser) {
+    return this.social.palRequests(me.id);
+  }
+
+  @Get('pal-requests/count')
+  palRequestCount(@CurrentUser() me: AuthUser) {
+    return this.social.palRequestCount(me.id);
+  }
+
   @Get('suggestions')
   suggestions(@CurrentUser() me: AuthUser) {
     return this.social.suggestions(me.id);
@@ -55,6 +65,36 @@ export class PeopleController {
   @Get(':id/following')
   following(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
     return this.social.following(me.id, id);
+  }
+
+  @Get(':id/pals')
+  pals(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
+    return this.social.pals(me.id, id);
+  }
+
+  /** Sends a pal request (or accepts theirs if they already asked). */
+  @Put(':id/pal')
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  requestPal(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
+    return this.social.requestPal(me.id, id);
+  }
+
+  /** Withdraws my request or removes the pal. */
+  @Delete(':id/pal')
+  endPal(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
+    return this.social.endPal(me.id, id);
+  }
+
+  @Post(':id/pal/accept')
+  @HttpCode(200)
+  acceptPal(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
+    return this.social.acceptPal(me.id, id);
+  }
+
+  @Post(':id/pal/ignore')
+  @HttpCode(200)
+  ignorePal(@CurrentUser() me: AuthUser, @Param('id', uuid) id: string) {
+    return this.social.ignorePal(me.id, id);
   }
 
   @Put(':id/follow')

@@ -19,6 +19,7 @@ import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
+import '../pals/pal_requests_row.dart';
 import '../people/profile_header.dart';
 import '../shell/brand_header.dart';
 import 'profile_photo.dart';
@@ -55,10 +56,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           city: user.city,
           memberSince: public?.memberSince,
           followers: public?.followersCount,
-          following: public?.followingCount,
+          pals: public?.palsCount,
           sharedCircles: public?.sharedCircles,
           onFollowers: () => context.push('/people/${user.id}/followers'),
-          onFollowing: () => context.push('/people/${user.id}/following'),
+          onPals: () => context.push('/people/${user.id}/pals'),
           photoBusy: _photoBusy,
           onEditPhoto: () => showProfilePhotoSheet(
             context,
@@ -78,7 +79,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           compact: true,
           onPressed: () => context.push('/profile/edit'),
         ),
-        const SizedBox(height: AppSpace.xxxl),
+        const SizedBox(height: AppSpace.m),
+        const PalRequestsRow(),
+        const SizedBox(height: AppSpace.xxl),
 
         PsSectionHeader(title: l10n.privateDetailsTitle),
         Padding(

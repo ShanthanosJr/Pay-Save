@@ -6,16 +6,20 @@ import { AppException } from '../common/errors/app.exception';
 import { PG_POOL } from '../database/database.module';
 import { Db, withTransaction } from '../database/transaction';
 import { LedgerService } from '../ledger/ledger.service';
+import { PayoutsService } from '../payouts/payouts.service';
+import { avatarUrl } from '../users/image-type';
+import { CircleInvitationsRepository } from './circle-invitations.repository';
 import type { LedgerEntry } from '../ledger/ledger.types';
 import { circleNotFound, forbiddenRole, Membership } from './circle-role.guard';
 import {
   CircleRecord,
   CirclesRepository,
+  CollectionMode,
   CycleRecord,
   MemberRecord,
   MemberStatusRecord,
 } from './circles.repository';
-import { CircleDetail, CircleSummary } from './circles.types';
+import { CircleDetail, CircleSummary, PayTo, Total } from './circles.types';
 import { generateJoinCode, normalizeJoinCode } from './domain/join-code';
 import { lotteryOrder, newLotterySeed } from './domain/lottery';
 import { addDays, dueDateFor, isValidDate, localDate } from './domain/schedule';
@@ -34,6 +38,13 @@ const iso = (d: Date | null): string | null => (d ? d.toISOString() : null);
 const conflict = (code: string, message: string) =>
   new AppException(409, code, message);
 
+export const notAPal = () =>
+  new AppException(
+    403,
+    'NOT_A_PAL',
+    "Only the organizer's pals can join this circle",
+  );
+
 @Injectable()
 export class CirclesService {
   constructor(
@@ -41,6 +52,8 @@ export class CirclesService {
     @Inject(CLOCK) private readonly clock: Clock,
     private readonly repo: CirclesRepository,
     private readonly ledger: LedgerService,
+    private readonly payouts: PayoutsService,
+    private readonly invitations: CircleInvitationsRepository,
   ) {}
 
   async create(userId: string, dto: CreateCircleDto): Promise<CircleDetail> {
@@ -68,10 +81,12 @@ export class CirclesService {
           turnRule: dto.turnRule,
           plannedCycles: dto.plannedCycles,
           firstDueDate: dto.firstDueDate,
+          collectionMode: dto.collectionMode ?? 'direct_to_recipient',
           createdBy: userId,
         });
       }
       await this.repo.addMember(tx, circleId, userId, 'organizer');
+      await this.payouts.shareDefault(tx, circleId, userId);
       await this.ledger.append(tx, {
         circleId,
         type: 'member_added',
@@ -111,7 +126,15 @@ export class CirclesService {
         throw conflict('CIRCLE_ALREADY_STARTED', 'This circle has started');
       if (members.length >= circle.plannedCycles)
         throw conflict('CIRCLE_FULL', 'This circle is full');
+      // Seettu is built on trust: only the organizer's pals may join.
+      const organizer = members.find((x) => x.role === 'organizer');
+      if (
+        !organizer ||
+        !(await this.invitations.arePals(tx, organizer.userId, userId))
+      )
+        throw notAPal();
       await this.repo.addMember(tx, circle.id, userId, 'member');
+      await this.payouts.shareDefault(tx, circle.id, userId);
       await this.ledger.append(tx, {
         circleId: circle.id,
         type: 'member_added',
@@ -151,6 +174,16 @@ export class CirclesService {
       if (members.length < 2)
         throw conflict('NOT_ENOUGH_MEMBERS', 'At least 2 members are needed');
       const ids = members.map((x) => x.userId);
+      // Everyone receives the pot once, so everyone needs a way to be paid.
+      const kinds = await this.payouts.kindsByMember(tx, circle.id);
+      const missing = ids.filter((id) => !kinds.has(id));
+      if (missing.length > 0)
+        throw new AppException(
+          409,
+          'PAYOUT_DETAILS_MISSING',
+          'Every member must share how they get paid before the circle starts',
+          { userIds: missing },
+        );
 
       let order: string[];
       const payload: Record<string, unknown> = { rule: circle.turnRule };
@@ -193,6 +226,7 @@ export class CirclesService {
         now,
         circle.turnRule === 'lottery',
       );
+      await this.invitations.cancelPending(tx, circle.id, now);
       await this.ledger.append(tx, {
         circleId: circle.id,
         type: 'turn_order_set',
@@ -201,6 +235,96 @@ export class CirclesService {
       });
       return this.detail(tx, circle.id, m.userId);
     });
+  }
+
+  /** Draft-only settings the organizer can still change. */
+  updateSettings(m: Membership, mode: CollectionMode): Promise<CircleDetail> {
+    return withTransaction(this.pool, async (tx) => {
+      const circle = await this.lock(tx, m.circleId);
+      if (circle.status !== 'draft')
+        throw conflict('CIRCLE_ALREADY_STARTED', 'This circle has started');
+      await this.repo.setCollectionMode(tx, circle.id, mode);
+      return this.detail(tx, circle.id, m.userId);
+    });
+  }
+
+  /** Which of my payment methods this circle may see. */
+  sharePayout(
+    m: Membership,
+    methodIds: string[],
+    preferredId: string,
+  ): Promise<CircleDetail> {
+    return withTransaction(this.pool, async (tx) => {
+      const circle = await this.lock(tx, m.circleId);
+      if (circle.status === 'completed')
+        throw conflict('CIRCLE_COMPLETED', 'This circle has finished');
+      await this.payouts.share(tx, circle.id, m.userId, methodIds, preferredId);
+      return this.detail(tx, circle.id, m.userId);
+    });
+  }
+
+  /**
+   * Who I pay this cycle and their details. Direct mode: the turn's
+   * recipient. Via organizer: members pay the organizer, and the organizer
+   * pays the recipient the verified pot. Each reveal is logged.
+   */
+  async payTo(m: Membership): Promise<PayTo> {
+    const { circle, members, current } = await this.load(this.pool, m.circleId);
+    if (!current)
+      throw conflict('NO_OPEN_CYCLE', 'There is no open cycle to pay');
+    const organizer = members.find((x) => x.role === 'organizer');
+    const recipient = members.find((x) => x.userId === current.payoutUserId);
+    const me = members.find((x) => x.userId === m.userId);
+    if (!organizer || !recipient || !me) throw circleNotFound();
+
+    const unit = circle.contributionMinor;
+    let payee = recipient;
+    let amount: Total = {
+      count: 1,
+      unitMinor: unit,
+      totalMinor: unit,
+      entryIds: [],
+    };
+    if (circle.collectionMode === 'via_organizer') {
+      if (m.userId === organizer.userId) {
+        const t = await this.repo.cycleTotals(this.pool, current.id);
+        amount = {
+          count: t.verifiedCount,
+          unitMinor: t.unitMinor,
+          totalMinor: t.verifiedTotalMinor,
+          entryIds: t.verifiedIds,
+        };
+      } else {
+        payee = organizer;
+      }
+    }
+    const youReceive = payee.userId === m.userId;
+    const firstName = me.displayName.trim().split(/\s+/)[0] ?? '';
+    return {
+      cycleNumber: current.number,
+      dueDate: current.dueDate,
+      collectionMode: circle.collectionMode,
+      youReceive,
+      payee: {
+        id: payee.userId,
+        fullName: payee.displayName,
+        username: null,
+        avatarUrl: avatarUrl(payee.userId, payee.avatarUpdatedAt),
+      },
+      amount,
+      reference: `${circle.publicCode} C${current.number} ${firstName}`.slice(
+        0,
+        30,
+      ),
+      methods: youReceive
+        ? []
+        : await this.payouts.revealFor(this.pool, {
+            circleId: circle.id,
+            viewerId: m.userId,
+            ownerId: payee.userId,
+            cycleId: current.id,
+          }),
+    };
   }
 
   closeCycle(
@@ -297,11 +421,49 @@ export class CirclesService {
       ? await this.repo.cycleTotals(db, current.id)
       : undefined;
     const revealed = circle.lotteryRevealedAt !== null;
+    const kinds = await this.payouts.kindsByMember(db, circleId);
+    const me = members.find((x) => x.userId === userId);
+    const isOrganizer = me?.role === 'organizer';
+    const pending =
+      circle.status === 'draft'
+        ? await this.invitations.pendingForCircle(db, circleId)
+        : [];
+    const missing = members
+      .filter((x) => !kinds.has(x.userId))
+      .map((x) => x.userId);
     return {
       ...this.toSummary(loaded, userId),
+      myPayout: await this.payouts.mySharedSummaries(db, circleId, userId),
+      setup: {
+        seatsTotal: circle.plannedCycles,
+        seatsTaken: members.length,
+        pendingInvitations: pending.length,
+        membersMissingPayout: missing,
+        canStart:
+          circle.status === 'draft' &&
+          members.length >= 2 &&
+          missing.length === 0,
+      },
+      invitations: isOrganizer
+        ? pending.map((p) => ({
+            id: p.invitation_id,
+            invitedAt: p.created_at.toISOString(),
+            person: {
+              id: p.id,
+              fullName: p.name,
+              username: p.username,
+              avatarUrl: avatarUrl(p.id, p.avatar_updated_at),
+            },
+          }))
+        : [],
       members: members.map((x) => ({
         userId: x.userId,
         displayName: x.displayName,
+        avatarUrl: avatarUrl(x.userId, x.avatarUpdatedAt),
+        payout: {
+          ready: kinds.has(x.userId),
+          kinds: kinds.get(x.userId) ?? [],
+        },
         role: x.role,
         payoutPosition: x.payoutPosition,
         isYou: x.userId === userId,
@@ -390,6 +552,7 @@ export class CirclesService {
       joinCode: circle.joinCode,
       role: me.role,
       status: circle.status,
+      collectionMode: circle.collectionMode,
       contributionMinor: circle.contributionMinor,
       interval: circle.interval,
       turnRule: circle.turnRule,

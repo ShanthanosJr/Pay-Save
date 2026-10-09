@@ -15,6 +15,7 @@ import { AppConfigModule } from './config/app-config.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { LedgerModule } from './ledger/ledger.module';
+import { PayoutsModule } from './payouts/payouts.module';
 import { SocialModule } from './social/social.module';
 import { UsersModule } from './users/users.module';
 
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
     CirclesModule,
     ContributionsModule,
     SocialModule,
+    PayoutsModule,
   ],
   controllers: [AppController],
   providers: [

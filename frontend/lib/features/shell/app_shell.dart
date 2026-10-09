@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/circles/circles_providers.dart';
 import '../../core/social/social_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
@@ -20,6 +21,14 @@ class AppShell extends ConsumerWidget {
     final unread = ref.watch(chatUnreadProvider);
     final requests = ref.watch(palRequestCountProvider);
     final total = unread + requests;
+    final invites = ref.watch(myInvitationsProvider).value?.length ?? 0;
+    Widget circlesIcon(IconData icon) => Badge(
+          isLabelVisible: invites > 0,
+          backgroundColor: AppColors.danger,
+          textStyle: AppText.caption.copyWith(fontWeight: FontWeight.w700),
+          label: Text('$invites', semanticsLabel: l10n.circleInvitationsTitle),
+          child: Icon(icon),
+        );
     Widget chatIcon(IconData icon) => Badge(
           isLabelVisible: total > 0,
           backgroundColor: AppColors.danger,
@@ -45,8 +54,8 @@ class AppShell extends ConsumerWidget {
               label: l10n.navHome,
             ),
             NavigationDestination(
-              icon: const Icon(Icons.groups_outlined),
-              selectedIcon: const Icon(Icons.groups_rounded),
+              icon: circlesIcon(Icons.groups_outlined),
+              selectedIcon: circlesIcon(Icons.groups_rounded),
               label: l10n.navCircles,
             ),
             NavigationDestination(

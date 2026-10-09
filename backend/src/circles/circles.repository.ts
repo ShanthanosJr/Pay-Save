@@ -19,6 +19,7 @@ export interface CircleRecord {
   turnRule: TurnRule;
   plannedCycles: number;
   status: CircleStatus;
+  collectionMode: CollectionMode;
   firstDueDate: string | null;
   lotteryCommitment: string | null;
   lotterySeed: string | null;
@@ -27,9 +28,13 @@ export interface CircleRecord {
   createdAt: Date;
 }
 
+/** Who members pay each cycle: the turn's recipient, or the organizer. */
+export type CollectionMode = 'direct_to_recipient' | 'via_organizer';
+
 export interface MemberRecord {
   userId: string;
   displayName: string;
+  avatarUpdatedAt: Date | null;
   role: MemberRole;
   payoutPosition: number | null;
   joinedCycle: number;
@@ -79,6 +84,7 @@ interface CircleRow {
   turn_rule: TurnRule;
   planned_cycles: number;
   status: CircleStatus;
+  collection_mode: CollectionMode;
   first_due_date: string | null;
   lottery_commitment: string | null;
   lottery_seed: string | null;
@@ -88,7 +94,7 @@ interface CircleRow {
 }
 
 const CIRCLE_COLUMNS = `id, public_code, join_code, name, contribution_minor, interval, turn_rule,
-  planned_cycles, status, first_due_date::text AS first_due_date, lottery_commitment, lottery_seed,
+  planned_cycles, status, collection_mode, first_due_date::text AS first_due_date, lottery_commitment, lottery_seed,
   lottery_committed_at, lottery_revealed_at, created_at`;
 
 const toCircle = (r: CircleRow): CircleRecord => ({
@@ -101,6 +107,7 @@ const toCircle = (r: CircleRow): CircleRecord => ({
   turnRule: r.turn_rule,
   plannedCycles: r.planned_cycles,
   status: r.status,
+  collectionMode: r.collection_mode,
   firstDueDate: r.first_due_date,
   lotteryCommitment: r.lottery_commitment,
   lotterySeed: r.lottery_seed,
@@ -117,6 +124,7 @@ export interface NewCircle {
   turnRule: TurnRule;
   plannedCycles: number;
   firstDueDate: string;
+  collectionMode: CollectionMode;
   createdBy: string;
 }
 
@@ -154,8 +162,8 @@ export class CirclesRepository {
   async insert(tx: PoolClient, c: NewCircle): Promise<string | null> {
     const { rows } = await tx.query<{ id: string }>(
       `INSERT INTO circles (public_code, join_code, name, contribution_minor, interval, turn_rule,
-                            planned_cycles, first_due_date, created_by)
-       VALUES ('RC-' || nextval('circle_public_code_seq'), $1, $2, $3, $4, $5, $6, $7, $8)
+                            planned_cycles, first_due_date, created_by, collection_mode)
+       VALUES ('RC-' || nextval('circle_public_code_seq'), $1, $2, $3, $4, $5, $6, $7, $8, $9)
        ON CONFLICT (join_code) DO NOTHING
        RETURNING id`,
       [
@@ -167,6 +175,7 @@ export class CirclesRepository {
         c.plannedCycles,
         c.firstDueDate,
         c.createdBy,
+        c.collectionMode,
       ],
     );
     return rows[0]?.id ?? null;
@@ -183,6 +192,17 @@ export class CirclesRepository {
        VALUES ($1, $2, $3, 1)`,
       [circleId, userId, role],
     );
+  }
+
+  async setCollectionMode(
+    tx: PoolClient,
+    circleId: string,
+    mode: CollectionMode,
+  ): Promise<void> {
+    await tx.query('UPDATE circles SET collection_mode = $2 WHERE id = $1', [
+      circleId,
+      mode,
+    ]);
   }
 
   async circleIdsFor(db: Db, userId: string): Promise<string[]> {
@@ -202,11 +222,12 @@ export class CirclesRepository {
     const { rows } = await db.query<{
       user_id: string;
       display_name: string;
+      avatar_updated_at: Date | null;
       role: MemberRole;
       payout_position: number | null;
       joined_cycle: number;
     }>(
-      `SELECT m.user_id, u.display_name, m.role, m.payout_position, m.joined_cycle
+      `SELECT m.user_id, u.display_name, u.avatar_updated_at, m.role, m.payout_position, m.joined_cycle
        FROM circle_members m JOIN users u ON u.id = m.user_id
        WHERE m.circle_id = $1 AND m.left_cycle IS NULL
        ORDER BY m.payout_position NULLS LAST, m.joined_at, m.user_id`,
@@ -215,6 +236,7 @@ export class CirclesRepository {
     return rows.map((r) => ({
       userId: r.user_id,
       displayName: r.display_name,
+      avatarUpdatedAt: r.avatar_updated_at,
       role: r.role,
       payoutPosition: r.payout_position,
       joinedCycle: r.joined_cycle,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
 import 'package:pay_and_save/core/circles/circles_providers.dart';
+import 'package:pay_and_save/core/payouts/payouts_api.dart';
 import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/profile/profile_photo.dart';
 import 'package:pay_and_save/main.dart';
@@ -16,6 +17,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
   bool signedIn = false,
   FakeSocialApi? social,
   FakeCirclesApi? circles,
+  FakePayoutsApi? payouts,
 }) async {
   tester.view.physicalSize = const Size(390 * 2, 844 * 2);
   tester.view.devicePixelRatio = 2;
@@ -31,6 +33,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
       tokenStoreProvider.overrideWithValue(store),
       socialApiProvider.overrideWithValue(social ?? FakeSocialApi()),
       circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
+      payoutsApiProvider.overrideWithValue(payouts ?? FakePayoutsApi()),
       imagePickerProvider.overrideWithValue(FakeImagePicker()),
     ],
     child: const PayAndSaveApp(),

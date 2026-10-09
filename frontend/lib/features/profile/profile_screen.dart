@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/api/error_messages.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../core/auth/auth_models.dart';
+import '../../core/payouts/payouts_api.dart';
 import '../../core/providers/locale_provider.dart';
 import '../../core/providers/text_scale_provider.dart';
 import '../../core/social/social_providers.dart';
@@ -136,6 +137,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         const SizedBox(height: AppSpace.xl),
         PsGroupLabel(l10n.accountGroup),
+        const _PaymentMethodsRow(),
         PsListRow(
           icon: Icons.phone_iphone_rounded,
           tone: PsBadgeTone.mint,
@@ -302,5 +304,25 @@ class _EmailVerifyBodyState extends ConsumerState<_EmailVerifyBody> {
           ),
         ),
     ]);
+  }
+}
+
+/// "How you get paid", with the default method as the subtitle.
+class _PaymentMethodsRow extends ConsumerWidget {
+  const _PaymentMethodsRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final methods = ref.watch(myPayoutMethodsProvider).value;
+    final def = methods?.where((m) => m.isDefault).firstOrNull ?? methods?.firstOrNull;
+    return PsListRow(
+      icon: Icons.account_balance_wallet_rounded,
+      tone: def == null ? PsBadgeTone.warning : PsBadgeTone.mint,
+      title: l10n.paymentMethodsTitle,
+      subtitle: def?.summary ?? l10n.howYouGetPaidEmpty,
+      showChevron: true,
+      onTap: () => context.push('/profile/payment-methods'),
+    );
   }
 }

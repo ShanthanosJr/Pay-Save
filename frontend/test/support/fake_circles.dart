@@ -24,6 +24,14 @@ class FakeCirclesApi extends CirclesApi {
 
   final FakeSeed seed;
   final calls = <String>[];
+
+  /// Invitations addressed to me (raw API JSON).
+  final invitations = <Map<String, dynamic>>[];
+
+  /// What GET /pay-to returns; null = no open cycle.
+  Map<String, dynamic>? payToJson;
+  final invitable = <Map<String, dynamic>>[];
+  int seatsLeft = 2;
   final _circles = <String, _C>{};
   int _ref = 1001;
 
@@ -193,8 +201,20 @@ class FakeCirclesApi extends CirclesApi {
             'payoutPosition': c.positions[u],
             'isYou': u == me,
             'joinedCycle': 1,
+            'payout': {'ready': true, 'kinds': ['cash']},
           },
       ],
+      'myPayout': [
+        {'id': 'pm1', 'kind': 'cash', 'summary': 'Cash in person', 'preferred': true},
+      ],
+      'setup': {
+        'seatsTotal': c.planned ?? c.members.length,
+        'seatsTaken': c.members.length,
+        'pendingInvitations': 0,
+        'membersMissingPayout': <String>[],
+        'canStart': c.status == 'draft' && c.members.length >= 2,
+      },
+      'invitations': <Object>[],
       'cycles': c.cycles,
       'lottery': {'commitment': c.commitment, 'seed': c.status == 'draft' ? null : c.seed},
       'current': cur == null
@@ -245,6 +265,7 @@ class FakeCirclesApi extends CirclesApi {
     required TurnRule turnRule,
     required int plannedCycles,
     required DateTime firstDueDate,
+    CollectionMode collectionMode = CollectionMode.directToRecipient,
   }) async {
     calls.add('create:$name:$contributionMinor:${wireName(interval)}:${wireName(turnRule)}:$plannedCycles:'
         '${DateFormat('yyyy-MM-dd').format(firstDueDate)}');
@@ -340,6 +361,65 @@ class FakeCirclesApi extends CirclesApi {
     final target = c.ledger.firstWhere((e) => e['id'] == entryId);
     return LedgerEntry.fromJson(_withStatus(c, _entry(c, 'correction',
         subject: target['subjectUserId'] as String, actor: me, cycle: target['cycleNumber'] as int, amount: -500000, target: entryId, note: reason)));
+  }
+
+  @override
+  Future<List<MyInvitation>> myInvitations() async => [for (final i in invitations) MyInvitation.fromJson(i)];
+
+  @override
+  Future<CircleDetail> acceptInvitation(String invitationId, {required List<String> methodIds, String? preferredId}) async {
+    calls.add('accept:$invitationId:${methodIds.join(',')}:$preferredId');
+    final inv = invitations.firstWhere((i) => i['id'] == invitationId);
+    invitations.remove(inv);
+    final circle = inv['circle'] as Map<String, dynamic>;
+    final c = _C(
+      id: circle['id'] as String,
+      name: circle['name'] as String,
+      rule: 'fixed',
+      status: 'draft',
+      organizer: 'u-org',
+      members: ['u-org', me],
+      names: {'u-org': 'Kamala Silva', me: 'Nadeeshi Perera'},
+      positions: {},
+      planned: circle['plannedCycles'] as int,
+    );
+    _circles[c.id] = c;
+    return _detailOf(c.id);
+  }
+
+  @override
+  Future<void> declineInvitation(String invitationId) async {
+    calls.add('decline:$invitationId');
+    invitations.removeWhere((i) => i['id'] == invitationId);
+  }
+
+  @override
+  Future<PayTo> payTo(String id) async {
+    final j = payToJson;
+    if (j == null) throw ApiException(code: 'NO_OPEN_CYCLE', statusCode: 409);
+    return PayTo.fromJson(j);
+  }
+
+  @override
+  Future<(int, List<InvitablePal>)> invitablePals(String id) async =>
+      (seatsLeft, [for (final p in invitable) InvitablePal.fromJson(p)]);
+
+  @override
+  Future<CircleDetail> invite(String id, List<String> userIds, {String? message}) async {
+    calls.add('invite:$id:${userIds.join(',')}:${message ?? ''}');
+    return _detailOf(id);
+  }
+
+  @override
+  Future<CircleDetail> sharePayout(String id, List<String> methodIds, String preferredId) async {
+    calls.add('share:$id:${methodIds.join(',')}:$preferredId');
+    return _detailOf(id);
+  }
+
+  @override
+  Future<CircleDetail> setCollectionMode(String id, CollectionMode mode) async {
+    calls.add('mode:$id:${wireName(mode)}');
+    return _detailOf(id);
   }
 
   @override

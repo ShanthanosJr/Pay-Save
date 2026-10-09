@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth/auth_controller.dart';
@@ -52,6 +54,24 @@ final verifyQueueProvider = FutureProvider.family<List<VerifyItem>, String>((ref
   return ref.watch(circlesApiProvider).verifyQueue(id);
 });
 
+/// Invitations waiting for me; polled with the other badges.
+final myInvitationsProvider = FutureProvider<List<MyInvitation>>((ref) async {
+  final auth = ref.watch(authControllerProvider);
+  if (auth is! AuthLoggedIn) return const [];
+  final timer = Timer(const Duration(seconds: 30), ref.invalidateSelf);
+  ref.onDispose(timer.cancel);
+  return ref.watch(circlesApiProvider).myInvitations();
+});
+
+final payToProvider = FutureProvider.autoDispose.family<PayTo, String>((ref, circleId) async {
+  ref.watch(authControllerProvider);
+  return ref.watch(circlesApiProvider).payTo(circleId);
+});
+
+final invitablePalsProvider = FutureProvider.autoDispose.family<(int, List<InvitablePal>), String>((ref, circleId) {
+  return ref.watch(circlesApiProvider).invitablePals(circleId);
+});
+
 /// Refreshes every view of one circle after a write.
 void refreshCircle(WidgetRef ref, String circleId) {
   ref.invalidate(myCirclesProvider);
@@ -59,4 +79,6 @@ void refreshCircle(WidgetRef ref, String circleId) {
   ref.invalidate(ledgerProvider((circleId: circleId, all: false)));
   ref.invalidate(ledgerProvider((circleId: circleId, all: true)));
   ref.invalidate(verifyQueueProvider(circleId));
+  ref.invalidate(payToProvider(circleId));
+  ref.invalidate(invitablePalsProvider(circleId));
 }

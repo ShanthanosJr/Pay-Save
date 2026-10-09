@@ -18,6 +18,8 @@ import '../../core/widgets/ps_status_badge.dart';
 import '../../core/widgets/ps_text_field.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
+import '../payouts/payout_ui.dart';
+import 'pay_to.dart';
 
 /// Records a payment the member already made (Pay&Save never moves money).
 /// With [subject] set, the organizer records cash on that member's behalf.
@@ -25,18 +27,15 @@ Future<void> showRecordPaymentSheet(
   BuildContext context, {
   required CircleSummary circle,
   required int cycleNumber,
-  String? payeeName,
   CircleMember? subject,
 }) {
   final l10n = AppLocalizations.of(context);
   return showPsSheet<void>(
     context: context,
     title: subject == null ? l10n.recordPaymentTitle : l10n.recordForMember,
-    subtitle: subject != null
-        ? l10n.recordForMemberSubtitle(subject.displayName, cycleNumber)
-        : payeeName == null
-            ? null
-            : l10n.recordPaymentSubtitle(payeeName, cycleNumber),
+    // For a member's own payment the Pay-to card names the payee; it follows
+    // the circle's collection mode, so no second (possibly wrong) name here.
+    subtitle: subject != null ? l10n.recordForMemberSubtitle(subject.displayName, cycleNumber) : null,
     builder: (_) => _RecordPaymentBody(circle: circle, cycleNumber: cycleNumber, subject: subject),
   );
 }
@@ -57,6 +56,9 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
   final _clientEntryId = const Uuid().v4();
   final _reference = TextEditingController();
   late PaymentMethod _method = widget.subject == null ? PaymentMethod.bankTransfer : PaymentMethod.cash;
+
+  /// Until the member picks a method, follow how the payee wants to be paid.
+  bool _methodTouched = false;
   String _provider = walletProviders.first;
   bool _busy = false;
   String? _error;
@@ -100,6 +102,10 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
     final l10n = AppLocalizations.of(context);
     final saved = _saved;
     if (saved != null) return _Confirmation(entry: saved);
+    if (widget.subject == null && !_methodTouched) {
+      final preferred = ref.watch(payToProvider(widget.circle.id)).value?.methods.firstOrNull;
+      if (preferred != null) _method = paymentMethodFor(preferred.kind);
+    }
 
     final hint = switch (_method) {
       PaymentMethod.cash => l10n.receiptRefHintCash,
@@ -108,6 +114,16 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
     };
 
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (widget.subject == null) ...[
+        PayToCard(
+          circleId: widget.circle.id,
+          onMethodChosen: (k) => setState(() {
+            _methodTouched = true;
+            _method = paymentMethodFor(k);
+          }),
+        ),
+        const SizedBox(height: AppSpace.xl),
+      ],
       PsInfoRow(label: l10n.amountLabel, value: formatLkr(widget.circle.contributionMinor)),
       const SizedBox(height: AppSpace.s),
       PsGroupLabel(l10n.methodLabel),
@@ -119,7 +135,12 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
             icon: methodIcon(m),
             tone: _method == m ? PsBadgeTone.forest : PsBadgeTone.neutral,
             title: methodLabel(l10n, m),
-            onTap: _busy ? null : () => setState(() => _method = m),
+            onTap: _busy
+                ? null
+                : () => setState(() {
+                      _methodTouched = true;
+                      _method = m;
+                    }),
             trailing: Icon(
               _method == m ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
               color: _method == m ? AppColors.forest600 : AppColors.strokeStrong,

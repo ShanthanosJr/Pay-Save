@@ -1,3 +1,4 @@
+import '../payouts/payout_models.dart';
 import '../widgets/ps_status_badge.dart';
 
 // Mirrors the M1 API contract. Money is always integer minor units.
@@ -11,6 +12,15 @@ enum CircleStatus { draft, active, completed }
 enum CircleRole { organizer, member }
 
 enum PaymentMethod { cash, bankTransfer, lankaqr, mobileWallet }
+
+/// Who members pay each cycle.
+enum CollectionMode {
+  /// Every member pays this cycle's turn recipient.
+  directToRecipient,
+
+  /// Members pay the organizer, who hands the pot to the recipient.
+  viaOrganizer,
+}
 
 enum LedgerType {
   contributionRecorded,
@@ -141,6 +151,7 @@ class CircleSummary {
     required this.firstDueDate,
     this.myTurn,
     this.currentCycle,
+    this.collectionMode = CollectionMode.directToRecipient,
   });
 
   final String id;
@@ -157,6 +168,7 @@ class CircleSummary {
   final DateTime? firstDueDate;
   final int? myTurn;
   final CurrentCycleSummary? currentCycle;
+  final CollectionMode collectionMode;
 
   bool get isOrganizer => role == CircleRole.organizer;
 
@@ -177,6 +189,7 @@ class CircleSummary {
         currentCycle: j['currentCycle'] == null
             ? null
             : CurrentCycleSummary.fromJson(j['currentCycle'] as Map<String, dynamic>),
+        collectionMode: _enum(CollectionMode.values, j['collectionMode'], CollectionMode.directToRecipient),
       );
 }
 
@@ -187,6 +200,9 @@ class CircleMember {
     required this.role,
     required this.isYou,
     this.payoutPosition,
+    this.avatarUrl,
+    this.payoutReady = false,
+    this.payoutKinds = const [],
   });
 
   final String userId;
@@ -194,6 +210,11 @@ class CircleMember {
   final CircleRole role;
   final bool isYou;
   final int? payoutPosition;
+  final String? avatarUrl;
+
+  /// Has shared at least one way to be paid (kinds only, never details).
+  final bool payoutReady;
+  final List<PayoutKind> payoutKinds;
 
   factory CircleMember.fromJson(Map<String, dynamic> j) => CircleMember(
         userId: j['userId'] as String,
@@ -201,6 +222,9 @@ class CircleMember {
         role: _enum(CircleRole.values, j['role'], CircleRole.member),
         isYou: j['isYou'] as bool? ?? false,
         payoutPosition: j['payoutPosition'] == null ? null : _int(j['payoutPosition']),
+        avatarUrl: j['avatarUrl'] as String?,
+        payoutReady: (j['payout'] as Map?)?['ready'] as bool? ?? false,
+        payoutKinds: [for (final k in (j['payout'] as Map?)?['kinds'] as List? ?? const []) PayoutKind.parse(k)],
       );
 }
 
@@ -316,6 +340,9 @@ class CircleDetail {
     required this.cycles,
     required this.lottery,
     this.current,
+    this.myPayout = const [],
+    this.setup = const CircleSetup(),
+    this.invitations = const [],
   });
 
   final CircleSummary summary;
@@ -323,6 +350,13 @@ class CircleDetail {
   final List<CycleInfo> cycles;
   final LotteryState lottery;
   final CurrentCycleDetail? current;
+
+  /// My methods shared with this circle.
+  final List<PayoutSummary> myPayout;
+  final CircleSetup setup;
+
+  /// Pending invitations (organizer only).
+  final List<CircleInvite> invitations;
 
   String get id => summary.id;
   CircleMember? get me => members.where((m) => m.isYou).firstOrNull;
@@ -337,6 +371,180 @@ class CircleDetail {
         cycles: (j['cycles'] as List? ?? const []).map((c) => CycleInfo.fromJson(c as Map<String, dynamic>)).toList(),
         lottery: LotteryState.fromJson(j['lottery'] as Map<String, dynamic>?),
         current: j['current'] == null ? null : CurrentCycleDetail.fromJson(j['current'] as Map<String, dynamic>),
+        myPayout: [for (final m in j['myPayout'] as List? ?? const []) PayoutSummary.fromJson(m as Map<String, dynamic>)],
+        setup: j['setup'] == null ? const CircleSetup() : CircleSetup.fromJson(j['setup'] as Map<String, dynamic>),
+        invitations: [for (final i in j['invitations'] as List? ?? const []) CircleInvite.fromJson(i as Map<String, dynamic>)],
+      );
+}
+
+/// What still stands between a draft circle and its start.
+class CircleSetup {
+  const CircleSetup({
+    this.seatsTotal = 0,
+    this.seatsTaken = 0,
+    this.pendingInvitations = 0,
+    this.membersMissingPayout = const [],
+    this.canStart = false,
+  });
+
+  final int seatsTotal;
+  final int seatsTaken;
+  final int pendingInvitations;
+  final List<String> membersMissingPayout;
+  final bool canStart;
+
+  int get seatsOpen => (seatsTotal - seatsTaken - pendingInvitations).clamp(0, seatsTotal);
+
+  factory CircleSetup.fromJson(Map<String, dynamic> j) => CircleSetup(
+        seatsTotal: _int(j['seatsTotal'] ?? 0),
+        seatsTaken: _int(j['seatsTaken'] ?? 0),
+        pendingInvitations: _int(j['pendingInvitations'] ?? 0),
+        membersMissingPayout: [for (final id in j['membersMissingPayout'] as List? ?? const []) id as String],
+        canStart: j['canStart'] as bool? ?? false,
+      );
+}
+
+/// Someone shown in invitation lists (public fields only).
+class InvitePerson {
+  const InvitePerson({required this.id, required this.fullName, this.username, this.avatarUrl});
+
+  final String id;
+  final String fullName;
+  final String? username;
+  final String? avatarUrl;
+
+  factory InvitePerson.fromJson(Map<String, dynamic> j) => InvitePerson(
+        id: j['id'] as String,
+        fullName: j['fullName'] as String,
+        username: j['username'] as String?,
+        avatarUrl: j['avatarUrl'] as String?,
+      );
+}
+
+class CircleInvite {
+  const CircleInvite({required this.id, required this.person, required this.invitedAt});
+
+  final String id;
+  final InvitePerson person;
+  final DateTime invitedAt;
+
+  factory CircleInvite.fromJson(Map<String, dynamic> j) => CircleInvite(
+        id: j['id'] as String,
+        person: InvitePerson.fromJson(j['person'] as Map<String, dynamic>),
+        invitedAt: _ts(j['invitedAt'])!,
+      );
+}
+
+enum InvitableState { available, invited, member }
+
+class InvitablePal {
+  const InvitablePal({required this.person, required this.state});
+
+  final InvitePerson person;
+  final InvitableState state;
+
+  factory InvitablePal.fromJson(Map<String, dynamic> j) => InvitablePal(
+        person: InvitePerson.fromJson(j),
+        state: _enum(InvitableState.values, j['state'], InvitableState.available),
+      );
+}
+
+/// An invitation to me, with everything needed to decide.
+class MyInvitation {
+  const MyInvitation({
+    required this.id,
+    required this.organizer,
+    required this.invitedAt,
+    required this.circleId,
+    required this.name,
+    required this.contributionMinor,
+    required this.interval,
+    required this.turnRule,
+    required this.plannedCycles,
+    required this.collectionMode,
+    required this.memberCount,
+    required this.seatsLeft,
+    required this.payout,
+    this.firstDueDate,
+    this.message,
+    this.palsInside = const [],
+  });
+
+  final String id;
+  final InvitePerson organizer;
+  final DateTime invitedAt;
+  final String? message;
+  final String circleId;
+  final String name;
+  final int contributionMinor;
+  final CircleInterval interval;
+  final TurnRule turnRule;
+  final int plannedCycles;
+  final CollectionMode collectionMode;
+  final DateTime? firstDueDate;
+  final int memberCount;
+  final int seatsLeft;
+
+  /// The pot each member receives on their turn, with its parts.
+  final Total payout;
+  final List<String> palsInside;
+
+  factory MyInvitation.fromJson(Map<String, dynamic> j) {
+    final c = j['circle'] as Map<String, dynamic>;
+    return MyInvitation(
+      id: j['id'] as String,
+      organizer: InvitePerson.fromJson(j['organizer'] as Map<String, dynamic>),
+      invitedAt: _ts(j['invitedAt'])!,
+      message: j['message'] as String?,
+      circleId: c['id'] as String,
+      name: c['name'] as String,
+      contributionMinor: _int(c['contributionMinor']),
+      interval: _enum(CircleInterval.values, c['interval'], CircleInterval.monthly),
+      turnRule: _enum(TurnRule.values, c['turnRule'], TurnRule.fixed),
+      plannedCycles: _int(c['plannedCycles']),
+      collectionMode: _enum(CollectionMode.values, c['collectionMode'], CollectionMode.directToRecipient),
+      firstDueDate: c['firstDueDate'] == null ? null : _date(c['firstDueDate']),
+      memberCount: _int(c['memberCount']),
+      seatsLeft: _int(c['seatsLeft']),
+      payout: Total.fromJson(c['payout'] as Map<String, dynamic>),
+      palsInside: [for (final n in c['palsInside'] as List? ?? const []) n as String],
+    );
+  }
+}
+
+/// Who I pay this cycle and how.
+class PayTo {
+  const PayTo({
+    required this.cycleNumber,
+    required this.dueDate,
+    required this.collectionMode,
+    required this.youReceive,
+    required this.payee,
+    required this.amount,
+    required this.reference,
+    this.methods = const [],
+  });
+
+  final int cycleNumber;
+  final DateTime dueDate;
+  final CollectionMode collectionMode;
+  final bool youReceive;
+  final InvitePerson payee;
+  final Total amount;
+
+  /// Suggested note for the transfer so the payee can match it.
+  final String reference;
+  final List<PayoutMethod> methods;
+
+  factory PayTo.fromJson(Map<String, dynamic> j) => PayTo(
+        cycleNumber: _int(j['cycleNumber']),
+        dueDate: _date(j['dueDate']),
+        collectionMode: _enum(CollectionMode.values, j['collectionMode'], CollectionMode.directToRecipient),
+        youReceive: j['youReceive'] as bool? ?? false,
+        payee: InvitePerson.fromJson(j['payee'] as Map<String, dynamic>),
+        amount: Total.fromJson(j['amount'] as Map<String, dynamic>),
+        reference: j['reference'] as String? ?? '',
+        methods: [for (final m in j['methods'] as List? ?? const []) PayoutMethod.fromJson(m as Map<String, dynamic>)],
       );
 }
 

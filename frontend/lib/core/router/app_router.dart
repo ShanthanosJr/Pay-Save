@@ -16,7 +16,11 @@ import '../../features/circle/join_circle_screen.dart';
 import '../../features/circle/verify_queue_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/member_home_screen.dart';
+import '../../features/circle/invitation_screen.dart';
+import '../../features/circle/invite_pals_screen.dart';
 import '../../features/pals/pal_requests_screen.dart';
+import '../../features/payouts/add_payment_method_screen.dart';
+import '../../features/payouts/payment_methods_screen.dart';
 import '../../features/people/people_list_screen.dart';
 import '../../features/people/person_profile_screen.dart';
 import '../../features/profile/change_phone_screen.dart';
@@ -42,7 +46,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      const signedInRoots = ['/home', '/circle', '/circles', '/history', '/chats', '/profile', '/people', '/pals'];
+      const signedInRoots = [
+        '/home', '/circle', '/circles', '/circle-invitations', '/history', '/chats', '/profile', '/people', '/pals',
+      ];
       final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
       if (auth is AuthUnknown) return loc == '/splash' ? null : '/splash';
@@ -113,6 +119,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/pals/requests', builder: (context, state) => const PalRequestsScreen()),
+      GoRoute(path: '/profile/payment-methods', builder: (context, state) => const PaymentMethodsScreen()),
+      GoRoute(path: '/profile/payment-methods/new', builder: (context, state) => const AddPaymentMethodScreen()),
+      GoRoute(
+        path: '/circles/:id/invite',
+        builder: (context, state) => InvitePalsScreen(circleId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/circle-invitations/:id',
+        builder: (context, state) => InvitationScreen(invitationId: state.pathParameters['id']!),
+      ),
       GoRoute(
         path: '/chats/:id',
         builder: (context, state) => ChatThreadScreen(chatId: state.pathParameters['id']!),

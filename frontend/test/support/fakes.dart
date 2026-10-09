@@ -6,6 +6,8 @@ import 'package:pay_and_save/core/api/api_exception.dart';
 import 'package:pay_and_save/core/auth/auth_api.dart';
 import 'package:pay_and_save/core/auth/auth_models.dart';
 import 'package:pay_and_save/core/auth/token_store.dart';
+import 'package:pay_and_save/core/payouts/payout_models.dart';
+import 'package:pay_and_save/core/payouts/payouts_api.dart';
 import 'package:pay_and_save/core/social/social_api.dart';
 import 'package:pay_and_save/core/social/social_models.dart';
 
@@ -346,3 +348,56 @@ class FakeImagePicker extends ImagePicker {
   }) async =>
       XFile.fromData(Uint8List.fromList([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]), name: 'me.jpg');
 }
+
+/// In-memory "how I get paid" list.
+class FakePayoutsApi extends PayoutsApi {
+  FakePayoutsApi({List<PayoutMethod>? initial}) : methods = initial ?? [], super(Dio());
+
+  final List<PayoutMethod> methods;
+  final added = <PayoutDetails>[];
+  int _n = 1;
+
+  @override
+  Future<List<PayoutMethod>> list() async => List.of(methods);
+
+  @override
+  Future<List<PayoutMethod>> add(PayoutDetails details, {bool makeDefault = false}) async {
+    added.add(details);
+    final digits = details.accountNumber ?? details.number ?? '';
+    final summary = switch (details.kind) {
+      PayoutKind.bankTransfer => '${details.bankName} · ••••${digits.substring(digits.length - 4)}',
+      PayoutKind.mobileWallet => '${details.provider} · ••••${digits.substring(digits.length - 4)}',
+      PayoutKind.lankaqr => 'LankaQR · ${details.merchantName}',
+      PayoutKind.cash => 'Cash in person',
+    };
+    final first = methods.isEmpty;
+    methods.add(PayoutMethod(
+      id: 'pm-new-${_n++}',
+      kind: details.kind,
+      summary: summary,
+      details: details,
+      isDefault: first || makeDefault,
+    ));
+    return List.of(methods);
+  }
+
+  @override
+  Future<List<PayoutMethod>> remove(String id) async {
+    methods.removeWhere((m) => m.id == id);
+    return List.of(methods);
+  }
+}
+
+const bocMethod = PayoutMethod(
+  id: 'pm-boc',
+  kind: PayoutKind.bankTransfer,
+  summary: 'Bank of Ceylon · ••••6789',
+  isDefault: true,
+  details: PayoutDetails(
+    kind: PayoutKind.bankTransfer,
+    bankName: 'Bank of Ceylon',
+    branch: 'Kandy',
+    accountName: 'Kamala Silva',
+    accountNumber: '007123456789',
+  ),
+);

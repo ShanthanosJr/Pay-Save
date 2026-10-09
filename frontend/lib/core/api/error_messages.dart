@@ -49,6 +49,18 @@ String messageFor(AppLocalizations l10n, Object error) {
       return l10n.errNoPalRequest;
     case 'TOO_MANY_PAL_REQUESTS':
       return l10n.errTooManyPalRequests;
+    case 'NOT_A_PAL':
+      return l10n.errNotAPal;
+    case 'NOT_ENOUGH_SEATS':
+      return l10n.errNotEnoughSeats;
+    case 'PAYOUT_DETAILS_MISSING':
+      return l10n.errPayoutMissingStart;
+    case 'PAYOUT_METHOD_IN_USE':
+      return l10n.errMethodInUse;
+    case 'INVALID_PAYOUT_DETAILS':
+      return l10n.errPayoutDetails;
+    case 'INVITATION_NOT_FOUND':
+      return l10n.errInvitationGone;
     case 'NOT_FOUND':
       return l10n.personNotFound;
   }

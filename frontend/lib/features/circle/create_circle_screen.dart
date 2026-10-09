@@ -19,6 +19,7 @@ import '../../core/widgets/ps_text_field.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/auth_scaffold.dart';
 import '../auth/widgets/error_banner.dart';
+import 'circle_setup.dart' show CollectionModeExplainer;
 
 /// FR-04: create a circle in three steps; the turn rule is asked once (U-03).
 class CreateCircleScreen extends ConsumerStatefulWidget {
@@ -37,6 +38,7 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
   int _step = 1;
   CircleInterval _interval = CircleInterval.monthly;
   TurnRule _rule = TurnRule.fixed;
+  CollectionMode _mode = CollectionMode.directToRecipient;
   late DateTime _firstDue = DateTime.now().add(const Duration(days: 30));
   bool _busy = false;
   String? _error;
@@ -81,6 +83,7 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
             contributionMinor: _amountMinor,
             interval: _interval,
             turnRule: _rule,
+            collectionMode: _mode,
             plannedCycles: _memberCount,
             firstDueDate: _firstDue,
           );
@@ -212,6 +215,18 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
             ),
           ),
         ),
+      const SizedBox(height: 12),
+      PsGroupLabel(l10n.whoCollectsTitle),
+      PsSegmented<CollectionMode>(
+        segments: [
+          (CollectionMode.directToRecipient, l10n.modeDirect),
+          (CollectionMode.viaOrganizer, l10n.modeViaOrganizer),
+        ],
+        selected: _mode,
+        onChanged: (m) => setState(() => _mode = m),
+      ),
+      const SizedBox(height: 8),
+      CollectionModeExplainer(mode: _mode),
       const SizedBox(height: 12),
       PsArithmeticRow(
         summary: l10n.createSummary(_memberCount, formatMinor(_amountMinor), formatMinor(_memberCount * _amountMinor)),

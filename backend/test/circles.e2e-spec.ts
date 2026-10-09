@@ -186,6 +186,19 @@ describe('Circles & ledger (e2e)', () => {
     m1 = await registerUser('Nimal Perera');
     m2 = await registerUser('Sunil Fernando');
     outsider = await registerUser('Ruwan Outsider');
+    // Only the organizer's pals may join, and everyone needs a way to be paid.
+    for (const u of [m1, m2])
+      await pool.query(
+        `INSERT INTO pals (user_low, user_high)
+         VALUES (LEAST($1::uuid, $2::uuid), GREATEST($1::uuid, $2::uuid))`,
+        [org.id, u.id],
+      );
+    for (const u of [org, m1, m2, outsider])
+      await http()
+        .post('/users/me/payout-methods')
+        .set({ Authorization: `Bearer ${u.token}` })
+        .send({ kind: 'cash' })
+        .expect(201);
   }, 60_000);
 
   afterAll(async () => {
@@ -312,6 +325,11 @@ describe('Circles & ledger (e2e)', () => {
         }),
         404,
         'INVALID_JOIN_CODE',
+      );
+      await expectError(
+        as(outsider).post('/circles/join', { code }),
+        403,
+        'NOT_A_PAL',
       );
       await as(m2).post('/circles/join', { code }).expect(200);
       await expectError(

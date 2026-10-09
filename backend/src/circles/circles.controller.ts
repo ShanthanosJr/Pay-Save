@@ -1,13 +1,19 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
+  Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { SharePayoutMethodsDto } from '../payouts/dto/payouts.dto';
+import { CircleInvitationsService } from './circle-invitations.service';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthUser } from '../auth/jwt-auth.guard';
@@ -15,7 +21,10 @@ import { CircleRole, CurrentMembership } from './circle-role.guard';
 import type { Membership } from './circle-role.guard';
 import { CirclesService } from './circles.service';
 import {
+  AcceptInvitationDto,
+  CircleSettingsDto,
   CloseCycleDto,
+  InvitePalsDto,
   CreateCircleDto,
   JoinCircleDto,
   LedgerQueryDto,
@@ -25,7 +34,10 @@ import {
 @Controller('circles')
 @UseGuards(JwtAuthGuard)
 export class CirclesController {
-  constructor(private readonly circles: CirclesService) {}
+  constructor(
+    private readonly circles: CirclesService,
+    private readonly invitations: CircleInvitationsService,
+  ) {}
 
   @Post()
   create(@CurrentUser() user: AuthUser, @Body() dto: CreateCircleDto) {
@@ -47,6 +59,50 @@ export class CirclesController {
   @CircleRole('member')
   get(@CurrentMembership() m: Membership) {
     return this.circles.get(m);
+  }
+
+  @Patch(':id')
+  @CircleRole('organizer')
+  settings(@CurrentMembership() m: Membership, @Body() dto: CircleSettingsDto) {
+    return this.circles.updateSettings(m, dto.collectionMode);
+  }
+
+  /** Which of my payment methods this circle may see. */
+  @Put(':id/payout-methods')
+  @CircleRole('member')
+  sharePayout(
+    @CurrentMembership() m: Membership,
+    @Body() dto: SharePayoutMethodsDto,
+  ) {
+    return this.circles.sharePayout(m, dto.methodIds, dto.preferredId);
+  }
+
+  /** Who I pay this cycle, with their payment details (logged). */
+  @Get(':id/pay-to')
+  @CircleRole('member')
+  payTo(@CurrentMembership() m: Membership) {
+    return this.circles.payTo(m);
+  }
+
+  @Get(':id/invitable-pals')
+  @CircleRole('organizer')
+  invitable(@CurrentMembership() m: Membership) {
+    return this.invitations.invitable(m);
+  }
+
+  @Post(':id/invitations')
+  @CircleRole('organizer')
+  invite(@CurrentMembership() m: Membership, @Body() dto: InvitePalsDto) {
+    return this.invitations.invite(m, dto.userIds, dto.message);
+  }
+
+  @Delete(':id/invitations/:invitationId')
+  @CircleRole('organizer')
+  cancelInvitation(
+    @CurrentMembership() m: Membership,
+    @Param('invitationId', new ParseUUIDPipe()) invitationId: string,
+  ) {
+    return this.invitations.cancel(m, invitationId);
   }
 
   @Post(':id/lottery/commit')
@@ -78,5 +134,36 @@ export class CirclesController {
   @CircleRole('member')
   ledger(@CurrentMembership() m: Membership, @Query() q: LedgerQueryDto) {
     return this.circles.ledgerEntries(m, q.scope);
+  }
+}
+
+/** Invitations addressed to the signed-in member. */
+@Controller('circle-invitations')
+@UseGuards(JwtAuthGuard)
+export class CircleInvitationsController {
+  constructor(private readonly invitations: CircleInvitationsService) {}
+
+  @Get()
+  mine(@CurrentUser() user: AuthUser) {
+    return this.invitations.mine(user.id);
+  }
+
+  @Post(':invitationId/accept')
+  @HttpCode(200)
+  accept(
+    @CurrentUser() user: AuthUser,
+    @Param('invitationId', new ParseUUIDPipe()) invitationId: string,
+    @Body() dto: AcceptInvitationDto,
+  ) {
+    return this.invitations.accept(user.id, invitationId, dto);
+  }
+
+  @Post(':invitationId/decline')
+  @HttpCode(204)
+  async decline(
+    @CurrentUser() user: AuthUser,
+    @Param('invitationId', new ParseUUIDPipe()) invitationId: string,
+  ): Promise<void> {
+    await this.invitations.decline(user.id, invitationId);
   }
 }

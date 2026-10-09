@@ -189,8 +189,7 @@ void main() {
 
     testWidgets('unread count shows on the Chats tab', (tester) async {
       await pumpApp(tester, signedIn: true, social: FakeSocialApi()..unread = 3);
-      final badge = tester.widgetList<Badge>(find.byType(Badge)).first;
-      expect(badge.isLabelVisible, isTrue);
+      expect(tester.widgetList<Badge>(find.byType(Badge)).any((b) => b.isLabelVisible), isTrue);
       expect(find.descendant(of: find.byType(Badge), matching: find.text('3')), findsWidgets);
     });
   });

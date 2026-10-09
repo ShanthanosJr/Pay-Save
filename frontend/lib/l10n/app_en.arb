@@ -224,17 +224,6 @@
     }
   },
   "recordPaymentTitle": "Record your payment",
-  "recordPaymentSubtitle": "Pay {name} for cycle {cycle}, then record how you paid.",
-  "@recordPaymentSubtitle": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "cycle": {
-        "type": "int"
-      }
-    }
-  },
   "amountLabel": "Amount",
   "methodLabel": "How did you pay?",
   "methodCash": "Cash",
@@ -862,5 +851,287 @@
     }
   },
   "errNoPalRequest": "That request is no longer available.",
-  "errTooManyPalRequests": "You have too many pending requests. Withdraw some first."
+  "errTooManyPalRequests": "You have too many pending requests. Withdraw some first.",
+  "paymentMethodsTitle": "How you get paid",
+  "paymentMethodsIntro": "Add the ways members can pay you when it's your turn. Pay&Save only shows these details — it never moves money.",
+  "paymentMethodsPrivacy": "Only the member who has to pay you sees the full details, and only for that cycle. Every view is recorded.",
+  "paymentMethodsEmpty": "No payment details yet",
+  "paymentMethodsEmptyBody": "Add a bank account, mobile wallet or cash so your circle knows how to pay you.",
+  "addPaymentMethod": "Add a payment method",
+  "addPaymentMethodSubtitle": "How should members pay you?",
+  "payoutKindBank": "Bank transfer",
+  "payoutKindBankHint": "A bank account in your name",
+  "payoutKindWallet": "Mobile wallet",
+  "payoutKindWalletHint": "eZ Cash, mCash, Genie or FriMi",
+  "payoutKindLankaqr": "LankaQR",
+  "payoutKindLankaqrHint": "Members pay to your LankaQR ID",
+  "payoutKindCash": "Cash in person",
+  "payoutKindCashHint": "Handed over, e.g. at a meeting",
+  "bankNameLabel": "Bank",
+  "bankOther": "Other bank",
+  "bankNameOtherLabel": "Bank name",
+  "branchLabel": "Branch (optional)",
+  "branchShort": "Branch",
+  "accountNameLabel": "Account holder name",
+  "accountNumberLabel": "Account number",
+  "confirmAccountNumberLabel": "Re-enter account number",
+  "confirmAccountNumberHint": "Typing it twice prevents money going to the wrong account",
+  "errAccountNumber": "Use 6–20 digits",
+  "errAccountMismatch": "The account numbers don't match",
+  "walletProviderLabel": "Wallet",
+  "walletNumberLabel": "Wallet mobile number",
+  "registeredNameLabel": "Registered name",
+  "merchantNameLabel": "Name shown on LankaQR",
+  "lankaqrReferenceLabel": "LankaQR ID or mobile number",
+  "cashNoteLabel": "Where and when (optional)",
+  "cashNoteHint": "e.g. At the Sunday meeting",
+  "makeDefaultLabel": "Share this with new circles automatically",
+  "defaultLabel": "Default",
+  "makeDefaultAction": "Make default",
+  "removeMethodAction": "Remove",
+  "removeMethodTitle": "Remove {summary}?",
+  "@removeMethodTitle": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "removeMethodBody": "Circles you shared it with won't see it any more.",
+  "methodAddedToast": "Payment method saved",
+  "methodRemovedToast": "Payment method removed",
+  "errMethodInUse": "A running circle relies on this method. Share another one with it first.",
+  "errPayoutDetails": "Check the payment details and try again.",
+  "savePaymentMethod": "Save payment method",
+  "preferredLabel": "Preferred",
+  "howYouGetPaidEmpty": "Add bank or wallet details",
+  "setupTitle": "Getting ready to start",
+  "setupSeats": "{taken} of {total} seats filled",
+  "@setupSeats": {
+    "placeholders": {
+      "taken": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "setupInvited": "{count} invited",
+  "@setupInvited": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setupPayoutAllSet": "Everyone has shared how they get paid",
+  "setupPayoutMissing": "{count, plural, =1{1 member still needs payment details} other{{count} members still need payment details}}",
+  "@setupPayoutMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setupNeedMembers": "Add at least one more member to start",
+  "setupReady": "Ready to start",
+  "whoCollectsTitle": "Who collects the money?",
+  "modeDirect": "Pay the receiver",
+  "modeDirectBody": "Each cycle, members pay that turn's receiver directly.",
+  "modeViaOrganizer": "Organizer collects",
+  "modeViaOrganizerBody": "Members pay the organizer, who hands the full pot to the receiver.",
+  "invitePals": "Invite pals",
+  "invitedPill": "Invited",
+  "cancelInvitation": "Cancel invitation to {name}",
+  "@cancelInvitation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "invitationCancelledToast": "Invitation cancelled",
+  "payoutReadyWord": "Payment details shared",
+  "payoutMissingWord": "No payment details yet",
+  "yourPayoutForCircle": "How you get paid in this circle",
+  "yourPayoutMissing": "Choose how members should pay you when it's your turn.",
+  "choosePayoutAction": "Choose",
+  "changePayoutAction": "Change",
+  "choosePayoutTitle": "Share with {circle}",
+  "@choosePayoutTitle": {
+    "placeholders": {
+      "circle": {
+        "type": "String"
+      }
+    }
+  },
+  "choosePayoutBody": "Members only see the details when they have to pay you.",
+  "addNewMethod": "Add a new method",
+  "shareSelected": "Share selected",
+  "joinCodePalsNote": "Only your pals can join with this code.",
+  "seatsLeft": "{count, plural, =0{No seats left} =1{1 seat left} other{{count} seats left}}",
+  "@seatsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inviteOnlyPalsNote": "Only pals can be invited — seettu works best between people who trust each other.",
+  "noPalsToInvite": "You have no pals yet",
+  "noPalsToInviteBody": "Send pal requests first, then invite them here.",
+  "findPeople": "Find people",
+  "alreadyInCircle": "In circle",
+  "inviteMessageLabel": "Message (optional)",
+  "inviteMessageHint": "e.g. Starting in January — join us!",
+  "sendInvitations": "{count, plural, =1{Send 1 invitation} other{Send {count} invitations}}",
+  "@sendInvitations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "invitationsSentToast": "Invitations sent",
+  "selectPal": "Select {name}",
+  "@selectPal": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "circleInvitationsTitle": "Circle invitations",
+  "invitationCardTitle": "{organizer} invited you to {circle}",
+  "@invitationCardTitle": {
+    "placeholders": {
+      "organizer": {
+        "type": "String"
+      },
+      "circle": {
+        "type": "String"
+      }
+    }
+  },
+  "viewInvitation": "View invitation",
+  "invitedBy": "Invited by {name}",
+  "@invitedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "startsOn": "Starts {date}",
+  "@startsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "cyclesCountLabel": "Cycles",
+  "potArithmetic": "{count} × {unit} = {total} when it's your turn",
+  "@potArithmetic": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "palsInsideLabel": "Pals already in",
+  "membersSoFar": "{count} of {total} members so far",
+  "@membersSoFar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "howYouGetPaidHere": "How you'll get paid",
+  "choosePayoutRequired": "Choose at least one way to be paid.",
+  "acceptInvitation": "Accept and join",
+  "declineInvitation": "Decline",
+  "declineConfirmTitle": "Decline this invitation?",
+  "declineConfirmBody": "You can ask {name} to invite you again later.",
+  "@declineConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "joinedToast": "You joined {circle}",
+  "@joinedToast": {
+    "placeholders": {
+      "circle": {
+        "type": "String"
+      }
+    }
+  },
+  "declinedToast": "Invitation declined",
+  "payToTitle": "Pay to",
+  "payToSubtitle": "Cycle {cycle} · due {date}",
+  "@payToSubtitle": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "payToOrganizerNote": "This circle pays the organizer, who hands the pot to this cycle's receiver.",
+  "handOverPot": "Hand the pot to {name}",
+  "@handOverPot": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "youReceiveTitle": "This cycle's pot comes to you",
+  "youReceiveBody": "No payment is needed from you this cycle.",
+  "copyValue": "Copy {label}",
+  "@copyValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "copiedToast": "{label} copied",
+  "@copiedToast": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "referenceToUse": "Note to add to your transfer",
+  "payeeNoDetails": "{name} hasn't shared payment details yet. Ask them before paying.",
+  "@payeeNoDetails": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whoToPay": "Who to pay this cycle",
+  "amountToPay": "Amount",
+  "errNotAPal": "Only pals of the organizer can join this circle.",
+  "errNotEnoughSeats": "Not enough seats left in this circle.",
+  "errPayoutMissingStart": "Every member must share how they get paid before you start.",
+  "errInvitationGone": "This invitation is no longer available."
 }

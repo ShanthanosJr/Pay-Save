@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
 import 'package:pay_and_save/core/circles/circles_providers.dart';
+import 'package:pay_and_save/core/payouts/payouts_api.dart';
 import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/circle/join_circle_screen.dart';
 import 'package:pay_and_save/main.dart';
@@ -22,6 +23,7 @@ Future<FakeCirclesApi> pumpSignedIn(WidgetTester tester, FakeSeed seed) async {
       tokenStoreProvider.overrideWithValue(store),
       circlesApiProvider.overrideWithValue(circles),
       socialApiProvider.overrideWithValue(FakeSocialApi()),
+      payoutsApiProvider.overrideWithValue(FakePayoutsApi()),
     ],
     child: const PayAndSaveApp(),
   ));
@@ -175,6 +177,8 @@ void main() {
     await tapText(tester, 'Circles');
     expect(find.text('Set the turn order'), findsWidgets);
 
+    await tester.ensureVisible(find.byTooltip('Move Nadeeshi Perera down'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Move Nadeeshi Perera down'));
     await tester.pumpAndSettle();
     await tapButton(tester, 'Start circle');

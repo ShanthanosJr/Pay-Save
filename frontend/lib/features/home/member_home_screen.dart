@@ -22,6 +22,8 @@ import '../../core/widgets/ps_status_badge.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../circle/record_payment_sheet.dart';
 import '../shell/async_states.dart';
+import '../circle/circle_setup.dart' show MyCirclePayoutCard;
+import '../circle/invitation_screen.dart' show InvitationsBanner;
 import '../shell/brand_header.dart';
 import '../shell/circle_switcher.dart';
 
@@ -42,6 +44,7 @@ class MemberHomeScreen extends ConsumerWidget {
       children: [
         Text(l10n.greeting(firstName), style: AppText.display),
         const SizedBox(height: AppSpace.xs),
+        const InvitationsBanner(),
         ...active.when(
           loading: () => const [SheetLoading()],
           error: (e, _) => [SheetError(error: e, onRetry: () => ref.invalidate(myCirclesProvider))],
@@ -122,7 +125,11 @@ class _DraftHome extends StatelessWidget {
           _MembersStrip(members: detail.members, planned: s.plannedCycles),
         ]),
       ),
-      if (s.joinCode != null) ...[
+      if (detail.myPayout.isEmpty) ...[
+        const SizedBox(height: AppSpace.m),
+        MyCirclePayoutCard(detail: detail),
+      ],
+      if (s.joinCode != null && s.isOrganizer) ...[
         const SizedBox(height: AppSpace.m),
         JoinCodeCard(code: s.joinCode!),
       ],
@@ -242,7 +249,6 @@ class _ActiveHome extends ConsumerWidget {
               context,
               circle: s,
               cycleNumber: cycle.number,
-              payeeName: recipient?.isYou == true ? l10n.youLabel : recipient?.displayName,
             ),
           ),
         ),

@@ -115,7 +115,6 @@
   "youLabel": "நீங்கள்",
   "receivesInCycle": "சுழற்சி {number}-இல் பெறுவார்",
   "recordPaymentTitle": "உங்கள் கட்டணத்தைப் பதிவுசெய்யுங்கள்",
-  "recordPaymentSubtitle": "சுழற்சி {cycle}-க்கு {name} அவர்களுக்குச் செலுத்தி, எப்படிச் செலுத்தினீர்கள் என்பதைப் பதிவுசெய்யுங்கள்.",
   "amountLabel": "தொகை",
   "methodLabel": "எப்படிச் செலுத்தினீர்கள்?",
   "methodCash": "ரொக்கம்",
@@ -690,6 +689,474 @@
   },
   "errTooManyPalRequests": "நிலுவையில் உள்ள கோரிக்கைகள் அதிகம். முதலில் சிலவற்றைத் திரும்பப் பெறவும்.",
   "@errTooManyPalRequests": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "paymentMethodsTitle": "உங்களுக்குப் பணம் கிடைக்கும் விதம்",
+  "@paymentMethodsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "paymentMethodsIntro": "உங்கள் முறை வரும்போது உறுப்பினர்கள் உங்களுக்குச் செலுத்தும் வழிகளைச் சேர்க்கவும். Pay&Save இவ்விவரங்களைக் காட்டும் மட்டுமே — பணத்தை ஒருபோதும் மாற்றாது.",
+  "@paymentMethodsIntro": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "paymentMethodsPrivacy": "உங்களுக்குச் செலுத்த வேண்டிய உறுப்பினர் மட்டுமே, அந்தச் சுற்றுக்கு மட்டும், முழு விவரங்களைப் பார்ப்பார். ஒவ்வொரு பார்வையும் பதிவு செய்யப்படும்.",
+  "@paymentMethodsPrivacy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "paymentMethodsEmpty": "இன்னும் கட்டண விவரங்கள் இல்லை",
+  "@paymentMethodsEmpty": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "paymentMethodsEmptyBody": "உங்களுக்கு எப்படிச் செலுத்துவது என வட்டம் அறிய வங்கிக் கணக்கு, மொபைல் வாலட் அல்லது பணத்தைச் சேர்க்கவும்.",
+  "@paymentMethodsEmptyBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addPaymentMethod": "கட்டண முறையைச் சேர்",
+  "@addPaymentMethod": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addPaymentMethodSubtitle": "உறுப்பினர்கள் உங்களுக்கு எப்படிச் செலுத்த வேண்டும்?",
+  "@addPaymentMethodSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindBank": "வங்கிப் பரிமாற்றம்",
+  "@payoutKindBank": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindBankHint": "உங்கள் பெயரில் உள்ள வங்கிக் கணக்கு",
+  "@payoutKindBankHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindWallet": "மொபைல் வாலட்",
+  "@payoutKindWallet": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindWalletHint": "eZ Cash, mCash, Genie அல்லது FriMi",
+  "@payoutKindWalletHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindLankaqr": "LankaQR",
+  "@payoutKindLankaqr": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindLankaqrHint": "உறுப்பினர்கள் உங்கள் LankaQR அடையாளத்திற்குச் செலுத்துவர்",
+  "@payoutKindLankaqrHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindCash": "நேரில் பணம்",
+  "@payoutKindCash": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutKindCashHint": "நேரில் ஒப்படைப்பு, எ.கா. கூட்டத்தில்",
+  "@payoutKindCashHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bankNameLabel": "வங்கி",
+  "@bankNameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bankOther": "வேறு வங்கி",
+  "@bankOther": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "bankNameOtherLabel": "வங்கியின் பெயர்",
+  "@bankNameOtherLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "branchLabel": "கிளை (விருப்பம்)",
+  "@branchLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "branchShort": "கிளை",
+  "@branchShort": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "accountNameLabel": "கணக்கு வைத்திருப்பவர் பெயர்",
+  "@accountNameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "accountNumberLabel": "கணக்கு எண்",
+  "@accountNumberLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "confirmAccountNumberLabel": "கணக்கு எண்ணை மீண்டும் உள்ளிடவும்",
+  "@confirmAccountNumberLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "confirmAccountNumberHint": "இருமுறை உள்ளிடுவது தவறான கணக்கிற்குப் பணம் செல்வதைத் தடுக்கும்",
+  "@confirmAccountNumberHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errAccountNumber": "6–20 இலக்கங்களைப் பயன்படுத்தவும்",
+  "@errAccountNumber": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errAccountMismatch": "கணக்கு எண்கள் பொருந்தவில்லை",
+  "@errAccountMismatch": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "walletProviderLabel": "வாலட்",
+  "@walletProviderLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "walletNumberLabel": "வாலட் மொபைல் எண்",
+  "@walletNumberLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "registeredNameLabel": "பதிவு செய்யப்பட்ட பெயர்",
+  "@registeredNameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "merchantNameLabel": "LankaQR இல் காட்டப்படும் பெயர்",
+  "@merchantNameLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "lankaqrReferenceLabel": "LankaQR அடையாளம் அல்லது மொபைல் எண்",
+  "@lankaqrReferenceLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cashNoteLabel": "எங்கே, எப்போது (விருப்பம்)",
+  "@cashNoteLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cashNoteHint": "எ.கா. ஞாயிறு கூட்டத்தில்",
+  "@cashNoteHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "makeDefaultLabel": "புதிய வட்டங்களுடன் இதைத் தானாகப் பகிரவும்",
+  "@makeDefaultLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "defaultLabel": "இயல்புநிலை",
+  "@defaultLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "makeDefaultAction": "இயல்புநிலையாக்கு",
+  "@makeDefaultAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMethodAction": "நீக்கு",
+  "@removeMethodAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMethodTitle": "{summary} ஐ நீக்கவா?",
+  "@removeMethodTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMethodBody": "நீங்கள் பகிர்ந்த வட்டங்களுக்கு இனி அது தெரியாது.",
+  "@removeMethodBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "methodAddedToast": "கட்டண முறை சேமிக்கப்பட்டது",
+  "@methodAddedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "methodRemovedToast": "கட்டண முறை நீக்கப்பட்டது",
+  "@methodRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errMethodInUse": "இயங்கும் வட்டம் இந்த முறையைச் சார்ந்துள்ளது. முதலில் அதனுடன் வேறொன்றைப் பகிரவும்.",
+  "@errMethodInUse": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errPayoutDetails": "கட்டண விவரங்களைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+  "@errPayoutDetails": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "savePaymentMethod": "கட்டண முறையைச் சேமி",
+  "@savePaymentMethod": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "preferredLabel": "விருப்பமானது",
+  "@preferredLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "howYouGetPaidEmpty": "வங்கி அல்லது வாலட் விவரங்களைச் சேர்க்கவும்",
+  "@howYouGetPaidEmpty": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupTitle": "தொடங்கத் தயாராகிறது",
+  "@setupTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupSeats": "{total} இடங்களில் {taken} நிரம்பின",
+  "@setupSeats": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupInvited": "{count} அழைக்கப்பட்டனர்",
+  "@setupInvited": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupPayoutAllSet": "அனைவரும் பணம் பெறும் விதத்தைப் பகிர்ந்துள்ளனர்",
+  "@setupPayoutAllSet": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupPayoutMissing": "{count, plural, other{{count} உறுப்பினர்களுக்கு இன்னும் கட்டண விவரங்கள் தேவை}}",
+  "@setupPayoutMissing": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupNeedMembers": "தொடங்க குறைந்தது இன்னொரு உறுப்பினரைச் சேர்க்கவும்",
+  "@setupNeedMembers": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "setupReady": "தொடங்கத் தயார்",
+  "@setupReady": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "whoCollectsTitle": "பணத்தை யார் வசூலிப்பார்?",
+  "@whoCollectsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "modeDirect": "பெறுபவருக்குச் செலுத்து",
+  "@modeDirect": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "modeDirectBody": "ஒவ்வொரு சுற்றிலும், உறுப்பினர்கள் அந்த முறையின் பெறுநருக்கு நேரடியாகச் செலுத்துவர்.",
+  "@modeDirectBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "modeViaOrganizer": "அமைப்பாளர் வசூலிப்பார்",
+  "@modeViaOrganizer": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "modeViaOrganizerBody": "உறுப்பினர்கள் அமைப்பாளருக்குச் செலுத்துவர்; அவர் முழுத் தொகையையும் பெறுநரிடம் ஒப்படைப்பார்.",
+  "@modeViaOrganizerBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitePals": "நண்பர்களை அழை",
+  "@invitePals": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitedPill": "அழைக்கப்பட்டார்",
+  "@invitedPill": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cancelInvitation": "{name} க்கான அழைப்பை ரத்து செய்",
+  "@cancelInvitation": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitationCancelledToast": "அழைப்பு ரத்து செய்யப்பட்டது",
+  "@invitationCancelledToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutReadyWord": "கட்டண விவரங்கள் பகிரப்பட்டன",
+  "@payoutReadyWord": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payoutMissingWord": "இன்னும் கட்டண விவரங்கள் இல்லை",
+  "@payoutMissingWord": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourPayoutForCircle": "இந்த வட்டத்தில் நீங்கள் பணம் பெறும் விதம்",
+  "@yourPayoutForCircle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourPayoutMissing": "உங்கள் முறை வரும்போது உறுப்பினர்கள் உங்களுக்கு எப்படிச் செலுத்த வேண்டும் எனத் தேர்வு செய்யவும்.",
+  "@yourPayoutMissing": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "choosePayoutAction": "தேர்வு செய்",
+  "@choosePayoutAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePayoutAction": "மாற்று",
+  "@changePayoutAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "choosePayoutTitle": "{circle} உடன் பகிர்",
+  "@choosePayoutTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "choosePayoutBody": "உங்களுக்குச் செலுத்த வேண்டியபோது மட்டுமே உறுப்பினர்கள் விவரங்களைப் பார்ப்பர்.",
+  "@choosePayoutBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "addNewMethod": "புதிய முறையைச் சேர்",
+  "@addNewMethod": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "shareSelected": "தேர்ந்தெடுத்தவற்றைப் பகிர்",
+  "@shareSelected": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "joinCodePalsNote": "இந்தக் குறியீட்டுடன் உங்கள் நண்பர்கள் மட்டுமே சேர முடியும்.",
+  "@joinCodePalsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "seatsLeft": "{count, plural, other{மீதமுள்ள இடங்கள் {count}}}",
+  "@seatsLeft": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "inviteOnlyPalsNote": "நண்பர்களை மட்டுமே அழைக்க முடியும் — ஒருவரையொருவர் நம்புபவர்களிடையே சீட்டு சிறப்பாகச் செயல்படும்.",
+  "@inviteOnlyPalsNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPalsToInvite": "உங்களுக்கு இன்னும் நண்பர்கள் இல்லை",
+  "@noPalsToInvite": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "noPalsToInviteBody": "முதலில் நண்பர் கோரிக்கைகளை அனுப்பி, பின்னர் இங்கே அழைக்கவும்.",
+  "@noPalsToInviteBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "findPeople": "நபர்களைத் தேடு",
+  "@findPeople": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "alreadyInCircle": "வட்டத்தில்",
+  "@alreadyInCircle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "inviteMessageLabel": "செய்தி (விருப்பம்)",
+  "@inviteMessageLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "inviteMessageHint": "எ.கா. ஜனவரியில் தொடங்குகிறது — இணையுங்கள்!",
+  "@inviteMessageHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendInvitations": "{count, plural, other{{count} அழைப்புகளை அனுப்பு}}",
+  "@sendInvitations": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitationsSentToast": "அழைப்புகள் அனுப்பப்பட்டன",
+  "@invitationsSentToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "selectPal": "{name} ஐத் தேர்ந்தெடு",
+  "@selectPal": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "circleInvitationsTitle": "வட்ட அழைப்புகள்",
+  "@circleInvitationsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitationCardTitle": "{organizer} உங்களை {circle} க்கு அழைத்தார்",
+  "@invitationCardTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "viewInvitation": "அழைப்பைப் பார்",
+  "@viewInvitation": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "invitedBy": "{name} அழைத்தார்",
+  "@invitedBy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "startsOn": "{date} தொடங்கும்",
+  "@startsOn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "cyclesCountLabel": "சுற்றுகள்",
+  "@cyclesCountLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "potArithmetic": "உங்கள் முறையில் {count} × {unit} = {total}",
+  "@potArithmetic": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "palsInsideLabel": "ஏற்கனவே உள்ள நண்பர்கள்",
+  "@palsInsideLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "membersSoFar": "இதுவரை {total} இல் {count} உறுப்பினர்கள்",
+  "@membersSoFar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "howYouGetPaidHere": "நீங்கள் பணம் பெறும் விதம்",
+  "@howYouGetPaidHere": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "choosePayoutRequired": "பணம் பெற குறைந்தது ஒரு வழியைத் தேர்வு செய்யவும்.",
+  "@choosePayoutRequired": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "acceptInvitation": "ஏற்று இணை",
+  "@acceptInvitation": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "declineInvitation": "நிராகரி",
+  "@declineInvitation": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "declineConfirmTitle": "இந்த அழைப்பை நிராகரிக்கவா?",
+  "@declineConfirmTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "declineConfirmBody": "பின்னர் மீண்டும் அழைக்குமாறு {name} இடம் கேட்கலாம்.",
+  "@declineConfirmBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "joinedToast": "நீங்கள் {circle} இல் இணைந்தீர்கள்",
+  "@joinedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "declinedToast": "அழைப்பு நிராகரிக்கப்பட்டது",
+  "@declinedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payToTitle": "செலுத்த வேண்டியவர்",
+  "@payToTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payToSubtitle": "சுற்று {cycle} · {date} க்குள்",
+  "@payToSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payToOrganizerNote": "இந்த வட்டம் அமைப்பாளருக்குச் செலுத்துகிறது; அவர் தொகையை இந்தச் சுற்றின் பெறுநரிடம் ஒப்படைப்பார்.",
+  "@payToOrganizerNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "handOverPot": "{name} இடம் தொகையை ஒப்படை",
+  "@handOverPot": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "youReceiveTitle": "இந்தச் சுற்றின் தொகை உங்களுக்கு வருகிறது",
+  "@youReceiveTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "youReceiveBody": "இந்தச் சுற்றில் நீங்கள் செலுத்த வேண்டியதில்லை.",
+  "@youReceiveBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "copyValue": "{label} ஐ நகலெடு",
+  "@copyValue": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "copiedToast": "{label} நகலெடுக்கப்பட்டது",
+  "@copiedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "referenceToUse": "உங்கள் பரிமாற்றத்தில் சேர்க்க வேண்டிய குறிப்பு",
+  "@referenceToUse": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "payeeNoDetails": "{name} இன்னும் கட்டண விவரங்களைப் பகிரவில்லை. செலுத்தும் முன் அவர்களிடம் கேட்கவும்.",
+  "@payeeNoDetails": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "whoToPay": "இந்தச் சுற்றில் யாருக்குச் செலுத்த வேண்டும்",
+  "@whoToPay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "amountToPay": "தொகை",
+  "@amountToPay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNotAPal": "அமைப்பாளரின் நண்பர்கள் மட்டுமே இந்த வட்டத்தில் சேர முடியும்.",
+  "@errNotAPal": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNotEnoughSeats": "இந்த வட்டத்தில் போதுமான இடங்கள் இல்லை.",
+  "@errNotEnoughSeats": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errPayoutMissingStart": "தொடங்கும் முன் ஒவ்வொரு உறுப்பினரும் பணம் பெறும் விதத்தைப் பகிர வேண்டும்.",
+  "@errPayoutMissingStart": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errInvitationGone": "இந்த அழைப்பு இனி கிடைக்காது.",
+  "@errInvitationGone": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

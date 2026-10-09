@@ -34,8 +34,10 @@ class CirclesApi {
     required TurnRule turnRule,
     required int plannedCycles,
     required DateTime firstDueDate,
+    CollectionMode collectionMode = CollectionMode.directToRecipient,
   }) =>
       _call(() => _detail(_dio.post('/circles', data: {
+            'collectionMode': wireName(collectionMode),
             'name': name,
             'contributionMinor': contributionMinor,
             'interval': wireName(interval),
@@ -43,6 +45,50 @@ class CirclesApi {
             'plannedCycles': plannedCycles,
             'firstDueDate': DateFormat('yyyy-MM-dd').format(firstDueDate),
           })));
+
+  Future<CircleDetail> setCollectionMode(String id, CollectionMode mode) =>
+      _call(() => _detail(_dio.patch('/circles/$id', data: {'collectionMode': wireName(mode)})));
+
+  /// Which of my payment methods this circle may see.
+  Future<CircleDetail> sharePayout(String id, List<String> methodIds, String preferredId) => _call(
+        () => _detail(_dio.put('/circles/$id/payout-methods', data: {'methodIds': methodIds, 'preferredId': preferredId})),
+      );
+
+  /// Who I pay this cycle, with their full details (the server logs each view).
+  Future<PayTo> payTo(String id) => _call(() async {
+        final r = await _dio.get<Map<String, dynamic>>('/circles/$id/pay-to');
+        return PayTo.fromJson(r.data!);
+      });
+
+  Future<(int, List<InvitablePal>)> invitablePals(String id) => _call(() async {
+        final r = await _dio.get<Map<String, dynamic>>('/circles/$id/invitable-pals');
+        return (
+          _intOf(r.data!['seatsLeft']),
+          [for (final p in r.data!['pals'] as List) InvitablePal.fromJson(p as Map<String, dynamic>)],
+        );
+      });
+
+  Future<CircleDetail> invite(String id, List<String> userIds, {String? message}) => _call(
+        () => _detail(_dio.post('/circles/$id/invitations', data: {'userIds': userIds, 'message': ?message})),
+      );
+
+  Future<CircleDetail> cancelInvitation(String id, String invitationId) =>
+      _call(() => _detail(_dio.delete('/circles/$id/invitations/$invitationId')));
+
+  Future<List<MyInvitation>> myInvitations() => _call(() async {
+        final r = await _dio.get<Map<String, dynamic>>('/circle-invitations');
+        return [for (final i in r.data!['invitations'] as List) MyInvitation.fromJson(i as Map<String, dynamic>)];
+      });
+
+  Future<CircleDetail> acceptInvitation(String invitationId, {required List<String> methodIds, String? preferredId}) =>
+      _call(() => _detail(_dio.post(
+            '/circle-invitations/$invitationId/accept',
+            data: {'methodIds': methodIds, 'preferredId': ?preferredId},
+          )));
+
+  Future<void> declineInvitation(String invitationId) => _call(() async {
+        await _dio.post<void>('/circle-invitations/$invitationId/decline');
+      });
 
   Future<CircleDetail> join(String code) => _call(() => _detail(_dio.post('/circles/join', data: {'code': code})));
 
@@ -106,3 +152,5 @@ class CirclesApi {
         return (r.data!['entries'] as List).map((e) => LedgerEntry.fromJson(e as Map<String, dynamic>)).toList();
       });
 }
+
+int _intOf(Object? v) => (v as num).toInt();

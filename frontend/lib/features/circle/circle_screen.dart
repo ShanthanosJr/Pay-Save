@@ -23,6 +23,10 @@ import '../auth/widgets/error_banner.dart';
 import '../home/member_home_screen.dart' show JoinCodeCard;
 import '../shell/async_states.dart';
 import '../shell/brand_header.dart';
+import '../../core/widgets/ps_user_avatar.dart';
+import 'circle_setup.dart';
+import 'invitation_screen.dart' show InvitationsBanner;
+import 'pay_to.dart';
 import 'record_payment_sheet.dart';
 import 'verify_actions.dart';
 
@@ -42,6 +46,7 @@ class CircleScreen extends ConsumerWidget {
         data: (circle) {
           if (circle == null) {
             return [
+              const InvitationsBanner(),
               EmptyState(
                 icon: Icons.groups_rounded,
                 title: l10n.noCirclesTitle,
@@ -61,7 +66,7 @@ class CircleScreen extends ConsumerWidget {
           return detail.when(
             loading: () => const [SheetLoading()],
             error: (e, _) => [SheetError(error: e, onRetry: () => ref.invalidate(circleDetailProvider(circle.id)))],
-            data: (d) => [_CircleBody(detail: d)],
+            data: (d) => [const InvitationsBanner(), _CircleBody(detail: d)],
           );
         },
       ),
@@ -218,8 +223,18 @@ class _DraftSetupState extends ConsumerState<_DraftSetup> {
     final organizer = s.isOrganizer;
     final ordered = organizer && !lottery ? _order.map(d.memberById).whereType<CircleMember>().toList() : d.members;
 
+    final setup = d.setup;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      if (s.joinCode != null) ...[JoinCodeCard(code: s.joinCode!), const SizedBox(height: AppSpace.xxl)],
+      SetupChecklist(detail: d),
+      const SizedBox(height: AppSpace.l),
+      MyCirclePayoutCard(detail: d),
+      if (organizer) ...[
+        const SizedBox(height: AppSpace.l),
+        InvitePalsButton(detail: d),
+      ],
+      const SizedBox(height: AppSpace.xxl),
+      CollectionModeSelector(detail: d),
+      const SizedBox(height: AppSpace.xxl),
       PsSectionHeader(title: organizer && !lottery ? l10n.turnOrderSetupTitle : l10n.circleMembers),
       Text(
         organizer ? l10n.draftBodyOrganizer(d.members.length, s.plannedCycles) : l10n.draftBodyMember(d.members.length, s.plannedCycles),
@@ -228,17 +243,12 @@ class _DraftSetupState extends ConsumerState<_DraftSetup> {
       const SizedBox(height: AppSpace.m),
       for (var i = 0; i < ordered.length; i++)
         PsListRow(
-          leading: organizer && !lottery
-              ? Container(
-                  width: 32,
-                  height: 32,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: AppColors.mintSoft, shape: BoxShape.circle),
-                  child: Text('${i + 1}', style: AppText.label.copyWith(color: AppColors.forest800)),
-                )
-              : PsAvatar(name: ordered[i].displayName, size: 40),
+          leading: _MemberAvatar(member: ordered[i], position: organizer && !lottery ? i + 1 : null),
           title: ordered[i].isYou ? '${ordered[i].displayName} (${l10n.youLabel})' : ordered[i].displayName,
-          subtitle: ordered[i].role == CircleRole.organizer ? l10n.organizerLabel : null,
+          subtitle: [
+            if (ordered[i].role == CircleRole.organizer) l10n.organizerLabel,
+            ordered[i].payoutReady ? l10n.payoutReadyWord : l10n.payoutMissingWord,
+          ].join(' · '),
           trailing: organizer && !lottery
               ? Row(mainAxisSize: MainAxisSize.min, children: [
                   IconButton(
@@ -254,6 +264,15 @@ class _DraftSetupState extends ConsumerState<_DraftSetup> {
                 ])
               : null,
         ),
+      if (organizer) PendingInvitations(detail: d),
+      if (s.joinCode != null && organizer) ...[
+        const SizedBox(height: AppSpace.l),
+        JoinCodeCard(code: s.joinCode!),
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpace.s, left: 4),
+          child: Text(l10n.joinCodePalsNote, style: AppText.caption),
+        ),
+      ],
       if (lottery && d.lottery.commitment != null) ...[
         const SizedBox(height: AppSpace.m),
         _FingerprintCard(label: l10n.lotteryFingerprint, value: d.lottery.commitment!, body: l10n.lotteryCommitBody),
@@ -273,14 +292,61 @@ class _DraftSetupState extends ConsumerState<_DraftSetup> {
             label: lottery ? l10n.revealAndStart : l10n.startCircle,
             icon: Icons.play_arrow_rounded,
             loading: _busy,
-            onPressed: d.members.length < 2 ? null : _confirmStart,
+            onPressed: setup.canStart ? _confirmStart : null,
           ),
-        if (d.members.length < 2) ...[
+        if (!setup.canStart) ...[
           const SizedBox(height: AppSpace.s),
-          Text(l10n.errNotEnoughMembers, style: AppText.caption, textAlign: TextAlign.center),
+          Text(
+            d.members.length < 2 ? l10n.errNotEnoughMembers : l10n.errPayoutMissingStart,
+            style: AppText.caption,
+            textAlign: TextAlign.center,
+          ),
         ],
       ],
     ]);
+  }
+}
+
+/// Avatar with a tiny readiness mark; the turn number in fixed-order setup.
+class _MemberAvatar extends StatelessWidget {
+  const _MemberAvatar({required this.member, this.position});
+
+  final CircleMember member;
+  final int? position;
+
+  @override
+  Widget build(BuildContext context) {
+    final ok = member.payoutReady;
+    return SizedBox(
+      width: 44,
+      height: 44,
+      child: Stack(clipBehavior: Clip.none, children: [
+        if (position != null)
+          Container(
+            width: 42,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(color: AppColors.mintSoft, shape: BoxShape.circle),
+            child: Text('$position', style: AppText.label.copyWith(color: AppColors.forest800)),
+          )
+        else
+          PsUserAvatar(name: member.displayName, avatarUrl: member.avatarUrl, size: 42),
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: ok ? AppColors.success : AppColors.warning,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.surface, width: 2),
+            ),
+            child: Icon(ok ? Icons.check_rounded : Icons.schedule_rounded, size: 11, color: AppColors.onForest),
+          ),
+        ),
+      ]),
+    );
   }
 }
 
@@ -332,6 +398,16 @@ class _LiveCircle extends StatelessWidget {
       ..sort((a, b) => (a.payoutPosition ?? 999).compareTo(b.payoutPosition ?? 999));
 
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      if (current != null) ...[
+        PsListRow(
+          icon: Icons.account_balance_wallet_rounded,
+          title: l10n.whoToPay,
+          subtitle: l10n.payToSubtitle(current.number, shortDate(l10n, current.dueDate)),
+          showChevron: true,
+          onTap: () => showPayToSheet(context, s.id),
+        ),
+        const SizedBox(height: AppSpace.xl),
+      ],
       PsSectionHeader(title: l10n.circleMembers),
       if (current != null)
         Container(

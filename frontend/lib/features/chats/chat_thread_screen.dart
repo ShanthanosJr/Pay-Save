@@ -22,6 +22,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_button.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 enum _Delivery { sent, sending, failed }
@@ -562,7 +563,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       );
     }
     if (_thread == null) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2));
+      return const PsSkeletonChat();
     }
     if (_items.isEmpty) {
       return Center(
@@ -794,11 +795,7 @@ class _Bubble extends ConsumerWidget {
       return ClipRRect(
         borderRadius: BorderRadius.circular(AppRadii.small),
         child: bytes == null
-            ? const SizedBox(
-                width: 200,
-                height: 150,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-              )
+            ? const PsSkeleton(child: PsBone(width: 200, height: 150, radius: 0))
             : Image.memory(bytes, width: 220, fit: BoxFit.cover, gaplessPlayback: true),
       );
     }

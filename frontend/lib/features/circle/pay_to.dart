@@ -13,6 +13,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_arithmetic_row.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../payouts/payout_ui.dart';
 import 'circle_setup.dart';
@@ -42,10 +43,7 @@ class _PayToCardState extends ConsumerState<PayToCard> {
     if (p == null) {
       return async.hasError
           ? Text(messageFor(l10n, async.error!), style: AppText.footnote)
-          : const Padding(
-              padding: EdgeInsets.all(AppSpace.l),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            );
+          : const PsSkeletonRows(count: 1, leading: PsSkeletonLeading.badge);
     }
 
     if (p.youReceive) {

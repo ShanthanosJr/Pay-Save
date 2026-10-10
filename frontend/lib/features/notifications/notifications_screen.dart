@@ -10,6 +10,7 @@ import '../../core/widgets/ps_back_header.dart';
 import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../shell/async_states.dart';
 
@@ -109,7 +110,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           if (inbox == null && async.hasError)
             SheetError(error: async.error!, onRetry: () => ref.invalidate(inboxProvider))
           else if (inbox == null)
-            const SheetLoading()
+            const PsSkeletonRows(count: 6, leading: PsSkeletonLeading.badge)
           else if (inbox.items.isEmpty)
             EmptyState(
               icon: Icons.notifications_none_rounded,

@@ -13,6 +13,7 @@ import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../people/pal_actions.dart';
 import '../people/person_row.dart';
@@ -71,10 +72,7 @@ class _PalRequestsScreenState extends ConsumerState<PalRequestsScreen> {
               ],
             )
           else if (list == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 32),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            )
+            const PsSkeletonRows(count: 4, trailing: true)
           else if (list.isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AppSpace.l),

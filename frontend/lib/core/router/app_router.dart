@@ -166,14 +166,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   );
 });
 
+/// Sits under the branded loader (`PsSplashGate` in main.dart) while the
+/// saved session is checked, so it only needs to match its background.
 class _Splash extends StatelessWidget {
   const _Splash();
 
   @override
   Widget build(BuildContext context) => const Scaffold(
-        body: DecoratedBox(
-          decoration: BoxDecoration(gradient: AppColors.headerGradient),
-          child: Center(child: CircularProgressIndicator(color: AppColors.onForest, strokeWidth: 2)),
-        ),
+        body: SizedBox.expand(child: DecoratedBox(decoration: BoxDecoration(gradient: AppColors.headerGradient))),
       );
 }

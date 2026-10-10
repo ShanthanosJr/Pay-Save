@@ -21,6 +21,7 @@ import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_search_field.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../pals/pal_requests_row.dart';
 import '../people/pal_actions.dart';
@@ -417,10 +418,7 @@ class _Loading extends StatelessWidget {
   const _Loading();
 
   @override
-  Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.symmetric(vertical: 32),
-    child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-  );
+  Widget build(BuildContext context) => const PsSkeletonRows(count: 4, trailing: true);
 }
 
 class _Message extends StatelessWidget {

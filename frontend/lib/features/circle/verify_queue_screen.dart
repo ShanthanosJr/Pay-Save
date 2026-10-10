@@ -8,6 +8,7 @@ import '../../core/format/money.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/auth_scaffold.dart';
 import '../shell/async_states.dart';
@@ -28,7 +29,7 @@ class VerifyQueueScreen extends ConsumerWidget {
       subtitle: l10n.verifyQueueSubtitle,
       onBack: () => context.canPop() ? context.pop() : context.go('/home'),
       child: queue.when(
-        loading: () => const SheetLoading(),
+        loading: () => const PsSkeletonRows(count: 4, trailing: true),
         error: (e, _) => SheetError(error: e, onRetry: () => ref.invalidate(verifyQueueProvider(circleId))),
         data: (items) => items.isEmpty
             ? EmptyState(icon: Icons.done_all_rounded, title: l10n.queueEmptyTitle, body: l10n.queueEmptyBody)

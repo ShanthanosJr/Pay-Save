@@ -6,7 +6,8 @@ import { CryptoService } from '../common/crypto/crypto.service';
 import { safeEqual } from '../common/crypto/hash';
 import { AppException } from '../common/errors/app.exception';
 import { OtpRepository } from './otp.repository';
-import { OTP_SENDER, OtpPurpose } from './otp-sender';
+import { Logger } from '@nestjs/common';
+import { OTP_SENDER, OtpLanguage, OtpPurpose } from './otp-sender';
 import type { OtpSender } from './otp-sender';
 
 export const OTP_TTL_SECONDS = 300;
@@ -29,6 +30,8 @@ export function otpResponse(issued: OtpIssued, echo: boolean) {
 
 @Injectable()
 export class OtpService {
+  private readonly logger = new Logger('Otp');
+
   constructor(
     private readonly repo: OtpRepository,
     @Inject(OTP_SENDER) private readonly sender: OtpSender,
@@ -40,6 +43,7 @@ export class OtpService {
     purpose: OtpPurpose,
     target: string,
     userId: string | null = null,
+    language?: OtpLanguage,
   ): Promise<OtpIssued> {
     const now = this.clock.now();
     const targetHash = this.crypto.lookupHash(target);
@@ -63,7 +67,7 @@ export class OtpService {
 
     const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
     await this.repo.invalidateActive(purpose, targetHash, now);
-    await this.repo.insert({
+    const challenge = await this.repo.insert({
       purpose,
       targetHash,
       userId,
@@ -71,7 +75,18 @@ export class OtpService {
       expiresAt: new Date(now.getTime() + OTP_TTL_SECONDS * 1000),
       createdAt: now,
     });
-    await this.sender.send({ purpose, target, code });
+    try {
+      await this.sender.send({ purpose, target, code, language });
+    } catch (err) {
+      // An undelivered code must not start the resend cooldown.
+      await this.repo.remove(challenge.id);
+      this.logger.error((err as Error).message);
+      throw new AppException(
+        503,
+        'DELIVERY_FAILED',
+        'We could not send the code. Try again shortly',
+      );
+    }
 
     return {
       code,

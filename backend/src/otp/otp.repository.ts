@@ -89,6 +89,10 @@ export class OtpRepository {
     return toChallenge(rows[0]);
   }
 
+  async remove(id: string): Promise<void> {
+    await this.pool.query('DELETE FROM otp_challenges WHERE id = $1', [id]);
+  }
+
   async incrementAttempts(id: string): Promise<number> {
     const { rows } = await this.pool.query<{ attempts: number }>(
       'UPDATE otp_challenges SET attempts = attempts + 1 WHERE id = $1 RETURNING attempts',

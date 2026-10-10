@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'circle_tools.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -118,6 +119,7 @@ class _CircleBody extends StatelessWidget {
         CircleStatus.draft => _DraftSetup(detail: detail),
         _ => _LiveCircle(detail: detail),
       },
+      CircleTools(detail: detail),
     ]);
   }
 }

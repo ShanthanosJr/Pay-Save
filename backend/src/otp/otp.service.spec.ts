@@ -45,6 +45,10 @@ class FakeRepo {
     this.rows.push(row);
     return Promise.resolve(row);
   }
+  remove(id: string) {
+    this.rows = this.rows.filter((r) => r.id !== id);
+    return Promise.resolve();
+  }
   incrementAttempts(id: string) {
     const r = this.rows.find((x) => x.id === id)!;
     return Promise.resolve(++r.attempts);

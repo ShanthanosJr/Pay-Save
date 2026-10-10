@@ -48,7 +48,7 @@ class FakeAuthApi extends AuthApi {
   bool emailVerified = false;
 
   @override
-  Future<OtpChallenge> requestPhoneOtp(String phone) async {
+  Future<OtpChallenge> requestPhoneOtp(String phone, {String? language}) async {
     calls.add('otp:$phone');
     return const OtpChallenge(resendAfterSeconds: 30, devCode: '123456');
   }
@@ -90,7 +90,42 @@ class FakeAuthApi extends AuthApi {
   }
 
   @override
-  Future<UserProfile> me() async => testUser;
+  Future<UserProfile> me() async => officer
+      ? const UserProfile(
+          id: 'u1',
+          fullName: 'Sunil Officer',
+          age: 52,
+          email: 'sunil@example.com',
+          emailVerified: true,
+          phoneMasked: '+9477*****09',
+          phoneVerified: true,
+          nicMasked: '*******123',
+          language: 'en',
+          isCommunityOfficer: true,
+        )
+      : testUser;
+
+  bool officer = false;
+  String? resetCode;
+
+  @override
+  Future<OtpChallenge> forgotPassword(String identifier) async {
+    calls.add('forgot:$identifier');
+    return OtpChallenge(resendAfterSeconds: 30, devCode: '246810', channel: identifier.contains('@') ? 'email' : 'sms');
+  }
+
+  @override
+  Future<void> resetPassword({required String identifier, required String code, required String newPassword}) async {
+    if (code != '246810') throw ApiException(code: 'INVALID_CODE', statusCode: 400);
+    calls.add('reset:$identifier:$newPassword');
+  }
+
+  @override
+  Future<AuthTokens> changePassword({required String currentPassword, required String newPassword}) async {
+    if (currentPassword != 'Passw0rdOld') throw ApiException(code: 'WRONG_PASSWORD', statusCode: 400);
+    calls.add('password:$newPassword');
+    return const AuthTokens(accessToken: 'access-2', refreshToken: 'refresh-2');
+  }
 
   @override
   Future<OtpChallenge> requestEmailOtp() async =>

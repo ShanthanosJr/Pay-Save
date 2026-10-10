@@ -104,11 +104,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 validator: v.required,
                 onSubmitted: (_) => _submit(),
               ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.ink,
+                    minimumSize: const Size(AppSpace.minTouch, AppSpace.minTouch),
+                  ),
+                  onPressed: () => context.go('/forgot-password'),
+                  child: Text(l10n.forgotPasswordLink, style: AppText.label.copyWith(decoration: TextDecoration.underline)),
+                ),
+              ),
               if (_error != null) ...[
-                const SizedBox(height: AppSpace.l),
+                const SizedBox(height: AppSpace.s),
                 ErrorBanner(_error!),
               ],
-              const SizedBox(height: AppSpace.xxl),
+              const SizedBox(height: AppSpace.l),
               PsButton(label: l10n.logIn, onPressed: _submit, loading: _busy),
             ],
           ),

@@ -5,6 +5,7 @@ import { forbiddenRole } from '../circles/circle-role.guard';
 import type { Membership } from '../circles/circle-role.guard';
 import { CirclesRepository } from '../circles/circles.repository';
 import { CirclesService } from '../circles/circles.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PG_POOL } from '../database/database.module';
 import { isUuid, toInt, withTransaction } from '../database/transaction';
 import { LedgerService } from '../ledger/ledger.service';
@@ -39,6 +40,7 @@ export class ContributionsService {
     private readonly circles: CirclesService,
     private readonly repo: CirclesRepository,
     private readonly ledger: LedgerService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   /** Idempotent on (circle, clientEntryId): a replay returns the original with created=false. */
@@ -102,8 +104,36 @@ export class ContributionsService {
         clientEntryId: dto.clientEntryId,
         deviceCreatedAt: dto.deviceCreatedAt ?? null,
       });
+      const entry = await this.ledger.getEntry(tx, circle.id, id);
+      const about = {
+        entryId: id,
+        reference: entry.reference,
+        cycleNumber: cycle.number,
+        amountMinor: circle.contributionMinor,
+        subjectUserId,
+      };
+      await this.notifications.notify(
+        tx,
+        subjectUserId === m.userId
+          ? members
+              .filter((x) => x.role === 'organizer' && x.userId !== m.userId)
+              .map((x) => ({
+                userId: x.userId,
+                kind: 'payment_recorded' as const,
+                circleId: circle.id,
+                payload: about,
+              }))
+          : [
+              {
+                userId: subjectUserId,
+                kind: 'payment_recorded_for_you',
+                circleId: circle.id,
+                payload: about,
+              },
+            ],
+      );
       return {
-        entry: await this.ledger.getEntry(tx, circle.id, id),
+        entry,
         created: true,
       };
     });
@@ -120,6 +150,7 @@ export class ContributionsService {
         actorUserId: m.userId,
         targetEntryId: c.id,
       });
+      await this.tell(tx, m, c, 'payment_verified');
       return { entry: await this.ledger.getEntry(tx, m.circleId, id) };
     });
   }
@@ -142,6 +173,7 @@ export class ContributionsService {
         note: reason,
         payload: { kind: 'rejected' },
       });
+      await this.tell(tx, m, c, 'payment_rejected', reason);
       return { entry: await this.ledger.getEntry(tx, m.circleId, id) };
     });
   }
@@ -186,6 +218,32 @@ export class ContributionsService {
         actorName: r.actor_name,
       })),
     };
+  }
+
+  /** Every entry about you reaches your inbox. */
+  private async tell(
+    tx: PoolClient,
+    m: Membership,
+    c: ContributionRef,
+    kind: 'payment_verified' | 'payment_rejected',
+    reason?: string,
+  ): Promise<void> {
+    if (c.subjectUserId === m.userId) return;
+    const original = await this.ledger.getEntry(tx, m.circleId, c.id);
+    await this.notifications.notify(tx, [
+      {
+        userId: c.subjectUserId,
+        kind,
+        circleId: m.circleId,
+        payload: {
+          entryId: c.id,
+          reference: original.reference,
+          cycleNumber: original.cycleNumber,
+          amountMinor: c.amountMinor,
+          ...(reason ? { reason } : {}),
+        },
+      },
+    ]);
   }
 
   private async pending(

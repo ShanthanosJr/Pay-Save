@@ -6,6 +6,7 @@ import { AppException } from '../common/errors/app.exception';
 import { PG_POOL } from '../database/database.module';
 import { withTransaction } from '../database/transaction';
 import { LedgerService } from '../ledger/ledger.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PayoutsService } from '../payouts/payouts.service';
 import { avatarUrl } from '../users/image-type';
 import { Membership } from './circle-role.guard';
@@ -33,6 +34,7 @@ export class CircleInvitationsService {
     private readonly circles: CirclesService,
     private readonly ledger: LedgerService,
     private readonly payouts: PayoutsService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async invitable(
@@ -103,6 +105,15 @@ export class CircleInvitationsService {
         m.userId,
         fresh,
         message?.trim() || null,
+      );
+      await this.notifications.notify(
+        tx,
+        fresh.map((userId) => ({
+          userId,
+          kind: 'circle_invitation' as const,
+          circleId: circle.id,
+          payload: { invitedBy: m.userId },
+        })),
       );
       return this.circles.detail(tx, circle.id, m.userId);
     });
@@ -189,6 +200,14 @@ export class CircleInvitationsService {
         payload: { role: 'member', via: 'invitation', invitationId: inv.id },
       });
       await this.repo.setStatus(tx, inv.id, 'accepted', this.clock.now());
+      await this.notifications.notify(tx, [
+        {
+          userId: inv.invited_by,
+          kind: 'member_joined',
+          circleId: circle.id,
+          payload: { userId },
+        },
+      ]);
       if (share.methodIds?.length) {
         await this.payouts.share(
           tx,

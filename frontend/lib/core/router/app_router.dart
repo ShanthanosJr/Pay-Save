@@ -3,7 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/register_draft.dart';
+import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/community/circle_sharing_screen.dart';
+import '../../features/community/community_screen.dart';
+import '../../features/notifications/notifications_screen.dart';
+import '../../features/profile/change_password_screen.dart';
+import '../../features/reminders/reminders_screen.dart';
+import '../../features/statements/statement_screen.dart';
 import '../../features/auth/screens/register_credentials_screen.dart';
 import '../../features/auth/screens/register_details_screen.dart';
 import '../../features/auth/screens/register_phone_screen.dart';
@@ -47,7 +54,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
       const signedInRoots = [
-        '/home', '/circle', '/circles', '/circle-invitations', '/history', '/chats', '/profile', '/people', '/pals',
+        '/home', '/circle', '/circles', '/circle-invitations', '/history', '/chats', '/profile', '/people', '/pals', '/notifications', '/community',
       ];
       final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
@@ -66,6 +73,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/splash', builder: (context, state) => const _Splash()),
       GoRoute(path: '/', builder: (context, state) => const WelcomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordScreen()),
       GoRoute(path: '/register/details', builder: (context, state) => const RegisterDetailsScreen()),
       GoRoute(path: '/register/phone', builder: (context, state) => const RegisterPhoneScreen()),
       GoRoute(path: '/register/credentials', builder: (context, state) => const RegisterCredentialsScreen()),
@@ -98,6 +106,25 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Full-screen pages pushed over the tabs (no bottom navigation).
       GoRoute(path: '/profile/edit', builder: (context, state) => const EditProfileScreen()),
       GoRoute(path: '/profile/phone', builder: (context, state) => const ChangePhoneScreen()),
+      GoRoute(path: '/profile/password', builder: (context, state) => const ChangePasswordScreen()),
+      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
+      GoRoute(
+        path: '/circles/:id/reminders',
+        builder: (context, state) => RemindersScreen(circleId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/circles/:id/statement',
+        builder: (context, state) => StatementScreen(circleId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/circles/:id/sharing',
+        builder: (context, state) => CircleSharingScreen(circleId: state.pathParameters['id']!),
+      ),
+      GoRoute(path: '/community', builder: (context, state) => const CommunityScreen()),
+      GoRoute(
+        path: '/community/disputes/:id',
+        builder: (context, state) => DisputeEvidenceScreen(disputeId: state.pathParameters['id']!),
+      ),
       GoRoute(
         path: '/people/:id',
         builder: (context, state) => PersonProfileScreen(userId: state.pathParameters['id']!),

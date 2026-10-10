@@ -94,6 +94,10 @@ class AuthController extends Notifier<AuthState> {
     if (s is AuthLoggedIn) state = AuthLoggedIn(s.user.copyWith(emailVerified: true));
   }
 
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    await _tokens.save(await _api.changePassword(currentPassword: currentPassword, newPassword: newPassword));
+  }
+
   Future<void> logout() async {
     try {
       await _api.logout();

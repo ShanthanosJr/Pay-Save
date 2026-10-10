@@ -27,7 +27,12 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthUser } from '../auth/jwt-auth.guard';
 import { AppException } from '../common/errors/app.exception';
 import { MAX_AVATAR_BYTES } from './avatar.storage';
-import { ChangePhoneDto, UpdateMeDto, VerifyEmailDto } from './dto/users.dto';
+import {
+  ChangePasswordDto,
+  ChangePhoneDto,
+  UpdateMeDto,
+  VerifyEmailDto,
+} from './dto/users.dto';
 import { UsersService } from './users.service';
 
 /** Multer's size-limit error, reshaped into the API's `{ code }` errors. */
@@ -72,6 +77,21 @@ export class UsersController {
       user.id,
       dto.phone,
       dto.phoneVerificationToken,
+    );
+  }
+
+  /** Other devices are signed out; this one gets fresh tokens. */
+  @Post('password')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.users.changePassword(
+      user.id,
+      dto.currentPassword,
+      dto.newPassword,
     );
   }
 

@@ -146,6 +146,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           onTap: () => context.push('/profile/phone'),
         ),
         PsListRow(
+          icon: Icons.lock_reset_rounded,
+          tone: PsBadgeTone.mint,
+          title: l10n.changePasswordTitle,
+          showChevron: true,
+          onTap: () => context.push('/profile/password'),
+        ),
+        if (user.isCommunityOfficer)
+          PsListRow(
+            icon: Icons.shield_rounded,
+            tone: PsBadgeTone.info,
+            title: l10n.communityTitle,
+            subtitle: l10n.communityRowHint,
+            showChevron: true,
+            onTap: () => context.push('/community'),
+          ),
+        PsListRow(
           icon: Icons.logout_rounded,
           tone: PsBadgeTone.danger,
           title: l10n.logOut,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/auth/auth_controller.dart';
+import '../../core/outbox/outbox.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -63,6 +65,7 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
   bool _busy = false;
   String? _error;
   LedgerEntry? _saved;
+  bool _savedOffline = false;
 
   @override
   void dispose() {
@@ -78,18 +81,26 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
     });
     try {
       final ref0 = _reference.text.trim();
-      final entry = await ref.read(circlesApiProvider).recordContribution(
-            widget.circle.id,
+      final auth = ref.read(authControllerProvider);
+      // No signal: the outbox keeps it on this phone and sends it later with
+      // the same id, so it can never be recorded twice (NFR-03).
+      final entry = await ref.read(outboxProvider.notifier).record(PendingContribution(
+            clientEntryId: _clientEntryId,
+            userId: auth is AuthLoggedIn ? auth.user.id : '',
+            circleId: widget.circle.id,
             cycleNumber: widget.cycleNumber,
             method: _method,
-            clientEntryId: _clientEntryId,
+            deviceCreatedAt: DateTime.now(),
             provider: _method == PaymentMethod.mobileWallet ? _provider : null,
             receiptReference: ref0.isEmpty ? null : ref0,
             subjectUserId: widget.subject?.userId,
-          );
+          ));
       if (!mounted) return;
-      refreshCircle(ref, widget.circle.id);
-      setState(() => _saved = entry);
+      if (entry != null) refreshCircle(ref, widget.circle.id);
+      setState(() {
+        _saved = entry;
+        _savedOffline = entry == null;
+      });
     } catch (e) {
       if (mounted) setState(() => _error = messageFor(l10n, e));
     } finally {
@@ -102,6 +113,7 @@ class _RecordPaymentBodyState extends ConsumerState<_RecordPaymentBody> {
     final l10n = AppLocalizations.of(context);
     final saved = _saved;
     if (saved != null) return _Confirmation(entry: saved);
+    if (_savedOffline) return const _SavedOffline();
     if (widget.subject == null && !_methodTouched) {
       final preferred = ref.watch(payToProvider(widget.circle.id)).value?.methods.firstOrNull;
       if (preferred != null) _method = paymentMethodFor(preferred.kind);
@@ -228,6 +240,26 @@ class _Confirmation extends StatelessWidget {
           Expanded(child: Text(l10n.recordSafety, style: AppText.footnote.copyWith(color: AppColors.forest800))),
         ]),
       ),
+      const SizedBox(height: AppSpace.xl),
+      PsButton(label: l10n.doneLabel, onPressed: () => Navigator.of(context).pop()),
+    ]);
+  }
+}
+
+/// Shown instead of the confirmation when the payment could not reach the
+/// server: it is on this phone only, and says so.
+class _SavedOffline extends StatelessWidget {
+  const _SavedOffline();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      const Center(child: PsIconBadge(icon: Icons.cloud_off_rounded, tone: PsBadgeTone.warning, size: 64)),
+      const SizedBox(height: AppSpace.l),
+      Text(l10n.savedOnPhoneTitle, style: AppText.title, textAlign: TextAlign.center),
+      const SizedBox(height: AppSpace.s),
+      Text(l10n.savedOnPhoneBody, style: AppText.body, textAlign: TextAlign.center),
       const SizedBox(height: AppSpace.xl),
       PsButton(label: l10n.doneLabel, onPressed: () => Navigator.of(context).pop()),
     ]);

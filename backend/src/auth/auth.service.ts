@@ -10,7 +10,13 @@ import { normalizeNic } from '../common/normalize/nic';
 import { normalizePhone, tryNormalizePhone } from '../common/normalize/phone';
 import { APP_CONFIG } from '../config/app-config';
 import type { AppConfig } from '../config/app-config';
-import { OtpService, otpResponse } from '../otp/otp.service';
+import {
+  OTP_RESEND_SECONDS,
+  OTP_TTL_SECONDS,
+  OtpService,
+  otpResponse,
+} from '../otp/otp.service';
+import type { OtpLanguage } from '../otp/otp-sender';
 import { UserRecord, UsersRepository } from '../users/users.repository';
 import { PublicUser, UsersService } from '../users/users.service';
 import { TokenPair, TokenService } from './token.service';
@@ -58,7 +64,7 @@ export class AuthService implements OnModuleInit {
     );
   }
 
-  async requestPhoneOtp(phoneInput: string) {
+  async requestPhoneOtp(phoneInput: string, language?: OtpLanguage) {
     const phone = normalizePhone(phoneInput);
     if (await this.users.findByPhoneHash(this.crypto.lookupHash(phone))) {
       throw new AppException(
@@ -67,7 +73,12 @@ export class AuthService implements OnModuleInit {
         'Phone number already registered',
       );
     }
-    const issued = await this.otp.issue('phone_register', phone);
+    const issued = await this.otp.issue(
+      'phone_register',
+      phone,
+      null,
+      language,
+    );
     return otpResponse(issued, this.cfg.devOtpEcho);
   }
 
@@ -158,6 +169,59 @@ export class AuthService implements OnModuleInit {
       throw this.invalidCredentials();
     }
     return this.startSession(user);
+  }
+
+  /**
+   * Sends a reset code to the phone or email the person typed. The answer
+   * is the same whether or not the account exists.
+   */
+  async forgotPassword(identifier: string) {
+    const user = await this.findByIdentifier(identifier);
+    const target = user ? this.resetTarget(user, identifier) : null;
+    const channel = identifier.includes('@') ? 'email' : 'sms';
+    const generic = {
+      channel,
+      expiresInSeconds: OTP_TTL_SECONDS,
+      resendAfterSeconds: OTP_RESEND_SECONDS,
+    };
+    if (!user || !target) return generic;
+    try {
+      const issued = await this.otp.issue(
+        'password_reset',
+        target,
+        user.id,
+        user.language,
+      );
+      return { channel, ...otpResponse(issued, this.cfg.devOtpEcho) };
+    } catch (err) {
+      // a cooldown would reveal that the account exists
+      if (err instanceof AppException && err.code === 'OTP_COOLDOWN')
+        return generic;
+      throw err;
+    }
+  }
+
+  /** A correct code sets the new password and signs every device out. */
+  async resetPassword(
+    identifier: string,
+    code: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.findByIdentifier(identifier);
+    const target = user ? this.resetTarget(user, identifier) : null;
+    if (!user || !target)
+      throw new AppException(400, 'INVALID_CODE', 'Invalid or expired code');
+    await this.otp.verify('password_reset', target, code);
+    await this.users.setPassword(
+      user.id,
+      await this.crypto.hashPassword(newPassword),
+      this.clock.now(),
+    );
+  }
+
+  private resetTarget(user: UserRecord, identifier: string): string | null {
+    if (identifier.includes('@')) return user.email;
+    return this.crypto.decryptPii(user.phoneEncrypted, 'phone');
   }
 
   async refresh(refreshToken: string): Promise<AuthResult> {

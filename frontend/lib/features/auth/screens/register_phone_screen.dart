@@ -66,7 +66,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
       _error = null;
     });
     try {
-      final challenge = await ref.read(authApiProvider).requestPhoneOtp(phone);
+      final challenge = await ref.read(authApiProvider).requestPhoneOtp(phone, language: l10n.localeName);
       if (!mounted) return;
       setState(() {
         _sentTo = phone;

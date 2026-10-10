@@ -28,6 +28,7 @@ import {
   CreateCircleDto,
   JoinCircleDto,
   LedgerQueryDto,
+  RemoveMemberDto,
   StartCircleDto,
 } from './dto/circles.dto';
 
@@ -128,6 +129,24 @@ export class CirclesController {
     @Body() dto: CloseCycleDto,
   ) {
     return this.circles.closeCycle(m, n, dto.acknowledgeUnpaid);
+  }
+
+  @Post(':id/leave')
+  @HttpCode(204)
+  @CircleRole('member')
+  async leave(@CurrentMembership() m: Membership): Promise<void> {
+    await this.circles.leave(m);
+  }
+
+  @Post(':id/members/:userId/remove')
+  @HttpCode(200)
+  @CircleRole('organizer')
+  removeMember(
+    @CurrentMembership() m: Membership,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+    @Body() dto: RemoveMemberDto,
+  ) {
+    return this.circles.removeMember(m, userId, dto.reason);
   }
 
   @Get(':id/ledger')

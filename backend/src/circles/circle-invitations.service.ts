@@ -135,8 +135,9 @@ export class CircleInvitationsService {
     for (const r of rows) {
       const c = await this.circlesRepo.get(this.pool, r.circle_id);
       if (!c) continue;
-      // Each member receives one pot: everyone's contribution for that cycle.
+      // Each member receives one pot: what the other members pay that cycle.
       const seats = c.plannedCycles;
+      const payers = Math.max(0, seats - 1);
       out.push({
         id: r.id,
         message: r.message,
@@ -159,9 +160,9 @@ export class CircleInvitationsService {
           memberCount: r.member_count,
           seatsLeft: Math.max(0, seats - r.member_count),
           payout: {
-            count: seats,
+            count: payers,
             unitMinor: c.contributionMinor,
-            totalMinor: seats * c.contributionMinor,
+            totalMinor: payers * c.contributionMinor,
             entryIds: [],
           },
           palsInside: r.pal_names ?? [],

@@ -26,6 +26,9 @@ class PsTextField extends StatefulWidget {
     this.showCounter = false,
     this.helper,
     this.enabled = true,
+    this.textCapitalization = TextCapitalization.none,
+    this.autocorrect = true,
+    this.below,
   });
 
   final String label;
@@ -46,6 +49,11 @@ class PsTextField extends StatefulWidget {
   final bool showCounter;
   final String? helper;
   final bool enabled;
+  final TextCapitalization textCapitalization;
+  final bool autocorrect;
+
+  /// Shown under the field, e.g. a password strength meter.
+  final Widget? below;
 
   @override
   State<PsTextField> createState() => _PsTextFieldState();
@@ -77,6 +85,9 @@ class _PsTextFieldState extends State<PsTextField> {
           maxLines: widget.obscure ? 1 : widget.maxLines,
           minLines: 1,
           enabled: widget.enabled,
+          textCapitalization: widget.textCapitalization,
+          autocorrect: widget.autocorrect && !widget.obscure,
+          enableSuggestions: widget.autocorrect && !widget.obscure,
           style: AppText.bodyStrong,
           cursorColor: AppColors.forest600,
           decoration: InputDecoration(
@@ -105,6 +116,7 @@ class _PsTextFieldState extends State<PsTextField> {
                 : null,
           ),
         ),
+        ?widget.below,
       ],
     );
   }

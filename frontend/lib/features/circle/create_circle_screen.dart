@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../../core/widgets/ps_picker_field.dart';
+import '../../core/validation/input_formatters.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -51,7 +52,7 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
     super.dispose();
   }
 
-  int get _amountMinor => (int.tryParse(_amount.text.trim()) ?? 0) * 100;
+  int get _amountMinor => RupeeInputFormatter.parse(_amount.text) * 100;
   int get _memberCount => int.tryParse(_members.text.trim()) ?? 0;
 
   void _next() {
@@ -137,11 +138,10 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
             controller: _amount,
             prefixText: 'LKR ',
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            maxLength: 7,
+            inputFormatters: [RupeeInputFormatter()],
             textInputAction: TextInputAction.done,
             validator: (v) {
-              final n = int.tryParse((v ?? '').trim()) ?? 0;
+              final n = RupeeInputFormatter.parse(v ?? '');
               return n < 1 || n > 1000000 ? l10n.errAmount : null;
             },
             onSubmitted: (_) => _next(),
@@ -163,12 +163,13 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
             onChanged: (i) => setState(() => _interval = i),
           ),
           const SizedBox(height: 20),
-          PsTextField(
+          PsPickerField<int>(
             label: l10n.membersCountLabel,
+            sheetTitle: l10n.membersPickerTitle,
             controller: _members,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            maxLength: 2,
+            options: [for (var n = 2; n <= 60; n++) n],
+            optionLabel: l10n.membersOption,
+            onPicked: (_) => setState(() {}),
             validator: (v) {
               final n = int.tryParse((v ?? '').trim()) ?? 0;
               return n < 2 || n > 60 ? l10n.errMembersCount : null;
@@ -229,7 +230,11 @@ class _CreateCircleScreenState extends ConsumerState<CreateCircleScreen> {
       CollectionModeExplainer(mode: _mode),
       const SizedBox(height: 12),
       PsArithmeticRow(
-        summary: l10n.createSummary(_memberCount, formatMinor(_amountMinor), formatMinor(_memberCount * _amountMinor)),
+        summary: l10n.createSummary(
+          _memberCount - 1,
+          formatMinor(_amountMinor),
+          formatMinor((_memberCount - 1) * _amountMinor),
+        ),
       ),
       if (_error != null) ...[const SizedBox(height: 16), ErrorBanner(_error!)],
       const SizedBox(height: 28),

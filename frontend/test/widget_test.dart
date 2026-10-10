@@ -91,14 +91,24 @@ void main() {
     expect(find.text('This field is required'), findsWidgets);
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Nadeeshi Perera');
-    await tester.enterText(find.byType(TextFormField).at(1), '29');
-    await tester.enterText(find.byType(TextFormField).at(2), '200012345678');
+    // a valid ID number fills the age in; it is typed in lower case here
+    await tester.enterText(find.byType(TextFormField).at(1), '200012345678');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Filled in from your ID card number'), findsOneWidget);
+    // age is chosen from a list, not typed
+    await tester.tap(find.byType(TextFormField).at(2));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('29 years'), 100, scrollable: find.byType(Scrollable).last);
+    await tester.tap(find.text('29 years'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Filled in from your ID card number'), findsNothing);
     await tester.tap(find.widgetWithText(InkWell, 'Continue').last);
     await tester.pumpAndSettle();
 
     // Step 2: phone, then OTP
     expect(find.text('Step 2 of 3'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField), '0771234567');
+    expect(find.text('077 123 4567'), findsOneWidget, reason: 'the number is grouped as it is typed');
     await tester.tap(find.widgetWithText(InkWell, 'Send code').last);
     await tester.pumpAndSettle();
     expect(api.calls, contains('otp:+94771234567'));
@@ -111,7 +121,13 @@ void main() {
     // Step 3: email + password
     expect(find.text('Step 3 of 3'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(0), 'Nadeeshi@Example.com');
+    expect(find.text('nadeeshi@example.com'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).at(1), 'abcd');
+    await tester.pump();
+    expect(find.text('Not strong enough yet'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(1), 'abcd1234');
+    await tester.pump();
+    expect(find.text('Good'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(2), 'abcd1234');
     await tester.tap(find.widgetWithText(InkWell, 'Create account').last);
     await tester.pumpAndSettle();
@@ -134,8 +150,10 @@ void main() {
     await tester.tap(find.text('Create account'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField).at(0), 'Nadeeshi Perera');
-    await tester.enterText(find.byType(TextFormField).at(1), '29');
-    await tester.enterText(find.byType(TextFormField).at(2), '901234567V');
+    // lower-case v is accepted and shown as V; the age comes from the number
+    await tester.enterText(find.byType(TextFormField).at(1), '901234567v');
+    await tester.pumpAndSettle();
+    expect(find.text('901234567V'), findsOneWidget);
     await tester.tap(find.widgetWithText(InkWell, 'Continue').last);
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextFormField), '0771234567');

@@ -61,6 +61,14 @@ String messageFor(AppLocalizations l10n, Object error) {
       return l10n.errPayoutDetails;
     case 'INVITATION_NOT_FOUND':
       return l10n.errInvitationGone;
+    case 'OWN_TURN':
+      return l10n.errOwnTurn;
+    case 'CYCLE_CLOSED':
+      return l10n.errCycleClosed;
+    case 'CYCLE_HAS_PAYMENTS':
+      return l10n.errCycleHasPayments;
+    case 'FIRST_DUE_DATE_PASSED':
+      return l10n.errFirstDuePassed;
     case 'WRONG_PASSWORD':
       return l10n.errWrongPassword;
     case 'DELIVERY_FAILED':

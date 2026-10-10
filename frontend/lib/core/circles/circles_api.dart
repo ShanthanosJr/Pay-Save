@@ -49,6 +49,20 @@ class CirclesApi {
   Future<CircleDetail> setCollectionMode(String id, CollectionMode mode) =>
       _call(() => _detail(_dio.patch('/circles/$id', data: {'collectionMode': wireName(mode)})));
 
+  /// Draft circles only.
+  Future<CircleDetail> setFirstDueDate(String id, DateTime date) => _call(
+        () => _detail(_dio.patch('/circles/$id', data: {'firstDueDate': DateFormat('yyyy-MM-dd').format(date)})),
+      );
+
+  /// Undo a verification made by mistake (open cycles only).
+  Future<LedgerEntry> reverseVerification(String circleId, String entryId, String reason) => _call(() async {
+        final r = await _dio.post<Map<String, dynamic>>(
+          '/circles/$circleId/contributions/$entryId/reverse',
+          data: {'reason': reason},
+        );
+        return LedgerEntry.fromJson(r.data!['entry'] as Map<String, dynamic>);
+      });
+
   /// Which of my payment methods this circle may see.
   Future<CircleDetail> sharePayout(String id, List<String> methodIds, String preferredId) => _call(
         () => _detail(_dio.put('/circles/$id/payout-methods', data: {'methodIds': methodIds, 'preferredId': preferredId})),

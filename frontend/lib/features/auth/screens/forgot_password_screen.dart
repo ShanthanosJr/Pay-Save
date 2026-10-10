@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/ps_password_strength.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -141,6 +142,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 showLabel: l10n.showPassword,
                 hideLabel: l10n.hidePassword,
                 validator: v.newPassword,
+                below: PsPasswordStrength(controller: _password),
               ),
               const SizedBox(height: AppSpace.l),
               PsTextField(

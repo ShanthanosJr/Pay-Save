@@ -310,6 +310,18 @@ class FakeCirclesApi extends CirclesApi {
   }
 
   @override
+  Future<CircleDetail> setFirstDueDate(String id, DateTime date) async {
+    calls.add('firstDue:${date.toIso8601String().substring(0, 10)}');
+    return _detailOf(id);
+  }
+
+  @override
+  Future<LedgerEntry> reverseVerification(String circleId, String entryId, String reason) async {
+    calls.add('reverse:$entryId:$reason');
+    return reject(circleId, entryId, reason);
+  }
+
+  @override
   Future<void> leave(String id) async {
     calls.add('leave:$id');
     _circles.remove(id);

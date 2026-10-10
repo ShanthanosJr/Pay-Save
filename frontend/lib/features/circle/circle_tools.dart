@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/api/error_messages.dart';
+import '../../core/circles/circle_labels.dart';
 import '../../core/circles/circle_models.dart';
 import '../../core/circles/circles_providers.dart';
 import '../../core/reminders/reminders.dart';
@@ -60,7 +61,18 @@ class CircleTools extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/circles/${s.id}/sharing'),
         ),
-        if (s.isOrganizer && others.isNotEmpty && s.status != CircleStatus.completed)
+        if (s.isOrganizer && s.status == CircleStatus.draft && s.firstDueDate != null)
+        PsListRow(
+          icon: Icons.event_rounded,
+          tone: _passed(s.firstDueDate!) ? PsBadgeTone.warning : PsBadgeTone.mint,
+          title: l10n.firstDueRowTitle,
+          subtitle: _passed(s.firstDueDate!)
+              ? l10n.firstDueRowPassed(longDate(l10n, s.firstDueDate!))
+              : longDate(l10n, s.firstDueDate!),
+          showChevron: true,
+          onTap: () => _changeFirstDue(context, ref),
+        ),
+      if (s.isOrganizer && others.isNotEmpty && s.status != CircleStatus.completed)
           PsListRow(
             icon: Icons.manage_accounts_rounded,
             tone: PsBadgeTone.neutral,
@@ -79,6 +91,31 @@ class CircleTools extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  static bool _passed(DateTime d) => daysUntil(d) < 0;
+
+  Future<void> _changeFirstDue(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final s = detail.summary;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final current = s.firstDueDate!;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current.isBefore(today) ? today : current,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365)),
+    );
+    if (picked == null) return;
+    try {
+      await ref.read(circlesApiProvider).setFirstDueDate(s.id, picked);
+      refreshCircle(ref, s.id);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.firstDueChangedToast)));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(messageFor(l10n, e))));
+    }
   }
 
   Future<void> _confirmLeave(BuildContext context, WidgetRef ref) async {
@@ -235,6 +272,57 @@ Future<String?> _askReason(BuildContext context, CircleMember m) {
             },
           ),
         ],
+      ),
+    ),
+  );
+}
+
+/// Organizer: undo a verification made by mistake. The original record
+/// stays; a correction with the reason is added (FR-08).
+void showReverseVerificationSheet(
+  BuildContext context, {
+  required String circleId,
+  required String entryId,
+  required String reference,
+}) {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final reason = TextEditingController();
+  final form = GlobalKey<FormState>();
+  showPsSheet<void>(
+    context: context,
+    title: l10n.reverseVerifyTitle(reference),
+    subtitle: l10n.reverseVerifyBody,
+    builder: (ctx) => Consumer(
+      builder: (ctx, ref, _) => Form(
+        key: form,
+        child: Column(children: [
+          PsTextField(
+            label: l10n.removeReasonLabel,
+            controller: reason,
+            textInputAction: TextInputAction.done,
+            textCapitalization: TextCapitalization.sentences,
+            validator: (v) => (v ?? '').trim().length < 3 ? l10n.errRequired : null,
+          ),
+          const SizedBox(height: AppSpace.xl),
+          PsButton(
+            label: l10n.reverseVerifyAction,
+            variant: PsButtonVariant.danger,
+            onPressed: () async {
+              if (!form.currentState!.validate()) return;
+              final nav = Navigator.of(ctx);
+              try {
+                await ref.read(circlesApiProvider).reverseVerification(circleId, entryId, reason.text.trim());
+                refreshCircle(ref, circleId);
+                nav.pop();
+                messenger.showSnackBar(SnackBar(content: Text(l10n.reverseDoneToast)));
+              } catch (e) {
+                nav.pop();
+                messenger.showSnackBar(SnackBar(content: Text(messageFor(l10n, e))));
+              }
+            },
+          ),
+        ]),
       ),
     ),
   );

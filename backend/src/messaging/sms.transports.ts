@@ -121,6 +121,11 @@ export class TwilioSmsTransport implements SmsTransport {
 }
 
 export function createSmsTransport(cfg: AppConfig['sms']): SmsTransport {
+  if (cfg.provider !== 'console' && /demo/i.test(cfg.senderId))
+    new Logger('Sms').warn(
+      `SMS_SENDER_ID "${cfg.senderId}" is a gateway demo sender: it replaces every message ` +
+        'with a test notice, so codes will NOT arrive. Use your own approved sender id.',
+    );
   switch (cfg.provider) {
     case 'notifylk':
       return new NotifyLkSmsTransport(cfg);

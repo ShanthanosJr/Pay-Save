@@ -70,16 +70,25 @@ void main() {
     expect(find.text('This field is required'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(0), 'Office Seettu');
     await tester.enterText(find.byType(TextFormField).at(1), '5000');
+    expect(find.text('5,000'), findsOneWidget);
     await tapButton(tester, 'Continue');
 
     expect(find.text('Step 2 of 3'), findsOneWidget);
     await tapText(tester, 'Weekly');
-    await tester.enterText(find.byType(TextFormField).first, '4');
+    await tester.tap(find.byType(TextFormField).first);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('4 members'), -100, scrollable: find.byType(Scrollable).last);
+    await tester.tap(find.text('4 members'));
+    await tester.pumpAndSettle();
     await tapButton(tester, 'Continue');
 
     expect(find.text('Step 3 of 3'), findsOneWidget);
     await tapText(tester, 'Lottery');
-    expect(find.text('4 members × LKR 5,000 = LKR 20,000 per payout'), findsOneWidget);
+    // the receiver does not pay on their own turn: three others pay them
+    expect(
+      find.text('On your turn the other 3 members each pay LKR 5,000: you receive LKR 15,000'),
+      findsOneWidget,
+    );
     await tapButton(tester, 'Create circle');
 
     expect(api.calls.single, startsWith('create:Office Seettu:500000:weekly:lottery:4:'));

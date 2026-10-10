@@ -225,6 +225,11 @@ export class CirclesService {
 
       const now = this.clock.now();
       const first = circle.firstDueDate ?? localDate(now);
+      if (first < localDate(now))
+        throw conflict(
+          'FIRST_DUE_DATE_PASSED',
+          'The first due date has passed. Choose a new one before starting',
+        );
       const dueDates = order.map((_, i) =>
         dueDateFor(first, circle.interval, i + 1),
       );
@@ -259,12 +264,30 @@ export class CirclesService {
   }
 
   /** Draft-only settings the organizer can still change. */
-  updateSettings(m: Membership, mode: CollectionMode): Promise<CircleDetail> {
+  updateSettings(
+    m: Membership,
+    mode: CollectionMode | undefined,
+    firstDueDate?: string,
+  ): Promise<CircleDetail> {
     return withTransaction(this.pool, async (tx) => {
       const circle = await this.lock(tx, m.circleId);
       if (circle.status !== 'draft')
         throw conflict('CIRCLE_ALREADY_STARTED', 'This circle has started');
-      await this.repo.setCollectionMode(tx, circle.id, mode);
+      if (mode) await this.repo.setCollectionMode(tx, circle.id, mode);
+      if (firstDueDate !== undefined) {
+        const today = localDate(this.clock.now());
+        if (
+          !isValidDate(firstDueDate) ||
+          firstDueDate < today ||
+          firstDueDate > addDays(today, 365)
+        )
+          throw new AppException(
+            400,
+            'INVALID_FIRST_DUE_DATE',
+            'First due date must be between today and one year from today',
+          );
+        await this.repo.setFirstDueDate(tx, circle.id, firstDueDate);
+      }
       return this.detail(tx, circle.id, m.userId);
     });
   }
@@ -306,9 +329,17 @@ export class CirclesService {
       totalMinor: unit,
       entryIds: [],
     };
-    if (circle.collectionMode === 'via_organizer') {
+    const t = await this.repo.cycleTotals(this.pool, current.id);
+    if (m.userId === recipient.userId) {
+      // my turn: nothing to pay; show what has been verified for me so far
+      amount = {
+        count: t.verifiedCount,
+        unitMinor: t.unitMinor,
+        totalMinor: t.verifiedTotalMinor,
+        entryIds: t.verifiedIds,
+      };
+    } else if (circle.collectionMode === 'via_organizer') {
       if (m.userId === organizer.userId) {
-        const t = await this.repo.cycleTotals(this.pool, current.id);
         amount = {
           count: t.verifiedCount,
           unitMinor: t.unitMinor,
@@ -516,6 +547,14 @@ export class CirclesService {
           );
         if (members.length <= 2)
           throw conflict('NOT_ENOUGH_MEMBERS', 'At least 2 members are needed');
+        if (current.payoutUserId === userId) {
+          const t = await this.repo.cycleTotals(tx, current.id);
+          if (t.verifiedCount + t.awaitingCount > 0)
+            throw conflict(
+              'CYCLE_HAS_PAYMENTS',
+              'Members already paid this cycle to this member; close the cycle first',
+            );
+        }
         const status = await this.repo.memberStatus(tx, current.id, userId);
         if (status?.contributionId)
           throw conflict(

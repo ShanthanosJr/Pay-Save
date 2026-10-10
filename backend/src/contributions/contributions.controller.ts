@@ -50,6 +50,16 @@ export class ContributionsController {
     return this.contributions.reject(m, id, dto.reason);
   }
 
+  @Post('contributions/:entryId/reverse')
+  @CircleRole('organizer')
+  reverse(
+    @CurrentMembership() m: Membership,
+    @Param('entryId') id: string,
+    @Body() dto: RejectContributionDto,
+  ) {
+    return this.contributions.reverse(m, id, dto.reason);
+  }
+
   @Get('verify-queue')
   @CircleRole('organizer')
   verifyQueue(@CurrentMembership() m: Membership) {

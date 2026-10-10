@@ -2141,5 +2141,13 @@
   "yourDataNeverBody": "Pay&Save කිසිදා ඔබේ මුදල් තබා ගන්නේ හෝ මාරු කරන්නේ නැත. ප්‍රජා නිලධාරීන්ට ඔබේ නම හෝ දුරකථන අංකය කිසිදා නොපෙනේ. සෑම සාමාජිකයෙක්ම එකඟ නොවන්නේ නම් කිසිවක් ඔබේ සීට්ටුවෙන් පිටතට බෙදා නොගැනේ.",
   "@yourDataNeverBody": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadingLabel": "පූරණය වෙමින්",
+  "@loadingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "signingIn": "ඔබව ඇතුළු කරමින්…",
+  "@signingIn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

@@ -17,6 +17,10 @@ abstract final class AppColors {
   static const stroke = Color(0xFFE5E9E6);
   static const strokeStrong = Color(0xFFD2D8D4);
 
+  // Loading placeholders: resting bone and the band of light that sweeps it
+  static const skeleton = Color(0xFFE2E8E4);
+  static const skeletonGlow = Color(0xFFF6F9F7);
+
   // Text
   static const ink = Color(0xFF121517);
   static const inkMuted = Color(0xFF55605A);
@@ -78,4 +82,7 @@ abstract final class AppMotion {
   static const fast = Duration(milliseconds: 180);
   static const medium = Duration(milliseconds: 320);
   static const curve = Curves.easeOutCubic;
+  static const shimmer = Duration(milliseconds: 1500);
+  static const splashIntro = Duration(milliseconds: 1100);
+  static const loaderBar = Duration(milliseconds: 1300);
 }

@@ -20,6 +20,7 @@ import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_status_badge.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../circle/record_payment_sheet.dart';
 import '../shell/async_states.dart';
@@ -47,7 +48,7 @@ class MemberHomeScreen extends ConsumerWidget {
         const SizedBox(height: AppSpace.xs),
         const InvitationsBanner(),
         ...active.when(
-          loading: () => const [SheetLoading()],
+          loading: () => const [SizedBox(height: AppSpace.m), PsSkeletonDashboard()],
           error: (e, _) => [SheetError(error: e, onRetry: () => ref.invalidate(myCirclesProvider))],
           data: (circle) => circle == null
               ? [
@@ -87,7 +88,7 @@ class _CircleHome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final detail = ref.watch(circleDetailProvider(circle.id));
     return detail.when(
-      loading: () => const SheetLoading(),
+      loading: () => const PsSkeletonDashboard(chip: false),
       error: (e, _) => SheetError(error: e, onRetry: () => ref.invalidate(circleDetailProvider(circle.id))),
       data: (d) => switch (d.summary.status) {
         CircleStatus.draft => _DraftHome(detail: d),

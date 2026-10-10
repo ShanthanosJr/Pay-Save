@@ -17,6 +17,7 @@ import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_status_badge.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../shell/async_states.dart';
 import '../shell/brand_header.dart';
@@ -76,7 +77,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           ]),
           const SizedBox(height: AppSpace.l),
           ref.watch(ledgerProvider((circleId: circle.id, all: _all && circle.isOrganizer))).when(
-                loading: () => const SheetLoading(),
+                loading: () => const PsSkeletonRows(count: 6, leading: PsSkeletonLeading.badge, trailing: true),
                 error: (e, _) => SheetError(
                   error: e,
                   onRetry: () => ref.invalidate(ledgerProvider((circleId: circle.id, all: _all))),

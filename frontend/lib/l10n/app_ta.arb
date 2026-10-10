@@ -2141,5 +2141,13 @@
   "yourDataNeverBody": "Pay&Save ஒருபோதும் உங்கள் பணத்தை வைத்திருப்பதோ மாற்றுவதோ இல்லை. சமூக அலுவலர்கள் உங்கள் பெயரையோ தொலைபேசி எண்ணையோ பார்க்க மாட்டார்கள். ஒவ்வொரு உறுப்பினரும் ஒப்புக்கொள்ளாவிட்டால் எதுவும் உங்கள் சீட்டுக்கு வெளியே பகிரப்படாது.",
   "@yourDataNeverBody": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "loadingLabel": "ஏற்றுகிறது",
+  "@loadingLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "signingIn": "உள்நுழைகிறது…",
+  "@signingIn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

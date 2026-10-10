@@ -18,6 +18,7 @@ import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_status_badge.dart';
 import '../../core/widgets/ps_text_field.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../shell/async_states.dart';
 import 'community_labels.dart';
@@ -71,7 +72,7 @@ class CommunityScreen extends ConsumerWidget {
           if (circles == null && circlesAsync.hasError)
             SheetError(error: circlesAsync.error!, onRetry: () => ref.invalidate(communityOverviewProvider))
           else if (circles == null)
-            const SheetLoading()
+            const PsSkeletonRows(count: 4, leading: PsSkeletonLeading.badge)
           else if (circles.isEmpty)
             Text(l10n.communityNoCircles, style: AppText.body)
           else

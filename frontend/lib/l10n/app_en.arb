@@ -1658,5 +1658,7 @@
   "yourDataWhoTitle": "Who can see it",
   "yourDataWhoBody": "Members of your circle see your name and whether you have paid. Your organizer sees your payments. Your payment details are shown only to the person paying you, and each time is logged.",
   "yourDataNeverTitle": "What never happens",
-  "yourDataNeverBody": "Pay&Save never holds or moves your money. Community officers never see your name or phone number. Nothing is shared outside your circle unless every member agrees."
+  "yourDataNeverBody": "Pay&Save never holds or moves your money. Community officers never see your name or phone number. Nothing is shared outside your circle unless every member agrees.",
+  "loadingLabel": "Loading",
+  "signingIn": "Signing you in…"
 }

@@ -17,6 +17,7 @@ import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_sheet.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
 import '../shell/async_states.dart';
@@ -102,7 +103,7 @@ class _StatementScreenState extends ConsumerState<StatementScreen> {
           if (statements == null && async.hasError)
             SheetError(error: async.error!, onRetry: () => ref.invalidate(statementsProvider(widget.circleId)))
           else if (statements == null)
-            const SheetLoading()
+            const PsSkeletonCard(lines: 4, button: true)
           else ...[
             if (latest != null) ...[
               PsCard(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -45,6 +47,9 @@ class FakeAuthApi extends AuthApi {
   String? lastLoginIdentifier;
   Map<String, dynamic>? lastRegister;
   bool loginFails = false;
+
+  /// When set, login waits for this before answering (to observe loading UI).
+  Completer<void>? loginGate;
   bool emailVerified = false;
 
   @override
@@ -85,6 +90,7 @@ class FakeAuthApi extends AuthApi {
   @override
   Future<AuthSession> login(String identifier, String password) async {
     lastLoginIdentifier = identifier;
+    await loginGate?.future;
     if (loginFails) throw ApiException(code: 'INVALID_CREDENTIALS', statusCode: 401);
     return const AuthSession(user: testUser, tokens: testTokens);
   }

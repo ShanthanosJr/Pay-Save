@@ -13,6 +13,7 @@ import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_sheet.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'payout_ui.dart';
 
@@ -48,10 +49,7 @@ class PaymentMethodsScreen extends ConsumerWidget {
               ],
             )
           else if (methods == null)
-            const Padding(
-              padding: EdgeInsets.all(32),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            )
+            const PsSkeletonRows(count: 3, leading: PsSkeletonLeading.badge)
           else if (methods.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpace.l),

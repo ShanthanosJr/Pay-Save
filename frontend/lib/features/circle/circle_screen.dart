@@ -25,6 +25,7 @@ import '../home/member_home_screen.dart' show JoinCodeCard;
 import '../shell/async_states.dart';
 import '../shell/brand_header.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import 'circle_setup.dart';
 import 'invitation_screen.dart' show InvitationsBanner;
 import 'pay_to.dart';
@@ -42,7 +43,7 @@ class CircleScreen extends ConsumerWidget {
     return PsForestPage(
       header: const BrandHeader(),
       children: active.when(
-        loading: () => const [SheetLoading()],
+        loading: () => const [PsSkeletonDashboard(chip: false)],
         error: (e, _) => [SheetError(error: e, onRetry: () => ref.invalidate(myCirclesProvider))],
         data: (circle) {
           if (circle == null) {
@@ -65,7 +66,7 @@ class CircleScreen extends ConsumerWidget {
           }
           final detail = ref.watch(circleDetailProvider(circle.id));
           return detail.when(
-            loading: () => const [SheetLoading()],
+            loading: () => const [PsSkeletonDashboard(chip: false)],
             error: (e, _) => [SheetError(error: e, onRetry: () => ref.invalidate(circleDetailProvider(circle.id)))],
             data: (d) => [const InvitationsBanner(), _CircleBody(detail: d)],
           );

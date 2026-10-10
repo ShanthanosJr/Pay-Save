@@ -7,6 +7,7 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/validation/validators.dart';
+import '../../../core/widgets/ps_brand_loader.dart';
 import '../../../core/widgets/ps_button.dart';
 import '../../../core/widgets/ps_text_field.dart';
 import '../../../l10n/gen/app_localizations.dart';
@@ -37,6 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
     final l10n = AppLocalizations.of(context);
+    FocusScope.of(context).unfocus();
     setState(() {
       _busy = true;
       _error = null;
@@ -58,6 +60,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context);
     final v = Validators(l10n);
 
+    // While the sign-in request runs, the branded loader takes the screen.
+    return Stack(children: [
+      _buildForm(l10n, v),
+      Positioned.fill(
+        child: AnimatedSwitcher(
+          duration: AppMotion.medium,
+          switchInCurve: AppMotion.curve,
+          switchOutCurve: AppMotion.curve,
+          child: _busy ? PsBrandLoader(message: l10n.signingIn) : const SizedBox.shrink(),
+        ),
+      ),
+    ]);
+  }
+
+  Widget _buildForm(AppLocalizations l10n, Validators v) {
     return AuthScaffold(
       titlePlain: l10n.loginTitlePlain,
       titleAccent: l10n.loginTitleAccent,

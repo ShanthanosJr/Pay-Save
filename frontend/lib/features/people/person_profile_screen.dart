@@ -16,6 +16,7 @@ import '../../core/widgets/ps_icon_badge.dart';
 import '../../core/widgets/ps_list_row.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_status_badge.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'pal_actions.dart';
 import 'profile_header.dart';
@@ -161,10 +162,7 @@ class _PersonProfileScreenState extends ConsumerState<PersonProfileScreen> {
               onRetry: () => ref.invalidate(publicProfileProvider(widget.userId)),
             )
           else if (p == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 48),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            )
+            const PsSkeletonProfile()
           else ...[
             ProfileHeader(
               name: p.person.fullName,

@@ -9,6 +9,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_button.dart';
 import '../../core/widgets/ps_sheet.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'payout_ui.dart';
 
@@ -54,10 +55,7 @@ class PayoutMethodPicker extends ConsumerWidget {
     if (mine == null) {
       return async.hasError
           ? Text(messageFor(l10n, async.error!), style: AppText.body)
-          : const Padding(
-              padding: EdgeInsets.all(AppSpace.l),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            );
+          : const PsSkeletonRows(count: 2, leading: PsSkeletonLeading.badge);
     }
     final sel = selection ?? PayoutSelection.initial(mine, const [], null);
     if (selection == null && !sel.isEmpty) {

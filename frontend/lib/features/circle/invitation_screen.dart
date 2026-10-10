@@ -17,6 +17,7 @@ import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
 import '../payouts/payout_method_picker.dart';
@@ -116,10 +117,7 @@ class _InvitationScreenState extends ConsumerState<InvitationScreen> {
         header: PsBackHeader(title: l10n.circleInvitationsTitle, backLabel: l10n.backLabel),
         children: [
           if (inv == null && async.isLoading)
-            const Padding(
-              padding: EdgeInsets.all(32),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            )
+            const PsSkeletonCard(lines: 4, button: true)
           else if (inv == null)
             Text(l10n.errInvitationGone, style: AppText.body)
           else ...[

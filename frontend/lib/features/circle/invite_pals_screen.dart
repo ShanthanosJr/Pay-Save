@@ -15,6 +15,7 @@ import '../../core/widgets/ps_search_field.dart';
 import '../../core/widgets/ps_status_badge.dart';
 import '../../core/widgets/ps_text_field.dart';
 import '../../core/widgets/ps_user_avatar.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/widgets/error_banner.dart';
 
@@ -110,10 +111,7 @@ class _InvitePalsScreenState extends ConsumerState<InvitePalsScreen> {
           if (data == null && async.hasError)
             Text(messageFor(l10n, async.error!), style: AppText.body)
           else if (data == null)
-            const Padding(
-              padding: EdgeInsets.all(32),
-              child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-            )
+            const PsSkeletonRows(count: 5, trailing: true)
           else if (data.$2.isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AppSpace.l),

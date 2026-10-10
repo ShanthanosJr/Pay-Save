@@ -4,16 +4,19 @@ import '../../core/api/error_messages.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_button.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 
+/// Generic content placeholder: a card and a few rows.
 class SheetLoading extends StatelessWidget {
   const SheetLoading({super.key});
 
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 80),
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      );
+  Widget build(BuildContext context) => const Column(children: [
+        PsSkeletonCard(),
+        SizedBox(height: AppSpace.l),
+        PsSkeletonRows(count: 3, leading: PsSkeletonLeading.badge),
+      ]);
 }
 
 class SheetError extends StatelessWidget {

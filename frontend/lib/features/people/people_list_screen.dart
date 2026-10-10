@@ -8,6 +8,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/ps_back_header.dart';
 import '../../core/widgets/ps_button.dart';
 import '../../core/widgets/ps_forest_page.dart';
+import '../../core/widgets/ps_skeleton.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'person_row.dart';
 
@@ -36,12 +37,7 @@ class PeopleListScreen extends ConsumerWidget {
         ),
         children: [
           ...async.when(
-            loading: () => const [
-              Padding(
-                padding: EdgeInsets.only(top: 48),
-                child: Center(child: CircularProgressIndicator(color: AppColors.forest700, strokeWidth: 2)),
-              ),
-            ],
+            loading: () => const [PsSkeletonRows(count: 7)],
             error: (_, _) => [
               Text(l10n.loadFailed, textAlign: TextAlign.center, style: AppText.body),
               const SizedBox(height: AppSpace.l),

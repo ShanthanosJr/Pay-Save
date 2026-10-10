@@ -1929,5 +1929,217 @@
   },
   "@createSummary": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatAttach": "இணைக்கவும்",
+  "@chatAttach": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPhoto": "புகைப்படம்",
+  "@chatPhoto": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPhotoHint": "எடுத்துக்காட்டாக வங்கி ரசீது. 5 MB வரை.",
+  "@chatPhotoHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideo": "காணொளி",
+  "@chatVideo": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideoHint": "2 நிமிடங்கள் மற்றும் 25 MB வரை.",
+  "@chatVideoHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideoMeta": "{size} MB · திறக்கத் தட்டவும்",
+  "@chatVideoMeta": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatEmoji": "எமோஜி",
+  "@chatEmoji": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleted": "இந்தச் செய்தி நீக்கப்பட்டது",
+  "@chatDeleted": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatMessageActions": "செய்தி",
+  "@chatMessageActions": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatReactWith": "{emoji} உடன் எதிர்வினையாற்றவும்",
+  "@chatReactWith": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatStar": "இந்தச் செய்திக்கு நட்சத்திரமிடவும்",
+  "@chatStar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnstar": "நட்சத்திரத்தை நீக்கவும்",
+  "@chatUnstar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatStarred": "நட்சத்திரமிடப்பட்டது",
+  "@chatStarred": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatCopy": "உரையை நகலெடுக்கவும்",
+  "@chatCopy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteMessage": "அனைவருக்கும் நீக்கவும்",
+  "@chatDeleteMessage": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteMessageBody": "செய்தியும் அதிலுள்ள புகைப்படம் அல்லது காணொளியும் உங்கள் இருவருக்கும் நீக்கப்படும்.",
+  "@chatDeleteMessageBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPin": "மேலே பொருத்தவும்",
+  "@chatPin": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPinHint": "இந்த உரையாடலை உங்கள் பட்டியலில் முதலில் வைக்கும்",
+  "@chatPinHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnpin": "பொருத்தலை நீக்கவும்",
+  "@chatUnpin": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPinned": "பொருத்தப்பட்டது",
+  "@chatPinned": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFavourite": "பிடித்தவற்றில் சேர்க்கவும்",
+  "@chatFavourite": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnfavourite": "பிடித்தவற்றிலிருந்து நீக்கவும்",
+  "@chatUnfavourite": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFavouriteLabel": "பிடித்தது",
+  "@chatFavouriteLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDelete": "உரையாடலை நீக்கவும்",
+  "@chatDelete": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteBody": "உங்கள் பட்டியலிலிருந்து மட்டும் நீக்கும். {name} இடம் அவர் பிரதி இருக்கும்.",
+  "@chatDeleteBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeletedToast": "உரையாடல் நீக்கப்பட்டது",
+  "@chatDeletedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFilterAll": "அனைத்தும்",
+  "@chatFilterAll": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFilterFavourites": "பிடித்தவை",
+  "@chatFilterFavourites": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errFileTooLarge": "அந்தக் கோப்பு மிகப் பெரியது. புகைப்படங்கள் 5 MB வரை, காணொளிகள் 25 MB வரை.",
+  "@errFileTooLarge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUnsupportedMedia": "JPEG, PNG அல்லது WebP புகைப்படம், அல்லது MP4, MOV அல்லது WebM காணொளியை அனுப்பவும்.",
+  "@errUnsupportedMedia": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsDisplay": "காட்சி",
+  "@settingsDisplay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsTextSample": "ரூ. 5,000 அக்டோபர் 20 அன்று செலுத்த வேண்டும். எழுத்து இப்படித் தெரியும்.",
+  "@settingsTextSample": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsLanguageNote": "SMS குறியீடுகள், மின்னஞ்சல்கள், நினைவூட்டல்களும் இந்த மொழியில் அனுப்பப்படும்.",
+  "@settingsLanguageNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsNotifications": "அறிவிப்புகளும் நினைவூட்டல்களும்",
+  "@settingsNotifications": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsInboxHint": "உங்களைப் பற்றிய ஒவ்வொரு பதிவும் ஒரே பட்டியலில்",
+  "@settingsInboxHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsRemindersHint": "ஒவ்வொரு சீட்டுக்கும் தனியாக: சீட்டைத் திறந்து, இந்தச் சீட்டுக்கு மேலும் என்பதைத் தேர்ந்தெடுக்கவும்",
+  "@settingsRemindersHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsPrivacy": "தனியுரிமை",
+  "@settingsPrivacy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "prefHidePreviews": "உரையாடல் பட்டியலில் செய்தி உரையை மறைக்கவும்",
+  "@prefHidePreviews": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "prefHidePreviewsHint": "பகிரப்படும் கைபேசிக்கு. உங்களுக்கு எழுதியவர் யார் என்பது தெரியும்.",
+  "@prefHidePreviewsHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatHiddenPreview": "செய்தி",
+  "@chatHiddenPreview": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsSecurity": "பாதுகாப்பு",
+  "@settingsSecurity": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsEditProfile": "சுயவிவரத்தைத் திருத்தவும்",
+  "@settingsEditProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsOpen": "அனைத்து அமைப்புகளும்",
+  "@settingsOpen": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataTitle": "உங்கள் தரவு",
+  "@yourDataTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataHint": "என்ன சேமிக்கப்படுகிறது, எப்படிப் பாதுகாக்கப்படுகிறது, யார் பார்க்கலாம்",
+  "@yourDataHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataStoredTitle": "என்ன சேமிக்கப்படுகிறது",
+  "@yourDataStoredTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataStoredBody": "உங்கள் பெயர், வயது, தொலைபேசி எண், மின்னஞ்சல், அடையாள எண்; நீங்கள் உள்ள சீட்டுகள்; நீங்கள் அல்லது ஒருங்கிணைப்பாளர் பதிவு செய்யும் ஒவ்வொரு கட்டணமும்; உங்களுக்கு எப்படிப் பணம் வர வேண்டும்; உங்கள் செய்திகள்.",
+  "@yourDataStoredBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataProtectedTitle": "எப்படிப் பாதுகாக்கப்படுகிறது",
+  "@yourDataProtectedTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataProtectedBody": "உங்கள் தொலைபேசி எண், அடையாள எண், வங்கி அல்லது பணப்பை விவரங்கள் மறையாக்கம் செய்யப்படுகின்றன. உங்கள் கடவுச்சொல் ஒருபோதும் சேமிக்கப்படாது. கட்டணப் பதிவுகளை யாராலும் திருத்தவோ நீக்கவோ முடியாது; தவறு புதிய பதிவால் திருத்தப்படும்.",
+  "@yourDataProtectedBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataWhoTitle": "யார் பார்க்கலாம்",
+  "@yourDataWhoTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataWhoBody": "உங்கள் சீட்டின் உறுப்பினர்கள் உங்கள் பெயரையும் நீங்கள் செலுத்தியுள்ளீர்களா என்பதையும் பார்க்கிறார்கள். ஒருங்கிணைப்பாளர் உங்கள் கட்டணங்களைப் பார்க்கிறார். உங்கள் கட்டண விவரங்கள் உங்களுக்குச் செலுத்துபவருக்கு மட்டுமே காட்டப்படும்; ஒவ்வொரு முறையும் பதிவாகும்.",
+  "@yourDataWhoBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataNeverTitle": "ஒருபோதும் நடக்காதவை",
+  "@yourDataNeverTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataNeverBody": "Pay&Save ஒருபோதும் உங்கள் பணத்தை வைத்திருப்பதோ மாற்றுவதோ இல்லை. சமூக அலுவலர்கள் உங்கள் பெயரையோ தொலைபேசி எண்ணையோ பார்க்க மாட்டார்கள். ஒவ்வொரு உறுப்பினரும் ஒப்புக்கொள்ளாவிட்டால் எதுவும் உங்கள் சீட்டுக்கு வெளியே பகிரப்படாது.",
+  "@yourDataNeverBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

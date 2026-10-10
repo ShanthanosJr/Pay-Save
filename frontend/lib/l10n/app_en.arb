@@ -1584,5 +1584,79 @@
   "errOwnTurn": "This member receives the payout this cycle, so there is nothing for them to pay.",
   "errCycleClosed": "This cycle is closed and paid out. Its records can no longer change.",
   "errCycleHasPayments": "Members have already paid this cycle to this member. Close the cycle first.",
-  "errFirstDuePassed": "The first due date has passed. Choose a new date under \"More for this circle\", then start."
+  "errFirstDuePassed": "The first due date has passed. Choose a new date under \"More for this circle\", then start.",
+  "chatAttach": "Attach",
+  "chatPhoto": "Photo",
+  "chatPhotoHint": "For example a bank slip. Up to 5 MB.",
+  "chatVideo": "Video",
+  "chatVideoHint": "Up to 2 minutes and 25 MB.",
+  "chatVideoMeta": "{size} MB · tap to open",
+  "@chatVideoMeta": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "chatEmoji": "Emoji",
+  "chatDeleted": "This message was deleted",
+  "chatMessageActions": "Message",
+  "chatReactWith": "React with {emoji}",
+  "@chatReactWith": {
+    "placeholders": {
+      "emoji": {
+        "type": "String"
+      }
+    }
+  },
+  "chatStar": "Star this message",
+  "chatUnstar": "Remove star",
+  "chatStarred": "Starred",
+  "chatCopy": "Copy text",
+  "chatDeleteMessage": "Delete for everyone",
+  "chatDeleteMessageBody": "The message and any photo or video are removed for both of you.",
+  "chatPin": "Pin to top",
+  "chatPinHint": "Keeps this chat first in your list",
+  "chatUnpin": "Unpin",
+  "chatPinned": "Pinned",
+  "chatFavourite": "Add to favourites",
+  "chatUnfavourite": "Remove from favourites",
+  "chatFavouriteLabel": "Favourite",
+  "chatDelete": "Delete chat",
+  "chatDeleteBody": "Removes it from your list only. {name} keeps their copy.",
+  "@chatDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDeletedToast": "Chat deleted",
+  "chatFilterAll": "All",
+  "chatFilterFavourites": "Favourites",
+  "errFileTooLarge": "That file is too large. Photos up to 5 MB, videos up to 25 MB.",
+  "errUnsupportedMedia": "Send a JPEG, PNG or WebP photo, or an MP4, MOV or WebM video.",
+  "settingsDisplay": "Display",
+  "settingsTextSample": "LKR 5,000 is due on 20 October. This is how text will look.",
+  "settingsLanguageNote": "SMS codes, emails and reminders are sent in this language too.",
+  "settingsNotifications": "Notifications and reminders",
+  "settingsInboxHint": "Every record about you, in one list",
+  "settingsRemindersHint": "Set per circle: open a circle, then More for this circle",
+  "settingsPrivacy": "Privacy",
+  "prefHidePreviews": "Hide message text in the chat list",
+  "prefHidePreviewsHint": "For a shared phone. You still see who wrote to you.",
+  "chatHiddenPreview": "Message",
+  "settingsSecurity": "Security",
+  "settingsEditProfile": "Edit profile",
+  "settingsOpen": "All settings",
+  "yourDataTitle": "Your data",
+  "yourDataHint": "What is stored, how it is protected, who can see it",
+  "yourDataStoredTitle": "What is stored",
+  "yourDataStoredBody": "Your name, age, phone number, email and ID number; the circles you are in; each payment you or your organizer records; how you want to be paid; and your messages.",
+  "yourDataProtectedTitle": "How it is protected",
+  "yourDataProtectedBody": "Your phone number, ID number and bank or wallet details are encrypted. Your password is never stored, only a scrambled form of it. Payment records cannot be edited or deleted by anyone; a mistake is corrected with a new record.",
+  "yourDataWhoTitle": "Who can see it",
+  "yourDataWhoBody": "Members of your circle see your name and whether you have paid. Your organizer sees your payments. Your payment details are shown only to the person paying you, and each time is logged.",
+  "yourDataNeverTitle": "What never happens",
+  "yourDataNeverBody": "Pay&Save never holds or moves your money. Community officers never see your name or phone number. Nothing is shared outside your circle unless every member agrees."
 }

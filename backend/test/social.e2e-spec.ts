@@ -750,4 +750,234 @@ describe('Profile, people and chat (e2e)', () => {
       c.id,
     );
   });
+  describe('rich chat', () => {
+    const MP4 = Buffer.concat([
+      Buffer.from([0, 0, 0, 0x18]),
+      Buffer.from('ftypmp42', 'ascii'),
+      Buffer.alloc(64, 3),
+    ]);
+    type Msg = {
+      id: string;
+      kind: string;
+      body: string;
+      deleted: boolean;
+      starred: boolean;
+      media: { url: string; contentType: string; size: number } | null;
+      reactions: { emoji: string; count: number; mine: boolean }[];
+    };
+    let chatId: string;
+    const send = async (u: TestUser, body: string) =>
+      (
+        await http()
+          .post(`/chats/${chatId}/messages`)
+          .set(u.auth)
+          .send({ clientMessageId: randomUUID(), body })
+          .expect(201)
+      ).body as Msg;
+    const thread = async (u: TestUser) =>
+      (
+        (await http().get(`/chats/${chatId}/messages`).set(u.auth).expect(200))
+          .body as { messages: Msg[] }
+      ).messages;
+    const inbox = async (u: TestUser) =>
+      (await http().get('/chats').set(u.auth).expect(200)).body as {
+        id: string;
+        pinned: boolean;
+        favourite: boolean;
+        unread: number;
+        lastMessage: { body: string; kind: string; deleted: boolean };
+      }[];
+
+    beforeEach(async () => {
+      const chat = await http()
+        .post('/chats')
+        .set(a.auth)
+        .send({ userId: b.id })
+        .expect(200);
+      chatId = (chat.body as { id: string }).id;
+    });
+
+    it('sends a photo and a video by their bytes; only participants can fetch them', async () => {
+      const clientMessageId = randomUUID();
+      const photo = await http()
+        .post(`/chats/${chatId}/media`)
+        .set(a.auth)
+        .field('clientMessageId', clientMessageId)
+        .field('caption', 'Bank slip')
+        .attach('file', PNG, {
+          filename: 'slip.exe',
+          contentType: 'text/plain',
+        })
+        .expect(201);
+      const m = photo.body as Msg;
+      expect(m).toMatchObject({
+        kind: 'image',
+        body: 'Bank slip',
+        media: { contentType: 'image/png', size: PNG.length },
+      });
+      // a retry with the same id does not create a second message
+      await http()
+        .post(`/chats/${chatId}/media`)
+        .set(a.auth)
+        .field('clientMessageId', clientMessageId)
+        .attach('file', PNG, 'slip.png')
+        .expect(201);
+      expect(await thread(b)).toHaveLength(1);
+
+      const file = await http().get(m.media!.url).set(b.auth).expect(200);
+      expect(file.headers['content-type']).toBe('image/png');
+      expect(Buffer.compare(file.body as Buffer, PNG)).toBe(0);
+      await http().get(m.media!.url).set(c.auth).expect(404);
+      await http().get(m.media!.url).expect(401);
+
+      const video = await http()
+        .post(`/chats/${chatId}/media`)
+        .set(b.auth)
+        .field('clientMessageId', randomUUID())
+        .attach('file', MP4, 'clip.mp4')
+        .expect(201);
+      expect(video.body).toMatchObject({
+        kind: 'video',
+        body: '',
+        media: { contentType: 'video/mp4' },
+      });
+      expect((await inbox(a))[0].lastMessage).toMatchObject({ kind: 'video' });
+
+      await http()
+        .post(`/chats/${chatId}/media`)
+        .set(a.auth)
+        .field('clientMessageId', randomUUID())
+        .attach('file', Buffer.from('MZ not a picture'), 'photo.png')
+        .expect(415);
+      await http()
+        .post(`/chats/${chatId}/media`)
+        .set(a.auth)
+        .field('clientMessageId', randomUUID())
+        .expect(400);
+    });
+
+    it('reactions: one per person, from a fixed set, counted for both sides', async () => {
+      const m = await send(a, 'Paid cycle 2 today');
+      const react = (u: TestUser, emoji: string | null) =>
+        http()
+          .put(`/chats/${chatId}/messages/${m.id}/reaction`)
+          .set(u.auth)
+          .send({ emoji });
+      await react(b, '👍').expect(200);
+      await react(b, '🙏').expect(200); // replaces the first
+      await react(a, '🙏').expect(200);
+      await react(b, '<script>').expect(400);
+      await react(c, '👍').expect(404);
+      expect((await thread(a))[0].reactions).toEqual([
+        { emoji: '🙏', count: 2, mine: true },
+      ]);
+      await react(a, null).expect(200);
+      expect((await thread(b))[0].reactions).toEqual([
+        { emoji: '🙏', count: 1, mine: true },
+      ]);
+    });
+
+    it('only the sender can delete a message; it goes for both, with its photo', async () => {
+      const text = await send(a, 'wrong chat, sorry');
+      const photo = (
+        await http()
+          .post(`/chats/${chatId}/media`)
+          .set(a.auth)
+          .field('clientMessageId', randomUUID())
+          .attach('file', JPEG, 'p.jpg')
+          .expect(201)
+      ).body as Msg;
+      await http()
+        .delete(`/chats/${chatId}/messages/${text.id}`)
+        .set(b.auth)
+        .expect(404);
+      await http()
+        .delete(`/chats/${chatId}/messages/${photo.id}`)
+        .set(a.auth)
+        .expect(204);
+      await http()
+        .delete(`/chats/${chatId}/messages/${photo.id}`)
+        .set(a.auth)
+        .expect(404);
+
+      const seen = await thread(b);
+      expect(seen[1]).toMatchObject({ deleted: true, body: '', media: null });
+      expect(seen[0]).toMatchObject({
+        deleted: false,
+        body: 'wrong chat, sorry',
+      });
+      await http().get(photo.media!.url).set(b.auth).expect(404);
+      const { rows } = await pool.query(
+        'SELECT 1 FROM chat_attachments WHERE message_id = $1',
+        [photo.id],
+      );
+      expect(rows).toHaveLength(0);
+      expect((await inbox(b))[0]).toMatchObject({
+        unread: 1,
+        lastMessage: { deleted: true, body: '' },
+      });
+    });
+
+    it('stars, pins and favourites are private to each person', async () => {
+      const m = await send(a, 'Account no. is in my profile');
+      await http()
+        .put(`/chats/${chatId}/messages/${m.id}/star`)
+        .set(b.auth)
+        .send({ starred: true })
+        .expect(200);
+      expect((await thread(b))[0].starred).toBe(true);
+      expect((await thread(a))[0].starred).toBe(false);
+
+      // a second chat, to see ordering
+      const other = await http()
+        .post('/chats')
+        .set(a.auth)
+        .send({ userId: c.id });
+      const otherId = (other.body as { id: string }).id;
+      await http()
+        .post(`/chats/${otherId}/messages`)
+        .set(a.auth)
+        .send({ clientMessageId: randomUUID(), body: 'newer message' })
+        .expect(201);
+      expect((await inbox(a)).map((x) => x.id)).toEqual([otherId, chatId]);
+
+      await http()
+        .patch(`/chats/${chatId}`)
+        .set(a.auth)
+        .send({ pinned: true, favourite: true })
+        .expect(204);
+      const mine = await inbox(a);
+      expect(mine.map((x) => x.id)).toEqual([chatId, otherId]);
+      expect(mine[0]).toMatchObject({ pinned: true, favourite: true });
+      expect((await inbox(b))[0]).toMatchObject({
+        pinned: false,
+        favourite: false,
+      });
+      await http()
+        .patch(`/chats/${chatId}`)
+        .set(c.auth)
+        .send({ pinned: true })
+        .expect(404);
+      await http()
+        .patch(`/chats/${chatId}`)
+        .set(a.auth)
+        .send({ pinned: 'yes' })
+        .expect(400);
+    });
+
+    it('deleting a chat clears it for me only, and a new message brings it back', async () => {
+      await send(a, 'first');
+      await send(b, 'second');
+      await http().delete(`/chats/${chatId}`).set(a.auth).expect(204);
+      expect(await inbox(a)).toEqual([]);
+      expect(await thread(a)).toEqual([]);
+      expect(await thread(b)).toHaveLength(2);
+
+      await send(b, 'are you there?');
+      const back = await inbox(a);
+      expect(back).toHaveLength(1);
+      expect(back[0]).toMatchObject({ unread: 1, pinned: false });
+      expect((await thread(a)).map((m) => m.body)).toEqual(['are you there?']);
+    });
+  });
 });

@@ -137,6 +137,68 @@ class SocialApi {
     return ChatMessage.fromJson(r.data!);
   });
 
+  /// A photo or short video. [clientMessageId] makes a retry safe.
+  Future<ChatMessage> sendMedia(
+    String chatId,
+    String clientMessageId,
+    Uint8List bytes,
+    String filename, {
+    String caption = '',
+  }) => _call(() async {
+    final form = FormData.fromMap({
+      'clientMessageId': clientMessageId,
+      if (caption.isNotEmpty) 'caption': caption,
+      'file': MultipartFile.fromBytes(bytes, filename: filename),
+    });
+    final r = await _dio.post<Map<String, dynamic>>(
+      '/chats/$chatId/media',
+      data: form,
+      options: Options(sendTimeout: const Duration(minutes: 2), receiveTimeout: const Duration(minutes: 2)),
+    );
+    return ChatMessage.fromJson(r.data!);
+  });
+
+  /// Photo or video bytes for a message; participants only.
+  Future<Uint8List> mediaBytes(String url) => _call(() async {
+    final r = await _dio.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes, receiveTimeout: const Duration(minutes: 2)),
+    );
+    return Uint8List.fromList(r.data!);
+  });
+
+  /// Takes my own message back for both of us.
+  Future<void> deleteMessage(String chatId, String messageId) => _call(() async {
+    await _dio.delete<void>('/chats/$chatId/messages/$messageId');
+  });
+
+  /// [emoji] null removes my reaction.
+  Future<ChatMessage> react(String chatId, String messageId, String? emoji) => _call(() async {
+    final r = await _dio.put<Map<String, dynamic>>(
+      '/chats/$chatId/messages/$messageId/reaction',
+      data: {'emoji': emoji},
+    );
+    return ChatMessage.fromJson(r.data!);
+  });
+
+  Future<ChatMessage> star(String chatId, String messageId, bool starred) => _call(() async {
+    final r = await _dio.put<Map<String, dynamic>>(
+      '/chats/$chatId/messages/$messageId/star',
+      data: {'starred': starred},
+    );
+    return ChatMessage.fromJson(r.data!);
+  });
+
+  /// Pin or favourite a chat in my own inbox.
+  Future<void> setChatFlags(String chatId, {bool? pinned, bool? favourite}) => _call(() async {
+    await _dio.patch<void>('/chats/$chatId', data: {'pinned': ?pinned, 'favourite': ?favourite});
+  });
+
+  /// Removes the chat and its history from my inbox only.
+  Future<void> clearChat(String chatId) => _call(() async {
+    await _dio.delete<void>('/chats/$chatId');
+  });
+
   Future<void> markRead(String chatId) => _call(() async {
     await _dio.post<void>('/chats/$chatId/read');
   });

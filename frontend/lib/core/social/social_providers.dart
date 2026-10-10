@@ -102,3 +102,8 @@ void refreshAfterPalChange(WidgetRef ref, String otherId, {bool keepSuggestions 
   ref.invalidate(peopleListProvider);
   ref.read(palRequestCountProvider.notifier).refresh();
 }
+
+/// Photo bytes for a chat message, fetched once per message.
+final chatMediaProvider = FutureProvider.family<Uint8List, String>((ref, url) {
+  return ref.watch(socialApiProvider).mediaBytes(url);
+});

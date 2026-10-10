@@ -117,7 +117,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         PsInfoRow(label: l10n.profileAge, value: '${user.age}'),
         const SizedBox(height: AppSpace.xxxl),
 
-        PsSectionHeader(title: l10n.settingsTitle),
+        PsSectionHeader(
+          title: l10n.settingsTitle,
+          trailing: PsPillLink(label: l10n.settingsOpen, icon: Icons.settings_rounded, onTap: () => context.push('/settings')),
+        ),
         PsGroupLabel(l10n.textSizeLabel),
         PsSegmented<TextSizeChoice>(
           segments: [

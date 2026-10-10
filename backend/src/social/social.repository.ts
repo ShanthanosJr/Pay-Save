@@ -46,10 +46,16 @@ export interface InboxRow extends PersonRow {
   conversation_id: string;
   last_seq: string;
   last_body: string;
+  last_kind: MessageKind;
+  last_deleted: boolean;
   last_sender_id: string;
   last_at: Date;
   unread: number;
+  pinned: boolean;
+  favourite: boolean;
 }
+
+export type MessageKind = 'text' | 'image' | 'video';
 
 export interface MessageRow {
   id: string;
@@ -58,7 +64,25 @@ export interface MessageRow {
   client_message_id: string;
   body: string;
   created_at: Date;
+  kind: MessageKind;
+  deleted_at: Date | null;
+  media_type: string | null;
+  media_size: number | null;
+  starred: boolean;
+  reactions: { emoji: string; count: number; mine: boolean }[];
 }
+
+/** Message columns as seen by the viewer bound to `$<viewer>`. */
+const messageSelect = (viewer: number) => `
+  SELECT m.id, m.seq, m.sender_id, m.client_message_id, m.body, m.created_at, m.kind, m.deleted_at,
+         a.content_type AS media_type, a.size AS media_size,
+         EXISTS (SELECT 1 FROM message_stars s
+                 WHERE s.message_id = m.id AND s.user_id = $${viewer}) AS starred,
+         COALESCE((SELECT json_agg(json_build_object('emoji', r.emoji, 'count', r.n, 'mine', r.mine))
+                   FROM (SELECT emoji, count(*)::int AS n, bool_or(user_id = $${viewer}) AS mine
+                         FROM message_reactions WHERE message_id = m.id
+                         GROUP BY emoji ORDER BY min(created_at)) r), '[]') AS reactions
+  FROM messages m LEFT JOIN chat_attachments a ON a.message_id = m.id`;
 
 // $1 is always the viewer.
 const PERSON = `
@@ -428,19 +452,23 @@ export class SocialRepository {
   async inbox(me: string, limit: number): Promise<InboxRow[]> {
     const { rows } = await this.pool.query<InboxRow>(
       `SELECT ${PERSON}, c.id AS conversation_id,
-              lm.seq AS last_seq, lm.body AS last_body, lm.sender_id AS last_sender_id, lm.created_at AS last_at,
+              lm.seq AS last_seq, lm.body AS last_body, lm.kind AS last_kind,
+              (lm.deleted_at IS NOT NULL) AS last_deleted,
+              lm.sender_id AS last_sender_id, lm.created_at AS last_at,
+              (mine.pinned_at IS NOT NULL) AS pinned, mine.favourite,
               (SELECT count(*)::int FROM messages x
-               WHERE x.conversation_id = c.id AND x.sender_id <> $1 AND x.seq > mine.last_read_seq) AS unread
+               WHERE x.conversation_id = c.id AND x.sender_id <> $1 AND x.seq > mine.last_read_seq
+                 AND x.deleted_at IS NULL) AS unread
        FROM conversation_members mine
        JOIN conversations c ON c.id = mine.conversation_id
        JOIN conversation_members pm ON pm.conversation_id = c.id AND pm.user_id <> $1
        JOIN users u ON u.id = pm.user_id
        JOIN LATERAL (
-         SELECT seq, body, sender_id, created_at FROM messages
-         WHERE conversation_id = c.id ORDER BY seq DESC LIMIT 1
+         SELECT seq, body, kind, deleted_at, sender_id, created_at FROM messages
+         WHERE conversation_id = c.id AND seq > mine.cleared_seq ORDER BY seq DESC LIMIT 1
        ) lm ON true
        WHERE mine.user_id = $1
-       ORDER BY lm.seq DESC
+       ORDER BY mine.pinned_at DESC NULLS LAST, lm.seq DESC
        LIMIT $2`,
       [me, limit],
     );
@@ -451,31 +479,149 @@ export class SocialRepository {
     const { rows } = await this.pool.query<{ n: number }>(
       `SELECT count(*)::int AS n FROM conversation_members mine
        JOIN messages x ON x.conversation_id = mine.conversation_id
-       WHERE mine.user_id = $1 AND x.sender_id <> $1 AND x.seq > mine.last_read_seq`,
+       WHERE mine.user_id = $1 AND x.sender_id <> $1 AND x.seq > mine.last_read_seq
+         AND x.deleted_at IS NULL`,
       [me],
     );
     return rows[0].n;
   }
 
+  /** Messages the viewer has not cleared, oldest first. */
   async messages(
     conversationId: string,
+    viewer: string,
     page: { before?: number; after?: number; limit: number },
   ): Promise<MessageRow[]> {
-    const cols = 'id, seq, sender_id, client_message_id, body, created_at';
+    const visible = `m.conversation_id = $1 AND m.seq > (
+      SELECT cleared_seq FROM conversation_members WHERE conversation_id = $1 AND user_id = $2)`;
     if (page.after !== undefined) {
       const { rows } = await this.pool.query<MessageRow>(
-        `SELECT ${cols} FROM messages WHERE conversation_id = $1 AND seq > $2 ORDER BY seq ASC LIMIT $3`,
-        [conversationId, page.after, page.limit],
+        `${messageSelect(2)} WHERE ${visible} AND m.seq > $3 ORDER BY m.seq ASC LIMIT $4`,
+        [conversationId, viewer, page.after, page.limit],
       );
       return rows;
     }
     const { rows } = await this.pool.query<MessageRow>(
-      `SELECT ${cols} FROM messages
-       WHERE conversation_id = $1 AND ($2::bigint IS NULL OR seq < $2)
-       ORDER BY seq DESC LIMIT $3`,
-      [conversationId, page.before ?? null, page.limit],
+      `${messageSelect(2)} WHERE ${visible} AND ($3::bigint IS NULL OR m.seq < $3)
+       ORDER BY m.seq DESC LIMIT $4`,
+      [conversationId, viewer, page.before ?? null, page.limit],
     );
     return rows.reverse();
+  }
+
+  async message(
+    conversationId: string,
+    viewer: string,
+    messageId: string,
+  ): Promise<MessageRow | null> {
+    const { rows } = await this.pool.query<MessageRow>(
+      `${messageSelect(2)} WHERE m.conversation_id = $1 AND m.id = $3`,
+      [conversationId, viewer, messageId],
+    );
+    return rows[0] ?? null;
+  }
+
+  async attachment(
+    conversationId: string,
+    messageId: string,
+  ): Promise<{ contentType: string; data: Buffer } | null> {
+    const { rows } = await this.pool.query<{
+      content_type: string;
+      data: Buffer;
+    }>(
+      `SELECT a.content_type, a.data FROM chat_attachments a
+       JOIN messages m ON m.id = a.message_id
+       WHERE m.conversation_id = $1 AND m.id = $2 AND m.deleted_at IS NULL`,
+      [conversationId, messageId],
+    );
+    return rows[0]
+      ? { contentType: rows[0].content_type, data: rows[0].data }
+      : null;
+  }
+
+  /** The sender takes a message back for everyone; its media is destroyed. */
+  async deleteMessage(
+    conversationId: string,
+    sender: string,
+    messageId: string,
+  ): Promise<boolean> {
+    return this.tx(async (c) => {
+      const { rowCount } = await c.query(
+        `UPDATE messages SET body = '', deleted_at = now()
+         WHERE id = $1 AND conversation_id = $2 AND sender_id = $3 AND deleted_at IS NULL`,
+        [messageId, conversationId, sender],
+      );
+      if (rowCount !== 1) return false;
+      await c.query('DELETE FROM chat_attachments WHERE message_id = $1', [
+        messageId,
+      ]);
+      await c.query('DELETE FROM message_reactions WHERE message_id = $1', [
+        messageId,
+      ]);
+      await c.query('DELETE FROM message_stars WHERE message_id = $1', [
+        messageId,
+      ]);
+      return true;
+    });
+  }
+
+  async setReaction(
+    messageId: string,
+    userId: string,
+    emoji: string | null,
+  ): Promise<void> {
+    if (emoji === null) {
+      await this.pool.query(
+        'DELETE FROM message_reactions WHERE message_id = $1 AND user_id = $2',
+        [messageId, userId],
+      );
+      return;
+    }
+    await this.pool.query(
+      `INSERT INTO message_reactions (message_id, user_id, emoji) VALUES ($1, $2, $3)
+       ON CONFLICT (message_id, user_id) DO UPDATE SET emoji = $3, created_at = now()`,
+      [messageId, userId, emoji],
+    );
+  }
+
+  async setStar(
+    messageId: string,
+    userId: string,
+    starred: boolean,
+  ): Promise<void> {
+    await this.pool.query(
+      starred
+        ? `INSERT INTO message_stars (message_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`
+        : 'DELETE FROM message_stars WHERE message_id = $1 AND user_id = $2',
+      [messageId, userId],
+    );
+  }
+
+  async setChatFlags(
+    conversationId: string,
+    userId: string,
+    flags: { pinned?: boolean; favourite?: boolean },
+  ): Promise<void> {
+    await this.pool.query(
+      `UPDATE conversation_members SET
+         pinned_at = CASE WHEN $3::boolean IS NULL THEN pinned_at
+                          WHEN $3 THEN COALESCE(pinned_at, now()) ELSE NULL END,
+         favourite = COALESCE($4::boolean, favourite)
+       WHERE conversation_id = $1 AND user_id = $2`,
+      [conversationId, userId, flags.pinned ?? null, flags.favourite ?? null],
+    );
+  }
+
+  /** "Delete chat": hides the history for this person only. */
+  async clearChat(conversationId: string, userId: string): Promise<void> {
+    await this.pool.query(
+      `UPDATE conversation_members SET pinned_at = NULL, favourite = false,
+         cleared_seq = COALESCE((SELECT max(seq) FROM messages WHERE conversation_id = $1), 0),
+         last_read_seq = GREATEST(last_read_seq,
+           COALESCE((SELECT max(seq) FROM messages WHERE conversation_id = $1), 0))
+       WHERE conversation_id = $1 AND user_id = $2`,
+      [conversationId, userId],
+    );
   }
 
   async lastReadSeq(conversationId: string, userId: string): Promise<number> {
@@ -496,18 +642,28 @@ export class SocialRepository {
     sender: string,
     clientMessageId: string,
     body: string,
+    media?: { kind: 'image' | 'video'; contentType: string; data: Buffer },
   ): Promise<MessageRow | null> {
-    return this.tx(async (c) => {
-      const cols = 'id, seq, sender_id, client_message_id, body, created_at';
-      const inserted = await c.query<MessageRow>(
-        `INSERT INTO messages (conversation_id, sender_id, client_message_id, body)
-         VALUES ($1, $2, $3, $4)
+    const id = await this.tx(async (c) => {
+      const inserted = await c.query<{
+        id: string;
+        seq: string;
+        created_at: Date;
+      }>(
+        `INSERT INTO messages (conversation_id, sender_id, client_message_id, body, kind)
+         VALUES ($1, $2, $3, $4, $5)
          ON CONFLICT (sender_id, client_message_id) DO NOTHING
-         RETURNING ${cols}`,
-        [conversationId, sender, clientMessageId, body],
+         RETURNING id, seq, created_at`,
+        [conversationId, sender, clientMessageId, body, media?.kind ?? 'text'],
       );
-      if (inserted.rows[0]) {
-        const m = inserted.rows[0];
+      const m = inserted.rows[0];
+      if (m) {
+        if (media)
+          await c.query(
+            `INSERT INTO chat_attachments (message_id, content_type, size, data)
+             VALUES ($1, $2, $3, $4)`,
+            [m.id, media.contentType, media.data.length, media.data],
+          );
         await c.query(
           'UPDATE conversations SET last_message_at = $2 WHERE id = $1',
           [conversationId, m.created_at],
@@ -517,15 +673,16 @@ export class SocialRepository {
            WHERE conversation_id = $1 AND user_id = $2`,
           [conversationId, sender, m.seq],
         );
-        return m;
+        return m.id;
       }
-      const existing = await c.query<MessageRow>(
-        `SELECT ${cols} FROM messages
+      const existing = await c.query<{ id: string }>(
+        `SELECT id FROM messages
          WHERE sender_id = $1 AND client_message_id = $2 AND conversation_id = $3`,
         [sender, clientMessageId, conversationId],
       );
-      return existing.rows[0] ?? null;
+      return existing.rows[0]?.id ?? null;
     });
+    return id ? this.message(conversationId, sender, id) : null;
   }
 
   async markRead(conversationId: string, userId: string): Promise<number> {

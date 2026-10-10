@@ -27,6 +27,7 @@ class PayAndSaveApp extends ConsumerWidget {
       title: 'Pay&Save',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      scrollBehavior: const _AppScrollBehavior(),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
@@ -52,4 +53,16 @@ class PayAndSaveApp extends ConsumerWidget {
       },
     );
   }
+}
+
+/// Lists stop at their ends instead of Android's default overscroll effect,
+/// which stretches the whole page, text included.
+class _AppScrollBehavior extends MaterialScrollBehavior {
+  const _AppScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) => child;
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) => const ClampingScrollPhysics();
 }

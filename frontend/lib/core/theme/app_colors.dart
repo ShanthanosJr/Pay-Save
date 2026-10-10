@@ -83,6 +83,8 @@ abstract final class AppMotion {
   static const medium = Duration(milliseconds: 320);
   static const curve = Curves.easeOutCubic;
   static const shimmer = Duration(milliseconds: 1500);
-  static const splashIntro = Duration(milliseconds: 1100);
+  static const splashIntro = Duration(milliseconds: 1700);
+  // How long the finished mark stays up at app start before the app shows.
+  static const splashHold = Duration(milliseconds: 1100);
   static const loaderBar = Duration(milliseconds: 1300);
 }

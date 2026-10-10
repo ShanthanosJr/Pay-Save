@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -25,7 +27,10 @@ class PsBrandLoader extends StatefulWidget {
 class _PsBrandLoaderState extends State<PsBrandLoader> with TickerProviderStateMixin {
   late final AnimationController _intro = AnimationController(vsync: this, duration: AppMotion.splashIntro);
   late final AnimationController _bar = AnimationController(vsync: this, duration: AppMotion.loaderBar);
-  late final Animation<double> _wordmark = CurvedAnimation(parent: _intro, curve: const Interval(0.55, 1, curve: AppMotion.curve));
+  late final Animation<double> _wordmark = CurvedAnimation(
+    parent: _intro,
+    curve: const Interval(0.55, 1, curve: AppMotion.curve),
+  );
   bool _started = false;
 
   @override
@@ -67,48 +72,64 @@ class _PsBrandLoaderState extends State<PsBrandLoader> with TickerProviderStateM
             type: MaterialType.transparency,
             child: DecoratedBox(
               decoration: const BoxDecoration(gradient: AppColors.headerGradient),
-              child: SafeArea(
-                child: Stack(children: [
-                  Center(
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      AnimatedBuilder(
-                        animation: _intro,
-                        builder: (context, _) => PsLogo(size: 84, progress: _intro.value),
-                      ),
-                      const SizedBox(height: AppSpace.xl),
-                      FadeTransition(
-                        opacity: _wordmark,
-                        child: SlideTransition(
-                          position: Tween(begin: const Offset(0, 0.4), end: Offset.zero).animate(_wordmark),
-                          child: Text(l10n.wordmark, style: AppText.hero.copyWith(fontSize: 32)),
-                        ),
-                      ),
-                    ]),
-                  ),
-                  Positioned(
-                    left: AppSpace.xxl,
-                    right: AppSpace.xxl,
-                    bottom: AppSpace.xxxl + AppSpace.l,
-                    child: FadeTransition(
-                      opacity: _wordmark,
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        if (widget.message != null) ...[
-                          Text(
-                            widget.message!,
-                            textAlign: TextAlign.center,
-                            style: AppText.callout.copyWith(color: AppColors.onForestMuted),
-                          ),
-                          const SizedBox(height: AppSpace.l),
-                        ],
-                        _LoaderBar(animation: _bar),
-                      ]),
-                    ),
-                  ),
-                ]),
+              // The web shell lays the app out at 1×1 before it knows the
+              // window size; there is no room for the mark until it does.
+              child: LayoutBuilder(
+                builder: (context, box) => box.biggest.shortestSide < 240 ? const SizedBox.expand() : _content(l10n),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _content(AppLocalizations l10n) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedBuilder(
+                  animation: _intro,
+                  builder: (context, _) => PsLogo(size: 84, progress: _intro.value),
+                ),
+                const SizedBox(height: AppSpace.xl),
+                FadeTransition(
+                  opacity: _wordmark,
+                  child: SlideTransition(
+                    position: Tween(begin: const Offset(0, 0.4), end: Offset.zero).animate(_wordmark),
+                    child: Text(l10n.wordmark, style: AppText.hero.copyWith(fontSize: 32)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: AppSpace.xxl,
+            right: AppSpace.xxl,
+            bottom: AppSpace.xxxl + AppSpace.l,
+            child: FadeTransition(
+              opacity: _wordmark,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.message != null) ...[
+                    Text(
+                      widget.message!,
+                      textAlign: TextAlign.center,
+                      style: AppText.callout.copyWith(color: AppColors.onForestMuted),
+                    ),
+                    const SizedBox(height: AppSpace.l),
+                  ],
+                  _LoaderBar(animation: _bar),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -165,23 +186,39 @@ class PsSplashGate extends StatefulWidget {
 class _PsSplashGateState extends State<PsSplashGate> {
   bool _introDone = false;
   bool _gone = false;
+  Timer? _hold;
+
+  /// Lets the finished mark rest on screen for a moment before the app shows.
+  void _onIntroDone() {
+    if (MediaQuery.disableAnimationsOf(context)) return setState(() => _introDone = true);
+    _hold = Timer(AppMotion.splashHold, () => setState(() => _introDone = true));
+  }
+
+  @override
+  void dispose() {
+    _hold?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     if (_gone) return widget.child;
     final leaving = widget.ready && _introDone;
-    return Stack(fit: StackFit.expand, children: [
-      widget.child,
-      IgnorePointer(
-        ignoring: leaving,
-        child: AnimatedOpacity(
-          opacity: leaving ? 0 : 1,
-          duration: AppMotion.medium,
-          curve: AppMotion.curve,
-          onEnd: () => setState(() => _gone = true),
-          child: PsBrandLoader(onIntroDone: () => setState(() => _introDone = true)),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        widget.child,
+        IgnorePointer(
+          ignoring: leaving,
+          child: AnimatedOpacity(
+            opacity: leaving ? 0 : 1,
+            duration: AppMotion.medium,
+            curve: AppMotion.curve,
+            onEnd: () => setState(() => _gone = true),
+            child: PsBrandLoader(onIntroDone: _onIntroDone),
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 }

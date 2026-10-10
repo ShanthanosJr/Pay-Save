@@ -83,6 +83,11 @@ export class ContributionsService {
         cycle?.status === 'open'
           ? await this.repo.memberStatus(tx, cycle.id, subjectUserId)
           : null;
+      if (cycle?.status === 'open' && cycle.payoutUserId === subjectUserId)
+        throw conflict(
+          'OWN_TURN',
+          'The member receiving this cycle does not contribute to it',
+        );
       if (!cycle || !status)
         throw conflict('CYCLE_NOT_OPEN', 'This cycle is not open');
       if (status.contributionId)
@@ -160,8 +165,32 @@ export class ContributionsService {
     entryId: string,
     reason: string,
   ): Promise<{ entry: LedgerEntry }> {
+    return this.correct(m, entryId, reason, false);
+  }
+
+  /**
+   * Undoes a verification made by mistake. Only while the cycle is open:
+   * once it is closed the payout has been calculated from it.
+   */
+  reverse(
+    m: Membership,
+    entryId: string,
+    reason: string,
+  ): Promise<{ entry: LedgerEntry }> {
+    return this.correct(m, entryId, reason, true);
+  }
+
+  /** Never edits: appends a correction that points at the original (FR-08). */
+  private correct(
+    m: Membership,
+    entryId: string,
+    reason: string,
+    verified: boolean,
+  ): Promise<{ entry: LedgerEntry }> {
     return withTransaction(this.pool, async (tx) => {
-      const c = await this.pending(tx, m.circleId, entryId);
+      const c = await this.pending(tx, m.circleId, entryId, verified);
+      if (verified && !c.verified)
+        throw conflict('NOT_VERIFIED', 'This entry has not been verified');
       const id = await this.ledger.append(tx, {
         circleId: m.circleId,
         cycleId: c.cycleId,
@@ -171,7 +200,7 @@ export class ContributionsService {
         targetEntryId: c.id,
         amountMinor: -c.amountMinor,
         note: reason,
-        payload: { kind: 'rejected' },
+        payload: { kind: verified ? 'verification_reversed' : 'rejected' },
       });
       await this.tell(tx, m, c, 'payment_rejected', reason);
       return { entry: await this.ledger.getEntry(tx, m.circleId, id) };
@@ -250,6 +279,7 @@ export class ContributionsService {
     tx: PoolClient,
     circleId: string,
     entryId: string,
+    allowVerified = false,
   ): Promise<ContributionRef> {
     await this.circles.lock(tx, circleId);
     const c = isUuid(entryId)
@@ -258,8 +288,18 @@ export class ContributionsService {
     if (!c) throw new AppException(404, 'ENTRY_NOT_FOUND', 'Entry not found');
     if (c.corrected)
       throw conflict('ENTRY_CORRECTED', 'This entry was already rejected');
-    if (c.verified)
+    if (c.verified && !allowVerified)
       throw conflict('ALREADY_VERIFIED', 'This entry is already verified');
+    if (c.verified) {
+      const cycle = (await this.repo.cycles(tx, circleId)).find(
+        (x) => x.id === c.cycleId,
+      );
+      if (cycle?.status !== 'open')
+        throw conflict(
+          'CYCLE_CLOSED',
+          'This cycle is closed and paid out; its records can no longer change',
+        );
+    }
     return c;
   }
 }

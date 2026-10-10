@@ -388,20 +388,20 @@ describe('Circles & ledger (e2e)', () => {
     });
 
     it('starts with an explicit order and schedules every cycle', async () => {
-      const order = [m1.id, org.id.toUpperCase(), m2.id];
+      const order = [org.id.toUpperCase(), m1.id, m2.id];
       circle = (
         await as(org).post(`/circles/${circle.id}/start`, { order }).expect(200)
       ).body as CircleDetail;
       expect(circle.status).toBe('active');
       expect(circle.plannedCycles).toBe(3);
-      expect(circle.myTurn).toBe(2);
+      expect(circle.myTurn).toBe(1);
       expect(circle.members.map((x) => [x.userId, x.payoutPosition])).toEqual([
-        [m1.id, 1],
-        [org.id, 2],
+        [org.id, 1],
+        [m1.id, 2],
         [m2.id, 3],
       ]);
       expect(circle.cycles).toEqual(
-        [m1.id, org.id, m2.id].map((id, i) => ({
+        [org.id, m1.id, m2.id].map((id, i) => ({
           number: i + 1,
           dueDate: dueDateFor(firstDue, 'monthly', i + 1),
           status: 'open',
@@ -412,24 +412,24 @@ describe('Circles & ledger (e2e)', () => {
       expect(circle.currentCycle).toEqual({
         number: 1,
         dueDate: firstDue,
-        myStatus: 'due',
+        // the receiver of a cycle owes nothing in it
+        myStatus: null,
         myContribution: null,
-        recipient: { userId: m1.id, displayName: 'Nimal Perera', isYou: false },
+        recipient: { userId: org.id, displayName: 'Kamala Silva', isYou: true },
       });
-      expect(circle.current?.members.map((x) => x.status)).toEqual([
-        'due',
-        'due',
-        'due',
+      expect(circle.current?.members.map((x) => [x.userId, x.status])).toEqual([
+        [m1.id, 'due'],
+        [m2.id, 'due'],
       ]);
       expect(circle.current?.totals).toEqual({
         verified: { count: 0, unitMinor: UNIT, totalMinor: 0, entryIds: [] },
         awaiting: { count: 0, unitMinor: UNIT, totalMinor: 0, entryIds: [] },
         unpaid: {
-          count: 3,
-          userIds: [org.id, m1.id, m2.id].sort(),
+          count: 2,
+          userIds: [m1.id, m2.id].sort(),
         },
-        membersDue: 3,
-        expectedMinor: 3 * UNIT,
+        membersDue: 2,
+        expectedMinor: 2 * UNIT,
       });
       await expectError(
         as(org).post(`/circles/${circle.id}/start`, { order }),
@@ -441,7 +441,7 @@ describe('Circles & ledger (e2e)', () => {
         [circle.id],
       );
       expect(rows).toEqual([
-        { payload: { rule: 'fixed', order: [m1.id, org.id, m2.id] } },
+        { payload: { rule: 'fixed', order: [org.id, m1.id, m2.id] } },
       ]);
     });
 
@@ -507,6 +507,8 @@ describe('Circles & ledger (e2e)', () => {
       expect((replay.body as { entry: LedgerEntry }).entry).toEqual(m1Entry);
 
       await expectError(record(m1, circle.id), 409, 'ALREADY_RECORDED');
+      // the organizer receives this cycle: nothing to pay, by them or for them
+      await expectError(record(org, circle.id), 409, 'OWN_TURN');
       await expectError(
         record(m1, circle.id, { subjectUserId: m2.id }),
         403,
@@ -622,7 +624,7 @@ describe('Circles & ledger (e2e)', () => {
         totalMinor: UNIT,
         entryIds: [m1Entry.id],
       });
-      expect(d.current?.totals.unpaid.count).toBe(2);
+      expect(d.current?.totals.unpaid.count).toBe(1);
 
       const list = (await as(m1).get('/circles').expect(200)).body as {
         circles: CircleSummary[];
@@ -637,7 +639,7 @@ describe('Circles & ledger (e2e)', () => {
           recordedAt: m1Entry.createdAt,
           verifiedAt: verified.entry.createdAt,
         },
-        recipient: { userId: m1.id, isYou: true },
+        recipient: { userId: org.id, isYou: false },
       });
       expect(mine).not.toHaveProperty('members');
     });
@@ -721,17 +723,17 @@ describe('Circles & ledger (e2e)', () => {
           acknowledgeUnpaid,
         });
       await expectError(close(m1, 1, 1), 403, 'FORBIDDEN_ROLE');
-      await expectError(close(org, 1, 1), 409, 'PENDING_VERIFICATIONS');
+      await expectError(close(org, 1, 0), 409, 'PENDING_VERIFICATIONS');
       await as(org)
         .post(`/circles/${circle.id}/contributions/${m2Entry.id}/verify`)
         .expect(201);
-      await expectError(close(org, 1, 0), 409, 'UNPAID_NOT_ACKNOWLEDGED');
-      await expectError(close(org, 2, 1), 409, 'CYCLE_NOT_OPEN');
-      await expectError(close(org, 9, 1), 409, 'CYCLE_NOT_OPEN');
+      await expectError(close(org, 1, 1), 409, 'UNPAID_NOT_ACKNOWLEDGED');
+      await expectError(close(org, 2, 0), 409, 'CYCLE_NOT_OPEN');
+      await expectError(close(org, 9, 0), 409, 'CYCLE_NOT_OPEN');
 
       const before = await detail(org, circle.id);
       expect(before.current?.totals.verified.totalMinor).toBe(2 * UNIT);
-      const after = (await close(org, 1, 1).expect(200)).body as CircleDetail;
+      const after = (await close(org, 1, 0).expect(200)).body as CircleDetail;
       expect(after.cycles[0].status).toBe('closed');
       expect(after.cycles[0].closedAt).not.toBeNull();
       expect(after.status).toBe('active');
@@ -739,9 +741,9 @@ describe('Circles & ledger (e2e)', () => {
         number: 2,
         dueDate: dueDateFor(firstDue, 'monthly', 2),
         myStatus: 'due',
-        recipient: { userId: org.id, isYou: true },
+        recipient: { userId: m1.id, isYou: false },
       });
-      await expectError(close(org, 1, 1), 409, 'CYCLE_NOT_OPEN');
+      await expectError(close(org, 1, 0), 409, 'CYCLE_NOT_OPEN');
 
       const all = (
         await as(org).get(`/circles/${circle.id}/ledger?scope=all`).expect(200)
@@ -755,7 +757,7 @@ describe('Circles & ledger (e2e)', () => {
       expect(all.entries[1]).toMatchObject({
         type: 'payout',
         cycleNumber: 1,
-        subjectUserId: m1.id,
+        subjectUserId: org.id,
         amountMinor: before.current?.totals.verified.totalMinor,
       });
       await expectError(
@@ -769,10 +771,10 @@ describe('Circles & ledger (e2e)', () => {
       const res = await record(org, circle.id, {
         cycleNumber: 2,
         method: 'cash',
-        subjectUserId: m1.id,
+        subjectUserId: m2.id,
       }).expect(201);
       expect((res.body as { entry: LedgerEntry }).entry).toMatchObject({
-        subjectUserId: m1.id,
+        subjectUserId: m2.id,
         actorUserId: org.id,
         actorName: 'Kamala Silva',
         method: 'cash',
@@ -806,7 +808,9 @@ describe('Circles & ledger (e2e)', () => {
           e.subjectUserId === m1.id || ids.has(e.targetEntryId ?? ''),
         ).toBe(true);
       }
-      expect(mine.entries.map((e) => e.type)).toContain('payout');
+      expect(mine.entries.map((e) => e.type)).toContain(
+        'contribution_verified',
+      );
       const defaultScope = (
         await as(m1).get(`/circles/${circle.id}/ledger`).expect(200)
       ).body as { entries: LedgerEntry[] };
@@ -985,16 +989,22 @@ describe('Circles & ledger (e2e)', () => {
         .post(`/circles/${circle.id}/start`, { order: [org.id, m1.id] })
         .expect(200);
 
+      // three different taps at once: exactly one payment is recorded
+      const attempts = [randomUUID(), randomUUID(), randomUUID()];
       const records = await Promise.all(
-        [1, 2, 3].map(() => record(m1, circle.id)),
+        attempts.map((clientEntryId) =>
+          record(m1, circle.id, { clientEntryId }),
+        ),
       );
       expect(records.map((r) => r.status).sort()).toEqual([201, 409, 409]);
 
-      const clientEntryId = randomUUID();
+      // the winning request retried three times at once: still that one entry
+      const clientEntryId =
+        attempts[records.findIndex((r) => r.status === 201)];
       const replays = await Promise.all(
-        [1, 2, 3].map(() => record(org, circle.id, { clientEntryId })),
+        [1, 2, 3].map(() => record(m1, circle.id, { clientEntryId })),
       );
-      expect(replays.map((r) => r.status).sort()).toEqual([200, 200, 201]);
+      expect(replays.map((r) => r.status)).toEqual([200, 200, 200]);
       const ids = new Set(
         replays.map((r) => (r.body as { entry: LedgerEntry }).entry.id),
       );
@@ -1003,7 +1013,7 @@ describe('Circles & ledger (e2e)', () => {
       const queue = (
         await as(org).get(`/circles/${circle.id}/verify-queue`).expect(200)
       ).body as { items: QueueItem[] };
-      expect(queue.items.map((i) => i.subjectUserId)).toEqual([m1.id, org.id]);
+      expect(queue.items.map((i) => i.subjectUserId)).toEqual([m1.id]);
       const verifies = await Promise.all(
         [1, 2].map(() =>
           as(org).post(
@@ -1012,11 +1022,6 @@ describe('Circles & ledger (e2e)', () => {
         ),
       );
       expect(verifies.map((r) => r.status).sort()).toEqual([201, 409]);
-      await as(org)
-        .post(
-          `/circles/${circle.id}/contributions/${queue.items[1].entryId}/verify`,
-        )
-        .expect(201);
 
       const closes = await Promise.all(
         [1, 2].map(() =>
@@ -1032,7 +1037,7 @@ describe('Circles & ledger (e2e)', () => {
       const done = (
         await as(org)
           .post(`/circles/${circle.id}/cycles/2/close`, {
-            acknowledgeUnpaid: 2,
+            acknowledgeUnpaid: 1,
           })
           .expect(200)
       ).body as CircleDetail;
@@ -1045,7 +1050,7 @@ describe('Circles & ledger (e2e)', () => {
          WHERE e.circle_id = $1 AND e.entry_type = 'payout' ORDER BY c.number`,
         [circle.id],
       );
-      expect(rows.map((r) => r.amount_minor)).toEqual([String(2 * UNIT), null]);
+      expect(rows.map((r) => r.amount_minor)).toEqual([String(UNIT), null]);
 
       const draft = await createCircle(org, { name: 'Next Year' });
       const list = (await as(org).get('/circles').expect(200)).body as {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/ps_picker_field.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -174,13 +175,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   autofillHints: const [AutofillHints.addressCity],
                 ),
                 const SizedBox(height: AppSpace.l),
-                PsTextField(
+                PsPickerField<int>(
                   label: l10n.ageLabel,
+                  hint: l10n.agePickerHint,
+                  sheetTitle: l10n.agePickerTitle,
                   controller: _age,
+                  options: [for (var a = 18; a <= 100; a++) a],
+                  optionLabel: l10n.ageYears,
                   validator: v.age,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.done,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
                 ),
               ],
             ),

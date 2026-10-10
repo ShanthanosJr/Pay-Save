@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/ps_password_strength.dart';
+import '../../../core/validation/input_formatters.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -86,6 +89,8 @@ class _RegisterCredentialsScreenState extends ConsumerState<RegisterCredentialsS
                 hint: l10n.emailHint,
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                inputFormatters: [LowerCaseInputFormatter(), LengthLimitingTextInputFormatter(254)],
                 autofillHints: const [AutofillHints.email],
                 validator: v.email,
               ),
@@ -99,6 +104,7 @@ class _RegisterCredentialsScreenState extends ConsumerState<RegisterCredentialsS
                 showLabel: l10n.showPassword,
                 hideLabel: l10n.hidePassword,
                 validator: v.newPassword,
+                below: PsPasswordStrength(controller: _password),
               ),
               const SizedBox(height: 16),
               PsTextField(

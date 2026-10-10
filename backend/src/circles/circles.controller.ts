@@ -65,7 +65,7 @@ export class CirclesController {
   @Patch(':id')
   @CircleRole('organizer')
   settings(@CurrentMembership() m: Membership, @Body() dto: CircleSettingsDto) {
-    return this.circles.updateSettings(m, dto.collectionMode);
+    return this.circles.updateSettings(m, dto.collectionMode, dto.firstDueDate);
   }
 
   /** Which of my payment methods this circle may see. */

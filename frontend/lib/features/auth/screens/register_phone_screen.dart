@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../../../core/validation/input_formatters.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -189,7 +189,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.telephoneNumber],
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9+\s\-]'))],
+                    inputFormatters: [PhoneInputFormatter()],
                     validator: v.phone,
                     onSubmitted: (_) => _sendCode(),
                   ),

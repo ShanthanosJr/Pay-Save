@@ -338,6 +338,17 @@ export class CirclesRepository {
     };
   }
 
+  async setFirstDueDate(
+    tx: PoolClient,
+    circleId: string,
+    date: string,
+  ): Promise<void> {
+    await tx.query('UPDATE circles SET first_due_date = $2 WHERE id = $1', [
+      circleId,
+      date,
+    ]);
+  }
+
   async circleIdsFor(db: Db, userId: string): Promise<string[]> {
     const { rows } = await db.query<{ id: string }>(
       `SELECT c.id FROM circles c

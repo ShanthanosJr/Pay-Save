@@ -60,8 +60,13 @@ export class CreateCircleDto {
 }
 
 export class CircleSettingsDto {
+  @IsOptional()
   @IsIn(COLLECTION_MODES)
-  collectionMode!: (typeof COLLECTION_MODES)[number];
+  collectionMode?: (typeof COLLECTION_MODES)[number];
+
+  @IsOptional()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  firstDueDate?: string;
 }
 
 export class InvitePalsDto {

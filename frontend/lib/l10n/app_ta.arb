@@ -191,7 +191,7 @@
   "turnRuleFixedHelp": "தொடங்குவதற்கு முன் நீங்கள் வரிசையை அமைப்பீர்கள்.",
   "turnRuleLotteryHelp": "எந்த உறுப்பினரும் சரிபார்க்கக்கூடிய நியாயமான குலுக்கல்.",
   "turnRuleNeedHelp": "தொடங்குவதற்கு முன் தேவையின் அடிப்படையில் உறுப்பினர்களை வரிசைப்படுத்துவீர்கள்.",
-  "createSummary": "{members} உறுப்பினர்கள் × ரூ. {amount} = ஒரு தொகைக்கு ரூ. {pot}",
+  "createSummary": "உங்கள் முறையில் மற்ற {members} உறுப்பினர்கள் தலா ரூ. {amount} செலுத்துவர்: உங்களுக்கு ரூ. {pot} கிடைக்கும்",
   "createCta": "வட்டத்தை உருவாக்கு",
   "joinTitlePlain": "ஒரு வட்டத்தில்",
   "joinTitleAccent": "இணையுங்கள்",
@@ -1115,7 +1115,7 @@
   "@youReceiveTitle": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "youReceiveBody": "இந்தச் சுற்றில் நீங்கள் செலுத்த வேண்டியதில்லை.",
+  "youReceiveBody": "இந்தச் சுற்றில் நீங்கள் செலுத்த வேண்டாம். மற்ற உறுப்பினர்கள் செலுத்துவது உங்களுக்குக் கிடைக்கும்.",
   "@youReceiveBody": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
@@ -1825,6 +1825,109 @@
   },
   "outboxDiscard": "இந்தக் கைபேசியிலிருந்து நீக்கவும்",
   "@outboxDiscard": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthWeak": "இன்னும் போதுமான வலிமை இல்லை",
+  "@pwStrengthWeak": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthGood": "நன்று",
+  "@pwStrengthGood": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthStrong": "வலிமையானது",
+  "@pwStrengthStrong": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleLength": "8 அல்லது அதற்கு மேற்பட்ட எழுத்துகள்",
+  "@pwRuleLength": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleLetter": "குறைந்தது ஒரு எழுத்து",
+  "@pwRuleLetter": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleNumber": "குறைந்தது ஒரு எண்",
+  "@pwRuleNumber": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "agePickerTitle": "உங்கள் வயது",
+  "@agePickerTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "agePickerHint": "உங்கள் வயதைத் தேர்ந்தெடுக்கவும்",
+  "@agePickerHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ageYears": "{count} வயது",
+  "@ageYears": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ageFromNic": "உங்கள் அடையாள அட்டை எண்ணிலிருந்து நிரப்பப்பட்டது. தவறாக இருந்தால் மாற்றவும்.",
+  "@ageFromNic": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "membersPickerTitle": "எத்தனை உறுப்பினர்கள்?",
+  "@membersPickerTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "membersOption": "{count} உறுப்பினர்கள்",
+  "@membersOption": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ownTurnBadge": "உங்கள் முறை",
+  "@ownTurnBadge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ownTurnSoFar": "இதுவரை உங்களுக்காக உறுதிப்படுத்தப்பட்டது: {summary}",
+  "@ownTurnSoFar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyTitle": "{reference} உறுதிப்படுத்தலை ரத்து செய்யவா?",
+  "@reverseVerifyTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyBody": "நீங்கள் தவறுதலாக ஒரு கட்டணத்தை உறுதிப்படுத்தியிருந்தால் மட்டுமே இதைப் பயன்படுத்தவும். அசல் பதிவு உங்கள் காரணத்துடன் தெரியும்; உறுப்பினர் மீண்டும் பதிவு செய்யலாம். சுற்று மூடப்பட்ட பின் இது சாத்தியமில்லை.",
+  "@reverseVerifyBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyAction": "உறுதிப்படுத்தலை ரத்து செய்யவும்",
+  "@reverseVerifyAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseDoneToast": "உறுதிப்படுத்தல் ரத்து செய்யப்பட்டது. உறுப்பினர் மீண்டும் செலுத்த வேண்டும்.",
+  "@reverseDoneToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueRowTitle": "முதல் செலுத்தும் நாள்",
+  "@firstDueRowTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueRowPassed": "{date} · இந்தத் தேதி கடந்துவிட்டது, புதியதைத் தேர்ந்தெடுக்கவும்",
+  "@firstDueRowPassed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueChangedToast": "முதல் செலுத்தும் நாள் மாற்றப்பட்டது",
+  "@firstDueChangedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errOwnTurn": "இந்த உறுப்பினர் இந்தச் சுற்றில் தொகையைப் பெறுகிறார்; எனவே அவர் செலுத்த எதுவும் இல்லை.",
+  "@errOwnTurn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errCycleClosed": "இந்தச் சுற்று மூடப்பட்டு தொகை வழங்கப்பட்டுவிட்டது. அதன் பதிவுகளை இனி மாற்ற முடியாது.",
+  "@errCycleClosed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errCycleHasPayments": "உறுப்பினர்கள் ஏற்கனவே இந்தச் சுற்றுக்கு இந்த உறுப்பினருக்குச் செலுத்தியுள்ளனர். முதலில் சுற்றை மூடவும்.",
+  "@errCycleHasPayments": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errFirstDuePassed": "முதல் செலுத்தும் நாள் கடந்துவிட்டது. \"இந்தச் சீட்டுக்கு மேலும்\" என்பதில் புதிய தேதியைத் தேர்ந்தெடுத்து தொடங்கவும்.",
+  "@errFirstDuePassed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "@createSummary": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

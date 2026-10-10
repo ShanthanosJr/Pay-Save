@@ -301,7 +301,8 @@ describe('Circle members: invitations and payout details (e2e)', () => {
           memberCount: 1,
           seatsLeft: 2,
           collectionMode: 'direct_to_recipient',
-          payout: { count: 3, unitMinor: 500_000, totalMinor: 1_500_000 },
+          // what the two other members pay on your turn
+          payout: { count: 2, unitMinor: 500_000, totalMinor: 1_000_000 },
           palsInside: ['Kamala Silva'],
         },
       });
@@ -510,10 +511,10 @@ describe('Circle members: invitations and payout details (e2e)', () => {
       const memberView = (
         await http().get(`/circles/${c.id}/pay-to`).set(amaya.auth).expect(200)
       ).body as { payee: { id: string }; youReceive: boolean };
-      // Amaya receives cycle 1, but still pays her share to the organizer.
+      // Amaya receives cycle 1, so she has nothing to pay this cycle.
       expect(memberView).toMatchObject({
-        payee: { id: org.id },
-        youReceive: false,
+        payee: { id: amaya.id },
+        youReceive: true,
       });
 
       const organizerView = (

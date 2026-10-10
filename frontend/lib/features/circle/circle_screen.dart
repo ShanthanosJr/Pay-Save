@@ -510,6 +510,13 @@ class _MemberRow extends StatelessWidget {
                 recordedAt: status!.recordedAt,
               ),
             );
+      } else if (st == ContributionStatus.verified && status!.contributionEntryId != null) {
+        onTap = () => showReverseVerificationSheet(
+              context,
+              circleId: s.id,
+              entryId: status!.contributionEntryId!,
+              reference: status!.reference ?? '',
+            );
       } else if (st == ContributionStatus.due || st == ContributionStatus.overdue) {
         onTap = () => showRecordPaymentSheet(context, circle: s, cycleNumber: current.number, subject: member);
       }
@@ -526,7 +533,10 @@ class _MemberRow extends StatelessWidget {
       title: member.isYou ? '${member.displayName} (${l10n.youLabel})' : member.displayName,
       subtitle: subtitle.isEmpty ? null : subtitle,
       trailing: st == null
-          ? null
+          // no status this cycle: this member is the one being paid
+          ? (current != null && detail.cycles.any((c) => c.number == current.number && c.recipientUserId == member.userId)
+              ? PsStatusPill(label: l10n.turnCurrent, tone: PsPillTone.success, icon: Icons.south_west_rounded)
+              : null)
           : PsStatusBadge(status: st, label: st == ContributionStatus.recorded ? l10n.filterPending : statusLabel(l10n, st)),
       showChevron: onTap != null,
       onTap: onTap,

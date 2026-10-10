@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/validation/input_formatters.dart';
+import '../../../core/widgets/ps_picker_field.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +26,26 @@ class _RegisterDetailsScreenState extends ConsumerState<RegisterDetailsScreen> {
     text: ref.read(registerDraftProvider).age == 0 ? '' : '${ref.read(registerDraftProvider).age}',
   );
   late final _nic = TextEditingController(text: ref.read(registerDraftProvider).nic);
+
+  /// The age shown was worked out from the ID number, not picked.
+  bool _ageFromNic = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nic.addListener(_fillAgeFromNic);
+  }
+
+  /// Both NIC formats carry the date of birth, so a valid number fills the
+  /// age in. The member can still change it.
+  void _fillAgeFromNic() {
+    final age = ageFromNic(_nic.text);
+    if (age == null || age < 18 || age > 100) return;
+    if (_age.text.isNotEmpty && !_ageFromNic) return;
+    if (_age.text == '$age') return;
+    _age.text = '$age';
+    setState(() => _ageFromNic = true);
+  }
 
   @override
   void dispose() {
@@ -66,18 +88,10 @@ class _RegisterDetailsScreenState extends ConsumerState<RegisterDetailsScreen> {
               hint: l10n.fullNameHint,
               controller: _name,
               keyboardType: TextInputType.name,
+              textCapitalization: TextCapitalization.words,
               autofillHints: const [AutofillHints.name],
+              inputFormatters: [LengthLimitingTextInputFormatter(80)],
               validator: v.fullName,
-            ),
-            const SizedBox(height: 16),
-            PsTextField(
-              label: l10n.ageLabel,
-              hint: l10n.ageHint,
-              controller: _age,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              maxLength: 3,
-              validator: v.age,
             ),
             const SizedBox(height: 16),
             PsTextField(
@@ -85,10 +99,23 @@ class _RegisterDetailsScreenState extends ConsumerState<RegisterDetailsScreen> {
               hint: l10n.nicHint,
               controller: _nic,
               textInputAction: TextInputAction.done,
-              maxLength: 12,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9vVxX]'))],
+              keyboardType: TextInputType.visiblePassword,
+              autocorrect: false,
+              inputFormatters: [NicInputFormatter()],
               validator: v.nic,
-              onSubmitted: (_) => _next(),
+              onSubmitted: (_) => FocusScope.of(context).unfocus(),
+            ),
+            const SizedBox(height: 16),
+            PsPickerField<int>(
+              label: l10n.ageLabel,
+              hint: l10n.agePickerHint,
+              helper: _ageFromNic ? l10n.ageFromNic : null,
+              sheetTitle: l10n.agePickerTitle,
+              controller: _age,
+              options: [for (var a = 18; a <= 100; a++) a],
+              optionLabel: l10n.ageYears,
+              validator: v.age,
+              onPicked: (_) => setState(() => _ageFromNic = false),
             ),
             const SizedBox(height: 32),
             PsButton(label: l10n.continueLabel, onPressed: _next, trailingIcon: Icons.arrow_forward_rounded),

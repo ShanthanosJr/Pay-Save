@@ -104,6 +104,9 @@ export function loadConfig(env: Env): AppConfig {
   const smtpPort = Number(env.SMTP_PORT || 587);
   if (!Number.isInteger(smtpPort) || smtpPort < 1 || smtpPort > 65535)
     errors.push('SMTP_PORT must be a port number');
+  // Gateways' shared demo senders deliver a canned text instead of ours.
+  if (isProd && /demo/i.test(env.SMS_SENDER_ID ?? ''))
+    errors.push('SMS_SENDER_ID must be your own approved sender id');
   // Codes that only reach a server log are not verification.
   if (isProd && smsProvider === 'console')
     errors.push('SMS_PROVIDER must be a real gateway when NODE_ENV=production');

@@ -385,7 +385,7 @@
   "turnRuleFixedHelp": "You arrange the order before starting.",
   "turnRuleLotteryHelp": "A fair draw that any member can check.",
   "turnRuleNeedHelp": "You order members by need before starting.",
-  "createSummary": "{members} members × LKR {amount} = LKR {pot} per payout",
+  "createSummary": "On your turn the other {members} members each pay LKR {amount}: you receive LKR {pot}",
   "@createSummary": {
     "placeholders": {
       "members": {
@@ -1102,7 +1102,7 @@
     }
   },
   "youReceiveTitle": "This cycle's pot comes to you",
-  "youReceiveBody": "No payment is needed from you this cycle.",
+  "youReceiveBody": "You do not pay this cycle. You receive what the other members pay.",
   "copyValue": "Copy {label}",
   "@copyValue": {
     "placeholders": {
@@ -1524,5 +1524,65 @@
   "savedOnPhoneBody": "Not yet confirmed. There is no connection, so it will be sent automatically when you are back online. Do not pay again.",
   "outboxTryNow": "Send now",
   "outboxFailed": "This payment was NOT recorded: the circle did not accept it. Check with your organizer, then record it again if needed.",
-  "outboxDiscard": "Remove from this phone"
+  "outboxDiscard": "Remove from this phone",
+  "pwStrengthWeak": "Not strong enough yet",
+  "pwStrengthGood": "Good",
+  "pwStrengthStrong": "Strong",
+  "pwRuleLength": "8 or more characters",
+  "pwRuleLetter": "At least one letter",
+  "pwRuleNumber": "At least one number",
+  "agePickerTitle": "Your age",
+  "agePickerHint": "Choose your age",
+  "ageYears": "{count} years",
+  "@ageYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ageFromNic": "Filled in from your ID card number. Change it if it is not right.",
+  "membersPickerTitle": "How many members?",
+  "membersOption": "{count} members",
+  "@membersOption": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ownTurnBadge": "Your turn",
+  "ownTurnSoFar": "Verified for you so far: {summary}",
+  "@ownTurnSoFar": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "reverseVerifyTitle": "Undo verification of {reference}?",
+  "@reverseVerifyTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "reverseVerifyBody": "Use this only if you verified a payment by mistake. The original record stays visible with your reason, and the member can record the payment again. This is not possible after the cycle is closed.",
+  "reverseVerifyAction": "Undo verification",
+  "reverseDoneToast": "Verification undone. The member is due again.",
+  "firstDueRowTitle": "First due date",
+  "firstDueRowPassed": "{date} · this date has passed, choose a new one",
+  "@firstDueRowPassed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "firstDueChangedToast": "First due date changed",
+  "errOwnTurn": "This member receives the payout this cycle, so there is nothing for them to pay.",
+  "errCycleClosed": "This cycle is closed and paid out. Its records can no longer change.",
+  "errCycleHasPayments": "Members have already paid this cycle to this member. Close the cycle first.",
+  "errFirstDuePassed": "The first due date has passed. Choose a new date under \"More for this circle\", then start."
 }

@@ -191,7 +191,7 @@
   "turnRuleFixedHelp": "ආරම්භයට පෙර ඔබ අනුපිළිවෙල සකසයි.",
   "turnRuleLotteryHelp": "ඕනෑම සාමාජිකයෙකුට පරීක්ෂා කළ හැකි සාධාරණ දිනුම් ඇදීමක්.",
   "turnRuleNeedHelp": "ආරම්භයට පෙර ඔබ අවශ්‍යතාව අනුව සාමාජිකයන් පෙළගස්වයි.",
-  "createSummary": "සාමාජිකයන් {members} × රු. {amount} = එක් ගෙවීමකට රු. {pot}",
+  "createSummary": "ඔබේ වාරයේදී අනෙක් සාමාජිකයන් {members} දෙනා එක් අයෙකු රු. {amount} බැගින් ගෙවයි: ඔබට රු. {pot} ලැබේ",
   "createCta": "කවය සාදන්න",
   "joinTitlePlain": "කවයකට",
   "joinTitleAccent": "එක්වන්න",
@@ -1115,7 +1115,7 @@
   "@youReceiveTitle": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
-  "youReceiveBody": "මෙම වාරයේ ඔබෙන් ගෙවීමක් අවශ්‍ය නැත.",
+  "youReceiveBody": "ඔබ මෙම වටයේ ගෙවන්නේ නැත. අනෙක් සාමාජිකයන් ගෙවන මුදල ඔබට ලැබේ.",
   "@youReceiveBody": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   },
@@ -1825,6 +1825,109 @@
   },
   "outboxDiscard": "මෙම දුරකථනයෙන් ඉවත් කරන්න",
   "@outboxDiscard": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthWeak": "තවම ප්‍රමාණවත් තරම් ශක්තිමත් නැත",
+  "@pwStrengthWeak": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthGood": "හොඳයි",
+  "@pwStrengthGood": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwStrengthStrong": "ශක්තිමත්",
+  "@pwStrengthStrong": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleLength": "අක්ෂර 8ක් හෝ වැඩි",
+  "@pwRuleLength": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleLetter": "අවම වශයෙන් එක් අකුරක්",
+  "@pwRuleLetter": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "pwRuleNumber": "අවම වශයෙන් එක් ඉලක්කමක්",
+  "@pwRuleNumber": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "agePickerTitle": "ඔබේ වයස",
+  "@agePickerTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "agePickerHint": "ඔබේ වයස තෝරන්න",
+  "@agePickerHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ageYears": "අවුරුදු {count}",
+  "@ageYears": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ageFromNic": "ඔබේ හැඳුනුම්පත් අංකයෙන් පුරවා ඇත. වැරදි නම් වෙනස් කරන්න.",
+  "@ageFromNic": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "membersPickerTitle": "සාමාජිකයන් කී දෙනෙක්ද?",
+  "@membersPickerTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "membersOption": "සාමාජිකයන් {count}",
+  "@membersOption": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ownTurnBadge": "ඔබේ වාරය",
+  "@ownTurnBadge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "ownTurnSoFar": "මේ වන විට ඔබ වෙනුවෙන් තහවුරු වී ඇත: {summary}",
+  "@ownTurnSoFar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyTitle": "{reference} තහවුරු කිරීම අවලංගු කරන්නද?",
+  "@reverseVerifyTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyBody": "ඔබ වැරදීමකින් ගෙවීමක් තහවුරු කළේ නම් පමණක් මෙය භාවිත කරන්න. මුල් සටහන ඔබේ හේතුව සමඟ දිස්වන අතර සාමාජිකයාට නැවත ගෙවීම සටහන් කළ හැක. වටය වැසූ පසු මෙය කළ නොහැක.",
+  "@reverseVerifyBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseVerifyAction": "තහවුරු කිරීම අවලංගු කරන්න",
+  "@reverseVerifyAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reverseDoneToast": "තහවුරු කිරීම අවලංගු විය. සාමාජිකයා නැවත ගෙවිය යුතුයි.",
+  "@reverseDoneToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueRowTitle": "පළමු ගෙවීම් දිනය",
+  "@firstDueRowTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueRowPassed": "{date} · මෙම දිනය ඉක්ම ගොස් ඇත, අලුත් එකක් තෝරන්න",
+  "@firstDueRowPassed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "firstDueChangedToast": "පළමු ගෙවීම් දිනය වෙනස් විය",
+  "@firstDueChangedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errOwnTurn": "මෙම සාමාජිකයාට මෙම වටයේ මුදල ලැබේ; එබැවින් ඔවුන්ට ගෙවීමට කිසිවක් නැත.",
+  "@errOwnTurn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errCycleClosed": "මෙම වටය වසා මුදල් ගෙවා ඇත. එහි සටහන් තවදුරටත් වෙනස් කළ නොහැක.",
+  "@errCycleClosed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errCycleHasPayments": "සාමාජිකයන් දැනටමත් මෙම වටය සඳහා මෙම සාමාජිකයාට ගෙවා ඇත. පළමුව වටය වසන්න.",
+  "@errCycleHasPayments": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errFirstDuePassed": "පළමු ගෙවීම් දිනය ඉක්ම ගොස් ඇත. \"මෙම සීට්ටුව සඳහා තවත්\" යටතේ නව දිනයක් තෝරා ආරම්භ කරන්න.",
+  "@errFirstDuePassed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "@createSummary": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

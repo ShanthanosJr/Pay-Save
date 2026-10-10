@@ -246,7 +246,15 @@ class _ActiveHome extends ConsumerWidget {
     final queue = s.isOrganizer ? ref.watch(verifyQueueProvider(s.id)).value ?? const <VerifyItem>[] : const <VerifyItem>[];
     final totals = current.totals;
 
-    final (String title, String body, Widget action) = switch (status) {
+    // My turn: I owe nothing this cycle, so there is no status and no Pay now.
+    final myTurn = recipient?.isYou ?? false;
+    final (String title, String body, Widget action) = myTurn
+        ? (
+            l10n.youReceiveTitle,
+            '${l10n.youReceiveBody}\n${l10n.ownTurnSoFar(l10n.arithmeticVerified(totals.verified.count, formatLkr(totals.verified.unitMinor), formatLkr(totals.verified.totalMinor)))}',
+            PsButton(label: l10n.viewRecord, variant: PsButtonVariant.secondary, onPressed: () => context.go('/history')),
+          )
+        : switch (status) {
       ContributionStatus.due || ContributionStatus.overdue => (
           l10n.contributionDueTitle,
           '${l10n.cycleOf(cycle.number, s.plannedCycles)} · ${formatLkr(unit)}',
@@ -299,6 +307,7 @@ class _ActiveHome extends ConsumerWidget {
         meta: recipient == null ? dueText : '$dueText · ${l10n.payeeLine(recipient.isYou ? l10n.youLabel : recipient.displayName)}',
         status: status,
         statusLabel: statusLabel(l10n, status),
+        ownTurnLabel: myTurn ? l10n.ownTurnBadge : null,
         action: action,
       ),
       if (queue.isNotEmpty) ...[
@@ -494,7 +503,11 @@ class _AttentionCard extends StatelessWidget {
     required this.status,
     required this.statusLabel,
     required this.action,
+    this.ownTurnLabel,
   });
+
+  /// Set on the member's own payout turn: replaces the payment status.
+  final String? ownTurnLabel;
 
   final String title;
   final String body;
@@ -505,7 +518,8 @@ class _AttentionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final urgent = status == ContributionStatus.due || status == ContributionStatus.overdue;
+    final own = ownTurnLabel != null;
+    final urgent = !own && (status == ContributionStatus.due || status == ContributionStatus.overdue);
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -518,10 +532,14 @@ class _AttentionCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             PsIconBadge(
-              icon: urgent ? Icons.priority_high_rounded : PsStatusBadge.styleFor(status).$1,
+              icon: own
+                  ? Icons.south_west_rounded
+                  : urgent
+                      ? Icons.priority_high_rounded
+                      : PsStatusBadge.styleFor(status).$1,
               tone: urgent
                   ? PsBadgeTone.danger
-                  : status == ContributionStatus.verified
+                  : own || status == ContributionStatus.verified
                       ? PsBadgeTone.forest
                       : PsBadgeTone.info,
               size: 40,
@@ -534,7 +552,10 @@ class _AttentionCard extends StatelessWidget {
                 Text(body, style: AppText.body.copyWith(color: AppColors.ink)),
                 const SizedBox(height: 10),
                 Wrap(spacing: 8, runSpacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                  PsStatusBadge(status: status, label: statusLabel, filled: !urgent || status == ContributionStatus.overdue),
+                  if (own)
+                    PsStatusPill(label: ownTurnLabel!, tone: PsPillTone.success, icon: Icons.south_west_rounded)
+                  else
+                    PsStatusBadge(status: status, label: statusLabel, filled: !urgent || status == ContributionStatus.overdue),
                   Text(meta, style: AppText.footnote),
                 ]),
               ]),

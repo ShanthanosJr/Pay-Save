@@ -434,7 +434,8 @@ describe('Reminders, member removal, statements and community (e2e)', () => {
         [amaya.id, 2],
         [chathu.id, 3],
       ]);
-      expect(d.current!.totals.unpaid.count).toBe(2);
+      // amaya is verified and the organizer receives this cycle: only chathu is unpaid
+      expect(d.current!.totals.unpaid.count).toBe(1);
       await http().get(`/circles/${circle.id}`).set(bimal.auth).expect(404);
 
       const ledger = await http()
@@ -452,7 +453,7 @@ describe('Reminders, member removal, statements and community (e2e)', () => {
       await http()
         .post(`/circles/${circle.id}/cycles/1/close`)
         .set(org.auth)
-        .send({ acknowledgeUnpaid: 2 })
+        .send({ acknowledgeUnpaid: 1 })
         .expect(200);
       expect((await inbox(amaya)).items[0].kind).toBe('cycle_closed');
       const two = await pay(circle.id, org, 2);
@@ -463,11 +464,220 @@ describe('Reminders, member removal, statements and community (e2e)', () => {
       await http()
         .post(`/circles/${circle.id}/cycles/2/close`)
         .set(org.auth)
-        .send({ acknowledgeUnpaid: 2 })
+        .send({ acknowledgeUnpaid: 1 })
         .expect(200);
       await remove(amaya).expect((r) =>
         expect(r.body).toMatchObject({ code: 'MEMBER_ALREADY_PAID_OUT' }),
       );
+    });
+  });
+
+  describe('seettu rules', () => {
+    it('the receiver of a cycle owes nothing: never due, never unpaid, never reminded', async () => {
+      const today = localDate(new Date());
+      clock.setDay(today);
+      const circle = await startedCircle([org, amaya, bimal], 3);
+      const base = `/circles/${circle.id}`;
+      const view = async (u: User) =>
+        (await http().get(base).set(u.auth).expect(200)).body as {
+          currentCycle: { myStatus: string | null };
+          current: {
+            members: { userId: string }[];
+            totals: { membersDue: number; expectedMinor: number };
+          };
+        };
+
+      const mine = await view(org);
+      expect(mine.currentCycle.myStatus).toBeNull();
+      expect(mine.current.members.map((x) => x.userId)).toEqual([
+        amaya.id,
+        bimal.id,
+      ]);
+      expect(mine.current.totals).toMatchObject({
+        membersDue: 2,
+        expectedMinor: 1_000_000,
+      });
+      // not by the receiver, and not by the organizer on their behalf
+      await http()
+        .post(`${base}/contributions`)
+        .set(org.auth)
+        .send({ cycleNumber: 1, method: 'cash', clientEntryId: randomUUID() })
+        .expect(409)
+        .expect((r) => expect(r.body).toMatchObject({ code: 'OWN_TURN' }));
+      const payTo = await http()
+        .get(`${base}/pay-to`)
+        .set(org.auth)
+        .expect(200);
+      expect(payTo.body).toMatchObject({ youReceive: true, methods: [] });
+
+      await http()
+        .put(`${base}/reminders`)
+        .set(org.auth)
+        .send({ enabled: true, daysBefore: [3], channels: [] })
+        .expect(200);
+      await app.get(RemindersService).run(clock.now());
+      expect(
+        (await inbox(org)).items.filter(
+          (n) =>
+            n.kind === 'reminder_due' &&
+            n.payload.dueDate === addDays(today, 3),
+        ),
+      ).toEqual([]);
+
+      // the payout is exactly what the others paid
+      for (const u of [amaya, bimal]) {
+        const e = await pay(circle.id, u, 1);
+        await http()
+          .post(`${base}/contributions/${e.id}/verify`)
+          .set(org.auth)
+          .expect(201);
+      }
+      await http()
+        .post(`${base}/cycles/1/close`)
+        .set(org.auth)
+        .send({ acknowledgeUnpaid: 0 })
+        .expect(200);
+      const payout = await pool.query<{
+        amount_minor: string;
+        subject_user_id: string;
+      }>(
+        `SELECT amount_minor, subject_user_id FROM ledger_entries
+         WHERE circle_id = $1 AND entry_type = 'payout'`,
+        [circle.id],
+      );
+      expect(payout.rows).toEqual([
+        { amount_minor: '1000000', subject_user_id: org.id },
+      ]);
+      // next cycle: amaya receives, the organizer now owes
+      expect((await view(org)).currentCycle.myStatus).toBe('due');
+      expect((await view(amaya)).currentCycle.myStatus).toBeNull();
+    });
+
+    it('a verification made by mistake can be reversed while the cycle is open, never after', async () => {
+      const circle = await startedCircle([org, amaya, bimal]);
+      const base = `/circles/${circle.id}`;
+      const entry = await pay(circle.id, amaya, 1);
+      const reverse = (u: User, id = entry.id) =>
+        http()
+          .post(`${base}/contributions/${id}/reverse`)
+          .set(u.auth)
+          .send({ reason: 'Verified the wrong member' });
+      await reverse(org).expect(409); // not verified yet
+      await http()
+        .post(`${base}/contributions/${entry.id}/verify`)
+        .set(org.auth)
+        .expect(201);
+      await reverse(amaya).expect(403);
+
+      const res = await reverse(org).expect(201);
+      expect((res.body as { entry: object }).entry).toMatchObject({
+        type: 'correction',
+        targetEntryId: entry.id,
+        amountMinor: -500_000,
+        note: 'Verified the wrong member',
+      });
+      await reverse(org).expect(409); // already corrected
+      // the original stays in the record and the member can record again
+      const again = await pay(circle.id, amaya, 1);
+      await http()
+        .post(`${base}/contributions/${again.id}/verify`)
+        .set(org.auth)
+        .expect(201);
+      const ledger = await http()
+        .get(`${base}/ledger?scope=mine`)
+        .set(amaya.auth)
+        .expect(200);
+      expect(
+        (ledger.body as { entries: { id: string; status: string }[] }).entries
+          .filter((e) => e.status)
+          .map((e) => [e.id, e.status]),
+      ).toEqual([
+        [again.id, 'verified'],
+        [entry.id, 'corrected'],
+      ]);
+
+      await http()
+        .post(`${base}/cycles/1/close`)
+        .set(org.auth)
+        .send({ acknowledgeUnpaid: 1 })
+        .expect(200);
+      await reverse(org, again.id)
+        .expect(409)
+        .expect((r) => expect(r.body).toMatchObject({ code: 'CYCLE_CLOSED' }));
+    });
+
+    it('a circle cannot start on a due date that has passed; the organizer picks a new one', async () => {
+      const today = localDate(new Date());
+      clock.setDay(today);
+      const created = (
+        await http()
+          .post('/circles')
+          .set(org.auth)
+          .send({
+            name: 'Late Start',
+            contributionMinor: 500_000,
+            interval: 'weekly',
+            turnRule: 'fixed',
+            plannedCycles: 2,
+            firstDueDate: addDays(today, 2),
+          })
+          .expect(201)
+      ).body as Detail & { joinCode: string };
+      await http()
+        .post('/circles/join')
+        .set(amaya.auth)
+        .send({ code: created.joinCode })
+        .expect(200);
+      const start = () =>
+        http()
+          .post(`/circles/${created.id}/start`)
+          .set(org.auth)
+          .send({ order: [org.id, amaya.id] });
+
+      clock.setDay(addDays(today, 5));
+      await start()
+        .expect(409)
+        .expect((r) =>
+          expect(r.body).toMatchObject({ code: 'FIRST_DUE_DATE_PASSED' }),
+        );
+      const patch = (u: User, firstDueDate: string) =>
+        http()
+          .patch(`/circles/${created.id}`)
+          .set(u.auth)
+          .send({ firstDueDate });
+      await patch(amaya, addDays(today, 9)).expect(403);
+      await patch(org, addDays(today, 1)).expect(400); // still in the past
+      await patch(org, '2026-13-40').expect(400);
+      await patch(org, addDays(today, 9)).expect(200);
+      const started = (await start().expect(200)).body as {
+        cycles: { dueDate: string }[];
+      };
+      expect(started.cycles.map((c) => c.dueDate)).toEqual([
+        addDays(today, 9),
+        addDays(today, 16),
+      ]);
+      clock.setDay(today);
+    });
+
+    it('the current receiver cannot be removed once members have paid them', async () => {
+      const circle = await startedCircle([amaya, org, bimal, chathu].slice(1));
+      // order: org, bimal, chathu -> org receives cycle 1; close it to reach bimal's turn
+      await http()
+        .post(`/circles/${circle.id}/cycles/1/close`)
+        .set(org.auth)
+        .send({ acknowledgeUnpaid: 2 })
+        .expect(200);
+      const remove = () =>
+        http()
+          .post(`/circles/${circle.id}/members/${bimal.id}/remove`)
+          .set(org.auth)
+          .send({ reason: 'Left the village' });
+      await pay(circle.id, chathu, 2);
+      await remove()
+        .expect(409)
+        .expect((r) =>
+          expect(r.body).toMatchObject({ code: 'CYCLE_HAS_PAYMENTS' }),
+        );
     });
   });
 
@@ -484,7 +694,7 @@ describe('Reminders, member removal, statements and community (e2e)', () => {
         );
 
       const mine = await pay(circle.id, amaya, 1);
-      await pay(circle.id, bimal, 1); // recorded, never verified
+      const later = await pay(circle.id, bimal, 1); // recorded, not verified yet
       await http()
         .post(`${base}/contributions/${mine.id}/verify`)
         .set(org.auth)
@@ -562,7 +772,10 @@ describe('Reminders, member removal, statements and community (e2e)', () => {
       expect(xss.text).not.toContain('<script>');
 
       // a later honest entry does not disturb an issued statement
-      await pay(circle.id, org, 1);
+      await http()
+        .post(`${base}/contributions/${later.id}/verify`)
+        .set(org.auth)
+        .expect(201);
       expect(
         (await http().get(`/statements/verify/${s.verificationCode}`)).body,
       ).toMatchObject({ valid: true, ledgerIntact: true });

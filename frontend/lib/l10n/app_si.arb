@@ -1929,5 +1929,217 @@
   },
   "@createSummary": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatAttach": "අමුණන්න",
+  "@chatAttach": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPhoto": "ඡායාරූපය",
+  "@chatPhoto": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPhotoHint": "උදාහරණයක් ලෙස බැංකු රිසිට්පතක්. 5 MB දක්වා.",
+  "@chatPhotoHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideo": "වීඩියෝව",
+  "@chatVideo": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideoHint": "විනාඩි 2ක් සහ 25 MB දක්වා.",
+  "@chatVideoHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatVideoMeta": "{size} MB · විවෘත කිරීමට තට්ටු කරන්න",
+  "@chatVideoMeta": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatEmoji": "ඉමෝජි",
+  "@chatEmoji": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleted": "මෙම පණිවිඩය මකා දමන ලදී",
+  "@chatDeleted": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatMessageActions": "පණිවිඩය",
+  "@chatMessageActions": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatReactWith": "{emoji} සමඟ ප්‍රතිචාර දක්වන්න",
+  "@chatReactWith": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatStar": "මෙම පණිවිඩය තරු ලකුණු කරන්න",
+  "@chatStar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnstar": "තරු ලකුණ ඉවත් කරන්න",
+  "@chatUnstar": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatStarred": "තරු ලකුණු කළා",
+  "@chatStarred": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatCopy": "පෙළ පිටපත් කරන්න",
+  "@chatCopy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteMessage": "සැමට මකන්න",
+  "@chatDeleteMessage": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteMessageBody": "පණිවිඩය සහ ඕනෑම ඡායාරූපයක් හෝ වීඩියෝවක් ඔබ දෙදෙනාටම ඉවත් වේ.",
+  "@chatDeleteMessageBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPin": "ඉහළට අමුණන්න",
+  "@chatPin": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPinHint": "මෙම සංවාදය ඔබේ ලැයිස්තුවේ මුලින් තබයි",
+  "@chatPinHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnpin": "ඇමුණුම ඉවත් කරන්න",
+  "@chatUnpin": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatPinned": "අමුණා ඇත",
+  "@chatPinned": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFavourite": "ප්‍රියතමයන්ට එක් කරන්න",
+  "@chatFavourite": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatUnfavourite": "ප්‍රියතමයන්ගෙන් ඉවත් කරන්න",
+  "@chatUnfavourite": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFavouriteLabel": "ප්‍රියතම",
+  "@chatFavouriteLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDelete": "සංවාදය මකන්න",
+  "@chatDelete": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeleteBody": "එය ඔබේ ලැයිස්තුවෙන් පමණක් ඉවත් කරයි. {name} සතු පිටපත රැඳේ.",
+  "@chatDeleteBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatDeletedToast": "සංවාදය මකා දමන ලදී",
+  "@chatDeletedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFilterAll": "සියල්ල",
+  "@chatFilterAll": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatFilterFavourites": "ප්‍රියතම",
+  "@chatFilterFavourites": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errFileTooLarge": "එම ගොනුව විශාල වැඩියි. ඡායාරූප 5 MB දක්වා, වීඩියෝ 25 MB දක්වා.",
+  "@errFileTooLarge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errUnsupportedMedia": "JPEG, PNG හෝ WebP ඡායාරූපයක්, නැතහොත් MP4, MOV හෝ WebM වීඩියෝවක් යවන්න.",
+  "@errUnsupportedMedia": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsDisplay": "දර්ශනය",
+  "@settingsDisplay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsTextSample": "රු. 5,000 ඔක්තෝබර් 20 වන දින ගෙවිය යුතුයි. අකුරු පෙනෙන්නේ මේ ආකාරයටයි.",
+  "@settingsTextSample": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsLanguageNote": "SMS කේත, ඊමේල් සහ මතක් කිරීම්ද මෙම භාෂාවෙන් යැවේ.",
+  "@settingsLanguageNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsNotifications": "දැනුම්දීම් සහ මතක් කිරීම්",
+  "@settingsNotifications": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsInboxHint": "ඔබ ගැන සෑම සටහනක්ම එක ලැයිස්තුවක",
+  "@settingsInboxHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsRemindersHint": "සීට්ටුව අනුව සකසන්න: සීට්ටුවක් විවෘත කර, මෙම සීට්ටුව සඳහා තවත් තෝරන්න",
+  "@settingsRemindersHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsPrivacy": "පෞද්ගලිකත්වය",
+  "@settingsPrivacy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "prefHidePreviews": "සංවාද ලැයිස්තුවේ පණිවිඩ පෙළ සඟවන්න",
+  "@prefHidePreviews": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "prefHidePreviewsHint": "බෙදාගත් දුරකථනයක් සඳහා. ඔබට ලියූ අය තවමත් පෙනේ.",
+  "@prefHidePreviewsHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "chatHiddenPreview": "පණිවිඩයක්",
+  "@chatHiddenPreview": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsSecurity": "ආරක්ෂාව",
+  "@settingsSecurity": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsEditProfile": "පැතිකඩ සංස්කරණය",
+  "@settingsEditProfile": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "settingsOpen": "සියලු සැකසුම්",
+  "@settingsOpen": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataTitle": "ඔබේ දත්ත",
+  "@yourDataTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataHint": "ගබඩා කරන දේ, ආරක්ෂා කරන ආකාරය, දැකිය හැකි අය",
+  "@yourDataHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataStoredTitle": "ගබඩා කරන දේ",
+  "@yourDataStoredTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataStoredBody": "ඔබේ නම, වයස, දුරකථන අංකය, ඊමේල් සහ හැඳුනුම්පත් අංකය; ඔබ සිටින සීට්ටු; ඔබ හෝ සංවිධායක සටහන් කරන සෑම ගෙවීමක්ම; ඔබට මුදල් ලැබිය යුතු ආකාරය; සහ ඔබේ පණිවිඩ.",
+  "@yourDataStoredBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataProtectedTitle": "ආරක්ෂා කරන ආකාරය",
+  "@yourDataProtectedTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataProtectedBody": "ඔබේ දුරකථන අංකය, හැඳුනුම්පත් අංකය සහ බැංකු හෝ පසුම්බි විස්තර සංකේතනය කර ඇත. ඔබේ මුරපදය කිසිදා ගබඩා නොවේ. ගෙවීම් සටහන් කිසිවෙකුට සංස්කරණය හෝ මැකීම කළ නොහැක; වැරැද්දක් නව සටහනකින් නිවැරදි කෙරේ.",
+  "@yourDataProtectedBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataWhoTitle": "දැකිය හැකි අය",
+  "@yourDataWhoTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataWhoBody": "ඔබේ සීට්ටුවේ සාමාජිකයන්ට ඔබේ නම සහ ඔබ ගෙවා ඇත්ද යන්න පෙනේ. සංවිධායකට ඔබේ ගෙවීම් පෙනේ. ඔබේ ගෙවීම් විස්තර පෙන්වන්නේ ඔබට ගෙවන පුද්ගලයාට පමණි; එය සෑම විටම සටහන් වේ.",
+  "@yourDataWhoBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataNeverTitle": "කිසිදා සිදු නොවන දේ",
+  "@yourDataNeverTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "yourDataNeverBody": "Pay&Save කිසිදා ඔබේ මුදල් තබා ගන්නේ හෝ මාරු කරන්නේ නැත. ප්‍රජා නිලධාරීන්ට ඔබේ නම හෝ දුරකථන අංකය කිසිදා නොපෙනේ. සෑම සාමාජිකයෙක්ම එකඟ නොවන්නේ නම් කිසිවක් ඔබේ සීට්ටුවෙන් පිටතට බෙදා නොගැනේ.",
+  "@yourDataNeverBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

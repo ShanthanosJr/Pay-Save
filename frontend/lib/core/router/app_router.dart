@@ -33,6 +33,7 @@ import '../../features/people/person_profile_screen.dart';
 import '../../features/profile/change_phone_screen.dart';
 import '../../features/profile/edit_profile_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/settings/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../auth/auth_controller.dart';
 import '../social/social_providers.dart';
@@ -54,7 +55,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
       const signedInRoots = [
-        '/home', '/circle', '/circles', '/circle-invitations', '/history', '/chats', '/profile', '/people', '/pals', '/notifications', '/community',
+        '/home', '/circle', '/circles', '/circle-invitations', '/history', '/chats', '/profile', '/people', '/pals', '/notifications', '/community', '/settings',
       ];
       final signedInArea = signedInRoots.any((r) => loc == r || loc.startsWith('$r/'));
 
@@ -107,6 +108,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/profile/edit', builder: (context, state) => const EditProfileScreen()),
       GoRoute(path: '/profile/phone', builder: (context, state) => const ChangePhoneScreen()),
       GoRoute(path: '/profile/password', builder: (context, state) => const ChangePasswordScreen()),
+      GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
       GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
       GoRoute(
         path: '/circles/:id/reminders',

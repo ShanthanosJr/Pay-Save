@@ -61,6 +61,11 @@ String messageFor(AppLocalizations l10n, Object error) {
       return l10n.errPayoutDetails;
     case 'INVITATION_NOT_FOUND':
       return l10n.errInvitationGone;
+    case 'FILE_TOO_LARGE':
+      return l10n.errFileTooLarge;
+    case 'UNSUPPORTED_MEDIA':
+    case 'FILE_REQUIRED':
+      return l10n.errUnsupportedMedia;
     case 'OWN_TURN':
       return l10n.errOwnTurn;
     case 'CYCLE_CLOSED':

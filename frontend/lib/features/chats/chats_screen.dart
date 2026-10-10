@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/api/error_messages.dart';
 import '../../core/auth/auth_controller.dart';
+import '../../core/providers/prefs_store.dart';
 import '../../core/social/social_models.dart';
 import '../../core/social/social_providers.dart';
 import '../../core/theme/app_colors.dart';
@@ -15,6 +16,8 @@ import '../../core/widgets/ps_button.dart';
 import '../../core/widgets/ps_card.dart';
 import '../../core/widgets/ps_forest_page.dart';
 import '../../core/widgets/ps_icon_badge.dart';
+import '../../core/widgets/ps_list_row.dart';
+import '../../core/widgets/ps_sheet.dart';
 import '../../core/widgets/ps_search_field.dart';
 import '../../core/widgets/ps_section.dart';
 import '../../core/widgets/ps_user_avatar.dart';
@@ -218,16 +221,26 @@ class _SuggestionsState extends ConsumerState<_Suggestions> {
   }
 }
 
-class _Inbox extends ConsumerWidget {
+class _Inbox extends ConsumerStatefulWidget {
   const _Inbox({required this.onOpen});
 
   final ValueChanged<String> onOpen;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_Inbox> createState() => _InboxState();
+}
+
+class _InboxState extends ConsumerState<_Inbox> {
+  bool _favouritesOnly = false;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(inboxProvider);
-    final chats = async.value;
+    final all = async.value;
+    final hasFavourites = all?.any((c) => c.favourite) ?? false;
+    final favouritesOnly = _favouritesOnly && hasFavourites;
+    final chats = favouritesOnly ? all!.where((c) => c.favourite).toList() : all;
     final auth = ref.watch(authControllerProvider);
     final me = auth is AuthLoggedIn ? auth.user.id : '';
 
@@ -260,29 +273,56 @@ class _Inbox extends ConsumerWidget {
               ],
             ),
           )
-        else
-          for (final c in chats) _ChatRow(chat: c, me: me, onTap: () => onOpen('/chats/${c.id}')),
+        else ...[
+          if (hasFavourites)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpace.m),
+              child: PsSegmented<bool>(
+                segments: [(false, l10n.chatFilterAll), (true, l10n.chatFilterFavourites)],
+                selected: favouritesOnly,
+                onChanged: (v) => setState(() => _favouritesOnly = v),
+              ),
+            ),
+          for (final c in chats)
+            _ChatRow(
+              chat: c,
+              me: me,
+              onTap: () => widget.onOpen('/chats/${c.id}'),
+              onLongPress: () => showChatActionsSheet(context, ref, c),
+            ),
+        ],
       ],
     );
   }
 }
 
-class _ChatRow extends StatelessWidget {
-  const _ChatRow({required this.chat, required this.me, required this.onTap});
+class _ChatRow extends ConsumerWidget {
+  const _ChatRow({required this.chat, required this.me, required this.onTap, this.onLongPress});
+
+  final VoidCallback? onLongPress;
 
   final ChatSummary chat;
   final String me;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final hidden = ref.watch(hideChatPreviewsProvider);
     final unread = chat.unread > 0;
     final at = chat.lastMessage.createdAt;
     final now = DateTime.now();
     final sameDay = at.year == now.year && at.month == now.month && at.day == now.day;
     final time = (sameDay ? DateFormat.Hm(l10n.localeName) : DateFormat.MMMd(l10n.localeName)).format(at);
-    final preview = chat.lastMessage.senderId == me ? l10n.youPrefix(chat.lastMessage.body) : chat.lastMessage.body;
+    final last = chat.lastMessage;
+    final said = last.deleted
+        ? l10n.chatDeleted
+        : switch (last.kind) {
+            MessageKind.image => last.body.isEmpty ? l10n.chatPhoto : '${l10n.chatPhoto} · ${last.body}',
+            MessageKind.video => last.body.isEmpty ? l10n.chatVideo : '${l10n.chatVideo} · ${last.body}',
+            MessageKind.text => last.body,
+          };
+    final preview = hidden ? l10n.chatHiddenPreview : (last.senderId == me ? l10n.youPrefix(said) : said);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -295,6 +335,7 @@ class _ChatRow extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
@@ -328,7 +369,19 @@ class _ChatRow extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(time, style: AppText.caption),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      if (chat.pinned)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(Icons.push_pin_rounded, size: 14, color: AppColors.inkMuted, semanticLabel: l10n.chatPinned),
+                        ),
+                      if (chat.favourite)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(Icons.favorite_rounded, size: 14, color: AppColors.danger, semanticLabel: l10n.chatFavouriteLabel),
+                        ),
+                      Text(time, style: AppText.caption),
+                    ]),
                     if (unread) ...[
                       const SizedBox(height: 6),
                       Semantics(
@@ -385,5 +438,60 @@ class _Message extends StatelessWidget {
         if (action != null) ...[const SizedBox(height: AppSpace.m), action!],
       ],
     ),
+  );
+}
+
+/// Pin, favourite or delete a chat. All three affect my inbox only.
+void showChatActionsSheet(BuildContext context, WidgetRef ref, ChatSummary chat) {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final api = ref.read(socialApiProvider);
+
+  Future<void> run(Future<void> Function() fn, {String? toast}) async {
+    try {
+      await fn();
+      ref.invalidate(inboxProvider);
+      ref.read(chatUnreadProvider.notifier).refresh();
+      if (toast != null) messenger.showSnackBar(SnackBar(content: Text(toast)));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(messageFor(l10n, e))));
+    }
+  }
+
+  showPsSheet<void>(
+    context: context,
+    title: chat.peer.fullName,
+    builder: (ctx) => Column(children: [
+      PsListRow(
+        icon: chat.pinned ? Icons.push_pin_outlined : Icons.push_pin_rounded,
+        tone: PsBadgeTone.mint,
+        title: chat.pinned ? l10n.chatUnpin : l10n.chatPin,
+        subtitle: chat.pinned ? null : l10n.chatPinHint,
+        onTap: () {
+          Navigator.of(ctx).pop();
+          run(() => api.setChatFlags(chat.id, pinned: !chat.pinned));
+        },
+      ),
+      PsListRow(
+        icon: chat.favourite ? Icons.favorite_border_rounded : Icons.favorite_rounded,
+        tone: PsBadgeTone.mint,
+        title: chat.favourite ? l10n.chatUnfavourite : l10n.chatFavourite,
+        onTap: () {
+          Navigator.of(ctx).pop();
+          run(() => api.setChatFlags(chat.id, favourite: !chat.favourite));
+        },
+      ),
+      PsListRow(
+        icon: Icons.delete_outline_rounded,
+        tone: PsBadgeTone.danger,
+        title: l10n.chatDelete,
+        subtitle: l10n.chatDeleteBody(chat.peer.fullName),
+        titleColor: AppColors.danger,
+        onTap: () {
+          Navigator.of(ctx).pop();
+          run(() => api.clearChat(chat.id), toast: l10n.chatDeletedToast);
+        },
+      ),
+    ]),
   );
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { AppException } from '../common/errors/app.exception';
-import { avatarUrl } from '../users/image-type';
+import { avatarUrl, sniffImageType } from '../users/image-type';
 import {
   InboxRow,
+  MessageKind,
   MessageRow,
   PalRequestRow,
   PalStatus,
@@ -62,6 +63,12 @@ export interface ChatMessage {
   clientMessageId: string;
   body: string;
   createdAt: string;
+  kind: MessageKind;
+  /** Taken back by its sender; body and media are gone. */
+  deleted: boolean;
+  media: { url: string; contentType: string; size: number } | null;
+  starred: boolean;
+  reactions: { emoji: string; count: number; mine: boolean }[];
 }
 
 export interface ChatSummary {
@@ -69,6 +76,23 @@ export interface ChatSummary {
   peer: Person;
   lastMessage: ChatMessage;
   unread: number;
+  pinned: boolean;
+  favourite: boolean;
+}
+
+export const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'] as const;
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const MAX_VIDEO_BYTES = 25 * 1024 * 1024;
+
+/** MP4/MOV carry `ftyp` at byte 4; WebM starts with the EBML header. */
+export function sniffVideoType(buf: Buffer): string | null {
+  if (buf.length >= 12 && buf.toString('ascii', 4, 8) === 'ftyp')
+    return buf.toString('ascii', 8, 10) === 'qt'
+      ? 'video/quicktime'
+      : 'video/mp4';
+  if (buf.length >= 4 && buf.readUInt32BE(0) === 0x1a45dfa3)
+    return 'video/webm';
+  return null;
 }
 
 const toPerson = (r: PersonRow): Person => ({
@@ -82,13 +106,25 @@ const toPerson = (r: PersonRow): Person => ({
   palStatus: r.pal_status,
 });
 
-const toMessage = (m: MessageRow): ChatMessage => ({
+const toMessage = (conversationId: string, m: MessageRow): ChatMessage => ({
   id: m.id,
   seq: Number(m.seq),
   senderId: m.sender_id,
   clientMessageId: m.client_message_id,
   body: m.body,
   createdAt: m.created_at.toISOString(),
+  kind: m.kind,
+  deleted: m.deleted_at !== null,
+  media:
+    m.media_type && m.media_size && !m.deleted_at
+      ? {
+          url: `/chats/${conversationId}/messages/${m.id}/media`,
+          contentType: m.media_type,
+          size: m.media_size,
+        }
+      : null,
+  starred: m.starred,
+  reactions: m.reactions,
 });
 
 const reasonFor = (r: SuggestionRow): SuggestionReason =>
@@ -256,6 +292,8 @@ export class SocialService {
       id: r.conversation_id,
       peer: toPerson(r),
       unread: r.unread,
+      pinned: r.pinned,
+      favourite: r.favourite,
       lastMessage: {
         id: '',
         seq: Number(r.last_seq),
@@ -263,6 +301,11 @@ export class SocialService {
         clientMessageId: '',
         body: r.last_body,
         createdAt: r.last_at.toISOString(),
+        kind: r.last_kind,
+        deleted: r.last_deleted,
+        media: null,
+        starred: false,
+        reactions: [],
       },
     }));
   }
@@ -302,13 +345,13 @@ export class SocialService {
     page: { before?: number; after?: number; limit?: number },
   ): Promise<{ messages: ChatMessage[]; peerLastReadSeq: number }> {
     const peerId = await this.peerOrThrow(me, conversationId);
-    const rows = await this.repo.messages(conversationId, {
+    const rows = await this.repo.messages(conversationId, me, {
       before: page.before,
       after: page.after,
       limit: page.limit ?? 50,
     });
     return {
-      messages: rows.map(toMessage),
+      messages: rows.map((r) => toMessage(conversationId, r)),
       peerLastReadSeq: await this.repo.lastReadSeq(conversationId, peerId),
     };
   }
@@ -329,7 +372,127 @@ export class SocialService {
         'DUPLICATE_CLIENT_ID',
         'clientMessageId was already used',
       );
-    return toMessage(m);
+    return toMessage(conversationId, m);
+  }
+
+  /** A photo or a short video, identified by its bytes, not its file name. */
+  async sendMedia(
+    me: string,
+    conversationId: string,
+    clientMessageId: string,
+    caption: string,
+    file: Buffer | undefined,
+  ): Promise<ChatMessage> {
+    const peerId = await this.peerOrThrow(me, conversationId);
+    if (await this.repo.isBlockedEitherWay(me, peerId))
+      throw new AppException(403, 'BLOCKED', 'You cannot message this person');
+    if (!file || file.length === 0)
+      throw new AppException(400, 'FILE_REQUIRED', 'Choose a photo or video');
+    const image = sniffImageType(file);
+    const video = image ? null : sniffVideoType(file);
+    if (!image && !video)
+      throw new AppException(
+        415,
+        'UNSUPPORTED_MEDIA',
+        'Send a JPEG, PNG or WebP photo, or an MP4, MOV or WebM video',
+      );
+    if (file.length > (image ? MAX_IMAGE_BYTES : MAX_VIDEO_BYTES))
+      throw new AppException(413, 'FILE_TOO_LARGE', 'This file is too large');
+    const m = await this.repo.send(
+      conversationId,
+      me,
+      clientMessageId,
+      caption,
+      {
+        kind: image ? 'image' : 'video',
+        contentType: (image ?? video) as string,
+        data: file,
+      },
+    );
+    if (!m)
+      throw new AppException(
+        409,
+        'DUPLICATE_CLIENT_ID',
+        'clientMessageId was already used',
+      );
+    return toMessage(conversationId, m);
+  }
+
+  async media(
+    me: string,
+    conversationId: string,
+    messageId: string,
+  ): Promise<{ contentType: string; data: Buffer }> {
+    await this.peerOrThrow(me, conversationId);
+    const found = await this.repo.attachment(conversationId, messageId);
+    if (!found) throw notFound();
+    return found;
+  }
+
+  /** Only the sender can take a message back; it disappears for both. */
+  async deleteMessage(
+    me: string,
+    conversationId: string,
+    messageId: string,
+  ): Promise<void> {
+    await this.peerOrThrow(me, conversationId);
+    if (!(await this.repo.deleteMessage(conversationId, me, messageId)))
+      throw notFound();
+  }
+
+  async react(
+    me: string,
+    conversationId: string,
+    messageId: string,
+    emoji: string | null,
+  ): Promise<ChatMessage> {
+    const m = await this.visibleMessage(me, conversationId, messageId);
+    if (m.deleted_at) throw notFound();
+    await this.repo.setReaction(messageId, me, emoji);
+    return this.reload(me, conversationId, messageId);
+  }
+
+  async star(
+    me: string,
+    conversationId: string,
+    messageId: string,
+    starred: boolean,
+  ): Promise<ChatMessage> {
+    await this.visibleMessage(me, conversationId, messageId);
+    await this.repo.setStar(messageId, me, starred);
+    return this.reload(me, conversationId, messageId);
+  }
+
+  async setChatFlags(
+    me: string,
+    conversationId: string,
+    flags: { pinned?: boolean; favourite?: boolean },
+  ): Promise<void> {
+    await this.peerOrThrow(me, conversationId);
+    await this.repo.setChatFlags(conversationId, me, flags);
+  }
+
+  /** Clears the chat from my inbox only; the other person keeps theirs. */
+  async clearChat(me: string, conversationId: string): Promise<void> {
+    await this.peerOrThrow(me, conversationId);
+    await this.repo.clearChat(conversationId, me);
+  }
+
+  private async visibleMessage(
+    me: string,
+    conversationId: string,
+    messageId: string,
+  ) {
+    await this.peerOrThrow(me, conversationId);
+    const m = await this.repo.message(conversationId, me, messageId);
+    if (!m) throw notFound();
+    return m;
+  }
+
+  private async reload(me: string, conversationId: string, messageId: string) {
+    const m = await this.repo.message(conversationId, me, messageId);
+    if (!m) throw notFound();
+    return toMessage(conversationId, m);
   }
 
   async markRead(

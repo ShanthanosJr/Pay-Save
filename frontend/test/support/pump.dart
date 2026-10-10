@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
 import 'package:pay_and_save/core/circles/circles_providers.dart';
 import 'package:pay_and_save/core/payouts/payouts_api.dart';
+import 'package:pay_and_save/core/providers/prefs_store.dart';
 import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/profile/profile_photo.dart';
 import 'package:pay_and_save/main.dart';
@@ -33,6 +34,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
   List<String>? sharedFiles,
   bool officer = false,
   OutboxStore? outbox,
+  MemoryPrefsStore? prefs,
 }) async {
   tester.view.physicalSize = const Size(390 * 2, 844 * 2);
   tester.view.devicePixelRatio = 2;
@@ -50,6 +52,7 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
       circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
       payoutsApiProvider.overrideWithValue(payouts ?? FakePayoutsApi()),
       imagePickerProvider.overrideWithValue(FakeImagePicker()),
+      prefsStoreProvider.overrideWithValue(prefs ?? MemoryPrefsStore()),
       outboxStoreProvider.overrideWithValue(outbox ?? MemoryOutboxStore()),
       notificationsApiProvider.overrideWithValue(notifications ?? FakeNotificationsApi()),
       remindersApiProvider.overrideWithValue(reminders ?? FakeRemindersApi()),

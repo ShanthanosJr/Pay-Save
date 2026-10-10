@@ -10,19 +10,29 @@ import {
   Put,
   Query,
   UseGuards,
+  Patch,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthUser } from '../auth/jwt-auth.guard';
 import {
+  ChatFlagsDto,
   MessagesQueryDto,
+  ReactionDto,
+  SendMediaDto,
+  StarDto,
   OpenChatDto,
   SearchQueryDto,
   SendMessageDto,
 } from './dto/social.dto';
 import { MemberOnlyGuard } from './social-access.guard';
-import { SocialService } from './social.service';
+import { MAX_VIDEO_BYTES, SocialService } from './social.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Response } from 'express';
 
 const uuid = new ParseUUIDPipe();
 
@@ -165,6 +175,101 @@ export class ChatsController {
     @Body() dto: SendMessageDto,
   ) {
     return this.social.send(me.id, id, dto.clientMessageId, dto.body);
+  }
+
+  /** A photo or short video with an optional caption. */
+  @Post(':id/media')
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: MAX_VIDEO_BYTES, files: 1 },
+    }),
+  )
+  sendMedia(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Body() dto: SendMediaDto,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ) {
+    return this.social.sendMedia(
+      me.id,
+      id,
+      dto.clientMessageId,
+      dto.caption ?? '',
+      file?.buffer,
+    );
+  }
+
+  /** Participants only; never cached by anything shared. */
+  @Get(':id/messages/:messageId/media')
+  async media(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Param('messageId', uuid) messageId: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const m = await this.social.media(me.id, id, messageId);
+    res
+      .status(200)
+      .set({
+        'Content-Type': m.contentType,
+        'Content-Length': String(m.data.length),
+        'Cache-Control': 'private, max-age=86400',
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Security-Policy': "default-src 'none'",
+      })
+      .end(m.data);
+  }
+
+  @Delete(':id/messages/:messageId')
+  @HttpCode(204)
+  async deleteMessage(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Param('messageId', uuid) messageId: string,
+  ): Promise<void> {
+    await this.social.deleteMessage(me.id, id, messageId);
+  }
+
+  @Put(':id/messages/:messageId/reaction')
+  react(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Param('messageId', uuid) messageId: string,
+    @Body() dto: ReactionDto,
+  ) {
+    return this.social.react(me.id, id, messageId, dto.emoji);
+  }
+
+  @Put(':id/messages/:messageId/star')
+  star(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Param('messageId', uuid) messageId: string,
+    @Body() dto: StarDto,
+  ) {
+    return this.social.star(me.id, id, messageId, dto.starred);
+  }
+
+  /** Pin or favourite a chat, for me only. */
+  @Patch(':id')
+  @HttpCode(204)
+  async flags(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+    @Body() dto: ChatFlagsDto,
+  ): Promise<void> {
+    await this.social.setChatFlags(me.id, id, dto);
+  }
+
+  /** Delete the chat from my inbox; the other person keeps their copy. */
+  @Delete(':id')
+  @HttpCode(204)
+  async clear(
+    @CurrentUser() me: AuthUser,
+    @Param('id', uuid) id: string,
+  ): Promise<void> {
+    await this.social.clearChat(me.id, id);
   }
 
   @Post(':id/read')

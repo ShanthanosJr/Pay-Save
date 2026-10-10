@@ -7,6 +7,10 @@ import {
   Length,
   Max,
   Min,
+  IsBoolean,
+  IsIn,
+  MaxLength,
+  ValidateIf,
 } from 'class-validator';
 
 const trim = ({ value }: { value: unknown }): unknown =>
@@ -54,4 +58,38 @@ export class MessagesQueryDto {
   @Min(1)
   @Max(100)
   limit?: number;
+}
+
+/** Multipart fields arrive as strings. */
+export class SendMediaDto {
+  @IsUUID('4')
+  clientMessageId!: string;
+
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @MaxLength(500)
+  caption?: string;
+}
+
+export class ReactionDto {
+  /** null removes my reaction. */
+  @ValidateIf((o: ReactionDto) => o.emoji !== null)
+  @IsIn(['👍', '❤️', '😂', '😮', '😢', '🙏'])
+  emoji!: string | null;
+}
+
+export class StarDto {
+  @IsBoolean()
+  starred!: boolean;
+}
+
+export class ChatFlagsDto {
+  @IsOptional()
+  @IsBoolean()
+  pinned?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  favourite?: boolean;
 }

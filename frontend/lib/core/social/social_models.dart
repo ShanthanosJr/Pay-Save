@@ -110,6 +110,16 @@ class PublicProfile {
   );
 }
 
+enum MessageKind { text, image, video }
+
+class MessageReaction {
+  const MessageReaction({required this.emoji, required this.count, required this.mine});
+
+  final String emoji;
+  final int count;
+  final bool mine;
+}
+
 class ChatMessage {
   const ChatMessage({
     required this.seq,
@@ -117,36 +127,95 @@ class ChatMessage {
     required this.clientMessageId,
     required this.body,
     required this.createdAt,
+    this.id = '',
+    this.kind = MessageKind.text,
+    this.deleted = false,
+    this.mediaUrl,
+    this.mediaType,
+    this.mediaSize = 0,
+    this.starred = false,
+    this.reactions = const [],
   });
 
+  final String id;
   final int seq;
   final String senderId;
   final String clientMessageId;
+
+  /// The text, or the caption of a photo or video.
   final String body;
   final DateTime createdAt;
+  final MessageKind kind;
 
-  factory ChatMessage.fromJson(Map<String, dynamic> j) => ChatMessage(
-    seq: (j['seq'] as num).toInt(),
-    senderId: j['senderId'] as String,
-    clientMessageId: j['clientMessageId'] as String? ?? '',
-    body: j['body'] as String,
-    createdAt: DateTime.parse(j['createdAt'] as String).toLocal(),
-  );
+  /// Taken back by its sender; nothing of it is left.
+  final bool deleted;
+
+  /// Server-relative; fetched with the signed-in user's token.
+  final String? mediaUrl;
+  final String? mediaType;
+  final int mediaSize;
+
+  /// Starred by me (private to me).
+  final bool starred;
+  final List<MessageReaction> reactions;
+
+  factory ChatMessage.fromJson(Map<String, dynamic> j) {
+    final media = j['media'] as Map<String, dynamic>?;
+    return ChatMessage(
+      id: j['id'] as String? ?? '',
+      seq: (j['seq'] as num).toInt(),
+      senderId: j['senderId'] as String,
+      clientMessageId: j['clientMessageId'] as String? ?? '',
+      body: j['body'] as String? ?? '',
+      createdAt: DateTime.parse(j['createdAt'] as String).toLocal(),
+      kind: switch (j['kind']) {
+        'image' => MessageKind.image,
+        'video' => MessageKind.video,
+        _ => MessageKind.text,
+      },
+      deleted: j['deleted'] as bool? ?? false,
+      mediaUrl: media?['url'] as String?,
+      mediaType: media?['contentType'] as String?,
+      mediaSize: (media?['size'] as num?)?.toInt() ?? 0,
+      starred: j['starred'] as bool? ?? false,
+      reactions: [
+        for (final r in j['reactions'] as List? ?? const [])
+          MessageReaction(
+            emoji: (r as Map)['emoji'] as String,
+            count: (r['count'] as num).toInt(),
+            mine: r['mine'] as bool? ?? false,
+          ),
+      ],
+    );
+  }
 }
 
 class ChatSummary {
-  const ChatSummary({required this.id, required this.peer, required this.lastMessage, required this.unread});
+  const ChatSummary({
+    required this.id,
+    required this.peer,
+    required this.lastMessage,
+    required this.unread,
+    this.pinned = false,
+    this.favourite = false,
+  });
 
   final String id;
   final Person peer;
   final ChatMessage lastMessage;
   final int unread;
 
+  /// Both are mine alone; the other person never sees them.
+  final bool pinned;
+  final bool favourite;
+
   factory ChatSummary.fromJson(Map<String, dynamic> j) => ChatSummary(
     id: j['id'] as String,
     peer: Person.fromJson(j['peer'] as Map<String, dynamic>),
     lastMessage: ChatMessage.fromJson(j['lastMessage'] as Map<String, dynamic>),
     unread: (j['unread'] as num?)?.toInt() ?? 0,
+    pinned: j['pinned'] as bool? ?? false,
+    favourite: j['favourite'] as bool? ?? false,
   );
 }
 

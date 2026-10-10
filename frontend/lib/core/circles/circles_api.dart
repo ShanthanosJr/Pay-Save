@@ -90,6 +90,15 @@ class CirclesApi {
         await _dio.post<void>('/circle-invitations/$invitationId/decline');
       });
 
+  /// Step out of a circle that has not started.
+  Future<void> leave(String id) => _call(() async {
+        await _dio.post<void>('/circles/$id/leave');
+      });
+
+  /// A [reason] is required once the circle is running.
+  Future<CircleDetail> removeMember(String id, String userId, {String? reason}) =>
+      _call(() => _detail(_dio.post('/circles/$id/members/$userId/remove', data: {'reason': ?reason})));
+
   Future<CircleDetail> join(String code) => _call(() => _detail(_dio.post('/circles/join', data: {'code': code})));
 
   Future<CircleDetail> commitLottery(String id) => _call(() => _detail(_dio.post('/circles/$id/lottery/commit')));
@@ -105,13 +114,14 @@ class CirclesApi {
     String? provider,
     String? receiptReference,
     String? subjectUserId,
+    DateTime? deviceCreatedAt,
   }) =>
       _call(() async {
         final r = await _dio.post<Map<String, dynamic>>('/circles/$circleId/contributions', data: {
           'cycleNumber': cycleNumber,
           'method': wireName(method),
           'clientEntryId': clientEntryId,
-          'deviceCreatedAt': DateTime.now().toUtc().toIso8601String(),
+          'deviceCreatedAt': (deviceCreatedAt ?? DateTime.now()).toUtc().toIso8601String(),
           'provider': ?provider,
           'receiptReference': ?receiptReference,
           'subjectUserId': ?subjectUserId,

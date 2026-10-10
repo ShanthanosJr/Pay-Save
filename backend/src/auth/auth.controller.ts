@@ -2,11 +2,13 @@ import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import {
+  ForgotPasswordDto,
   LoginDto,
   OtpRequestDto,
   OtpVerifyDto,
   RefreshDto,
   RegisterDto,
+  ResetPasswordDto,
 } from './dto/auth.dto';
 import { CurrentUser } from './current-user.decorator';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -22,7 +24,7 @@ export class AuthController {
   @HttpCode(200)
   @Throttle(STRICT)
   requestOtp(@Body() dto: OtpRequestDto) {
-    return this.auth.requestPhoneOtp(dto.phone);
+    return this.auth.requestPhoneOtp(dto.phone, dto.language);
   }
 
   @Post('otp/verify')
@@ -42,6 +44,20 @@ export class AuthController {
   @Throttle(STRICT)
   login(@Body() dto: LoginDto) {
     return this.auth.login(dto.identifier, dto.password);
+  }
+
+  @Post('password/forgot')
+  @HttpCode(200)
+  @Throttle(STRICT)
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.auth.forgotPassword(dto.identifier);
+  }
+
+  @Post('password/reset')
+  @HttpCode(204)
+  @Throttle(STRICT)
+  async resetPassword(@Body() dto: ResetPasswordDto): Promise<void> {
+    await this.auth.resetPassword(dto.identifier, dto.code, dto.newPassword);
   }
 
   @Post('refresh')

@@ -61,6 +61,30 @@ String messageFor(AppLocalizations l10n, Object error) {
       return l10n.errPayoutDetails;
     case 'INVITATION_NOT_FOUND':
       return l10n.errInvitationGone;
+    case 'WRONG_PASSWORD':
+      return l10n.errWrongPassword;
+    case 'DELIVERY_FAILED':
+      return l10n.errDeliveryFailed;
+    case 'EMAIL_NOT_VERIFIED':
+      return l10n.errEmailNotVerified;
+    case 'REMINDER_DAYS_REQUIRED':
+      return l10n.reminderChooseDay;
+    case 'NOTHING_VERIFIED':
+      return l10n.errNothingVerified;
+    case 'LEDGER_INTEGRITY':
+      return l10n.errLedgerIntegrity;
+    case 'MEMBER_ALREADY_PAID_OUT':
+      return l10n.errMemberPaidOut;
+    case 'MEMBER_HAS_PAYMENT':
+      return l10n.errMemberHasPayment;
+    case 'ALREADY_REMINDED':
+      return l10n.errAlreadyReminded;
+    case 'ORGANIZER_CANNOT_LEAVE':
+      return l10n.errOrganizerCannotLeave;
+    case 'DISPUTE_CLOSED':
+      return l10n.errDisputeClosed;
+    case 'FORBIDDEN_ROLE':
+      return l10n.errNotYourRecord;
     case 'NOT_FOUND':
       return l10n.personNotFound;
   }

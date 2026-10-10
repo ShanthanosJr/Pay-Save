@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../core/api/error_messages.dart';
+import '../../core/community/community.dart';
+import '../../core/widgets/ps_sheet.dart';
+import '../community/community_labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/circles/circle_labels.dart';
@@ -63,7 +67,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             selected: _filter,
             onChanged: (f) => setState(() => _filter = f),
           ),
-          const SizedBox(height: AppSpace.xl),
+          const SizedBox(height: AppSpace.m),
+          // ER-02: the promise sits where every visitor sees it
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Icon(Icons.lock_outline_rounded, size: 18, color: AppColors.inkSubtle),
+            const SizedBox(width: 8),
+            Expanded(child: Text(l10n.recordsAppendOnly, style: AppText.caption)),
+          ]),
+          const SizedBox(height: AppSpace.l),
           ref.watch(ledgerProvider((circleId: circle.id, all: _all && circle.isOrganizer))).when(
                 loading: () => const SheetLoading(),
                 error: (e, _) => SheetError(
@@ -82,32 +93,31 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         : EmptyState(icon: Icons.receipt_long_rounded, title: l10n.historyEmptyTitle, body: l10n.historyEmptyBody);
                   }
                   final byId = {for (final e in entries) e.id: e};
-                  return Column(children: [for (final e in shown) _EntryRow(entry: e, byId: byId, showSubject: _all)]);
+                  return Column(children: [
+                    for (final e in shown) _EntryRow(circleId: circle.id, entry: e, byId: byId, showSubject: _all),
+                  ]);
                 },
               ),
-          const SizedBox(height: AppSpace.m),
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Icon(Icons.lock_outline_rounded, size: 18, color: AppColors.inkSubtle),
-            const SizedBox(width: 8),
-            Expanded(child: Text(l10n.recordsAppendOnly, style: AppText.caption)),
-          ]),
         ],
       ],
     );
   }
 }
 
-class _EntryRow extends StatelessWidget {
-  const _EntryRow({required this.entry, required this.byId, required this.showSubject});
+class _EntryRow extends ConsumerWidget {
+  const _EntryRow({required this.circleId, required this.entry, required this.byId, required this.showSubject});
+
+  final String circleId;
 
   final LedgerEntry entry;
   final Map<String, LedgerEntry> byId;
   final bool showSubject;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final e = entry;
+    void dispute() => showRaiseDisputeSheet(context, ref, circleId: circleId, entry: e);
     final when = dateTime(l10n, e.createdAt);
     final who = showSubject && e.subjectName != null ? '${e.subjectName} · ' : '';
 
@@ -133,6 +143,7 @@ class _EntryRow extends StatelessWidget {
           title: '$who${l10n.entryContribution(e.cycleNumber ?? 0)}',
           subtitle: [e.reference, if (method.isNotEmpty) method, when].join(' · '),
           trailing: Text(formatLkr(e.amountMinor ?? 0), style: AppText.label),
+          onTap: dispute,
           below: Align(
             alignment: AlignmentDirectional.centerStart,
             child: status == null
@@ -146,6 +157,7 @@ class _EntryRow extends StatelessWidget {
           icon: Icons.undo_rounded,
           tone: PsBadgeTone.warning,
           title: '$who${l10n.entryCorrection} · ${e.reference}',
+          onTap: dispute,
           subtitle: [
             l10n.correctsRef(target?.reference ?? ''),
             if (e.note != null) '“${e.note}”',
@@ -166,6 +178,7 @@ class _EntryRow extends StatelessWidget {
           icon: Icons.south_west_rounded,
           tone: PsBadgeTone.mint,
           title: '$who${l10n.entryPayout(e.cycleNumber ?? 0)}',
+          onTap: dispute,
           subtitle: '${e.reference} · $when',
           trailing: Text(formatLkr(e.amountMinor ?? 0), style: AppText.label.copyWith(color: AppColors.success)),
         );
@@ -181,7 +194,38 @@ class _EntryRow extends StatelessWidget {
       case LedgerType.cycleClosed:
         return PsListRow(icon: Icons.lock_rounded, tone: PsBadgeTone.neutral, title: l10n.entryCycleClosed(e.cycleNumber ?? 0), subtitle: '${e.reference} · $when');
       case LedgerType.memberRemoved:
-        return PsListRow(icon: Icons.person_remove_rounded, tone: PsBadgeTone.neutral, title: e.subjectName ?? '', subtitle: '${e.reference} · $when');
+        return PsListRow(icon: Icons.person_remove_rounded, tone: PsBadgeTone.neutral, title: l10n.entryMemberRemoved(e.subjectName ?? ''), subtitle: [e.reference, if (e.note != null) '“${e.note}”', when].join(' · '));
     }
   }
+}
+
+/// A record the member disagrees with can be put in front of a community
+/// officer, but only after everyone it concerns agrees (U-05).
+void showRaiseDisputeSheet(BuildContext context, WidgetRef ref, {required String circleId, required LedgerEntry entry}) {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  showPsSheet<void>(
+    context: context,
+    title: l10n.raiseDisputeTitle(entry.reference),
+    subtitle: l10n.raiseDisputeBody,
+    builder: (ctx) => Column(children: [
+      for (final c in DisputeCategory.values)
+        PsListRow(
+          icon: Icons.gavel_rounded,
+          tone: PsBadgeTone.mint,
+          title: disputeCategoryLabel(l10n, c),
+          showChevron: true,
+          onTap: () async {
+            Navigator.of(ctx).pop();
+            try {
+              await ref.read(communityApiProvider).raise(circleId, entry.id, c);
+              ref.invalidate(disputesProvider(circleId));
+              messenger.showSnackBar(SnackBar(content: Text(l10n.disputeRaisedToast)));
+            } catch (e) {
+              messenger.showSnackBar(SnackBar(content: Text(messageFor(l10n, e))));
+            }
+          },
+        ),
+    ]),
+  );
 }

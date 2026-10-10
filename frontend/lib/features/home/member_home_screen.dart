@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/outbox/outbox.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -228,7 +229,14 @@ class _ActiveHome extends ConsumerWidget {
     final current = detail.current;
     if (cycle == null || current == null) return _CompletedHome(detail: detail);
 
-    final status = cycle.myStatus;
+    final pending = ref
+        .watch(outboxProvider)
+        .where((p) => p.isMine && p.circleId == s.id && p.cycleNumber == cycle.number)
+        .firstOrNull;
+    // A payment waiting on this phone hides Pay now (U-01), unless the server
+    // already shows one for the cycle.
+    final unpaid = cycle.myStatus == ContributionStatus.due || cycle.myStatus == ContributionStatus.overdue;
+    final status = pending != null && unpaid ? ContributionStatus.pendingSync : cycle.myStatus;
     final unit = s.contributionMinor;
     final days = daysUntil(cycle.dueDate);
     final dueText = l10n.dueInDays(shortDate(l10n, cycle.dueDate), days < 0 ? 0 : days);
@@ -252,9 +260,25 @@ class _ActiveHome extends ConsumerWidget {
             ),
           ),
         ),
-      ContributionStatus.recorded || ContributionStatus.pendingSync => (
+      ContributionStatus.pendingSync => (
+          l10n.savedOnPhoneTitle,
+          pending?.failure == null ? l10n.savedOnPhoneBody : l10n.outboxFailed,
+          pending?.failure == null
+              ? PsButton(
+                  label: l10n.outboxTryNow,
+                  variant: PsButtonVariant.secondary,
+                  icon: Icons.sync_rounded,
+                  onPressed: () => ref.read(outboxProvider.notifier).sync(),
+                )
+              : PsButton(
+                  label: l10n.outboxDiscard,
+                  variant: PsButtonVariant.secondary,
+                  onPressed: () => ref.read(outboxProvider.notifier).discard(pending!.clientEntryId),
+                ),
+        ),
+      ContributionStatus.recorded => (
           l10n.statusAwaiting,
-          l10n.recordedBody(cycle.myContribution?.reference ?? '', shortDate(l10n, cycle.myContribution?.recordedAt ?? DateTime.now())),
+          '${l10n.recordedBody(cycle.myContribution?.reference ?? '', shortDate(l10n, cycle.myContribution?.recordedAt ?? DateTime.now()))}\n${l10n.doNotPayAgain}',
           PsButton(label: l10n.viewRecord, variant: PsButtonVariant.secondary, onPressed: () => context.go('/history')),
         ),
       ContributionStatus.verified => (
@@ -356,6 +380,24 @@ class _ActiveHome extends ConsumerWidget {
       PsSectionHeader(
         title: l10n.turnOrderTitle,
         trailing: PsPillLink(label: l10n.seeMore, onTap: () => context.go('/circle')),
+      ),
+      // UI-05: say how the order was decided, where the order is shown
+      Padding(
+        padding: const EdgeInsets.only(bottom: AppSpace.m),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.inkMuted),
+          const SizedBox(width: AppSpace.s),
+          Expanded(
+            child: Text(
+              switch (s.turnRule) {
+                TurnRule.lottery => l10n.turnRuleExplainLottery,
+                TurnRule.fixed => l10n.turnRuleExplainFixed,
+                TurnRule.needBased => l10n.turnRuleExplainNeed,
+              },
+              style: AppText.footnote,
+            ),
+          ),
+        ]),
       ),
       for (final m in (detail.members.where((m) => (m.payoutPosition ?? 0) >= cycle.number).toList()
             ..sort((a, b) => a.payoutPosition!.compareTo(b.payoutPosition!)))

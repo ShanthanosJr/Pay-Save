@@ -1133,5 +1133,396 @@
   "errNotAPal": "Only pals of the organizer can join this circle.",
   "errNotEnoughSeats": "Not enough seats left in this circle.",
   "errPayoutMissingStart": "Every member must share how they get paid before you start.",
-  "errInvitationGone": "This invitation is no longer available."
+  "errInvitationGone": "This invitation is no longer available.",
+  "forgotPasswordLink": "Forgot password?",
+  "forgotTitlePlain": "Reset your",
+  "forgotTitleAccent": "password",
+  "forgotSubtitle": "Enter the mobile number or email on your account. We will send a code to it.",
+  "resetCodeSentSms": "If {target} has an account, a code was sent to it by SMS. Enter it and choose a new password.",
+  "@resetCodeSentSms": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "resetCodeSentEmail": "If {target} has an account, a code was emailed to it. Enter it and choose a new password.",
+  "@resetCodeSentEmail": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "newPasswordLabel": "New password",
+  "resetPasswordAction": "Set new password",
+  "passwordResetToast": "Password changed. Log in with your new password.",
+  "changePasswordTitle": "Change password",
+  "changePasswordNote": "After you change it, your other phones and browsers are signed out. This one stays signed in.",
+  "currentPasswordLabel": "Current password",
+  "passwordChangedToast": "Password changed",
+  "errWrongPassword": "The current password is not correct.",
+  "errDeliveryFailed": "We could not send the code just now. Please try again in a minute.",
+  "notificationsEmptyTitle": "Nothing yet",
+  "notificationsEmptyBody": "When a payment about you is recorded, verified or corrected, you will see it here.",
+  "notificationsFootnote": "Each notification comes from the same record as History, so the two can never disagree.",
+  "notifNewLabel": "New",
+  "notifPaymentRecorded": "A payment is waiting for you to verify · {reference}",
+  "@notifPaymentRecorded": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPaymentRecordedForYou": "The organizer recorded your cash payment for cycle {cycle}",
+  "@notifPaymentRecordedForYou": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifPaymentVerified": "Your payment was verified · {reference}",
+  "@notifPaymentVerified": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPaymentRejected": "Your payment was not accepted · {reference}. You can record it again.",
+  "@notifPaymentRejected": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "notifCycleClosed": "Cycle {cycle} was closed",
+  "@notifCycleClosed": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifPayoutToYou": "Cycle {cycle} was closed. The payout is yours.",
+  "@notifPayoutToYou": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifCircleStarted": "Your circle has started",
+  "notifInvitation": "You were invited to a circle",
+  "notifMemberJoined": "A member joined your circle",
+  "notifMemberLeft": "A member left your circle",
+  "notifMemberRemoved": "The organizer removed you from this circle",
+  "notifDueToday": "Cycle {cycle} is due today",
+  "@notifDueToday": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifDueIn": "Cycle {cycle} is due in {days} days",
+  "@notifDueIn": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "notifOverdue": "Cycle {cycle} is overdue",
+  "@notifOverdue": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifNudge": "The organizer is reminding you about cycle {cycle}",
+  "@notifNudge": {
+    "placeholders": {
+      "cycle": {
+        "type": "int"
+      }
+    }
+  },
+  "notifDisputeConsent": "Your consent is asked for a dispute",
+  "notifDisputeResolved": "A dispute was resolved",
+  "notifDisputeDeclined": "A dispute request was refused; nothing was shown",
+  "notifDisputeConsented": "Everyone agreed. A community officer may now see the disputed records.",
+  "notifEvidenceViewed": "A community officer viewed the disputed records",
+  "notifGeneric": "Activity in your circle",
+  "arithmeticVerified": "{count} verified × {unit} = {total}",
+  "@arithmeticVerified": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "remindersTitle": "Reminders",
+  "remindersRowHint": "Choose if and when to be reminded",
+  "remindersIntro": "Reminders are off until you turn them on. They stop for a cycle as soon as your payment is recorded.",
+  "remindersSwitch": "Remind me before a contribution is due",
+  "remindersOn": "On",
+  "remindersOff": "Off",
+  "remindersWhen": "When",
+  "reminderOnTheDay": "On the due date",
+  "reminderDaysBefore": "{days} days before",
+  "@reminderDaysBefore": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminderSuggested": "Suggested",
+  "remindersHow": "How",
+  "remindersInAppAlways": "You always get the reminder inside the app. Add SMS or email if you want it there too.",
+  "reminderBySms": "Also by SMS",
+  "reminderByEmail": "Also by email",
+  "reminderEmailNeedsVerify": "Verify your email in Profile first",
+  "reminderChooseDay": "Choose at least one day to be reminded.",
+  "saveReminders": "Save reminders",
+  "remindersSavedToast": "Reminders saved",
+  "errEmailNotVerified": "Verify your email before using email reminders.",
+  "statementTitle": "Savings statement",
+  "statementRowHint": "Proof of your verified payments for a bank or lender",
+  "statementIntro": "A statement lists only the payments your organizer verified. Anyone you give it to can check that it is genuine with its code.",
+  "statementIssued": "Issued {when}",
+  "@statementIssued": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "statementCode": "Verification code",
+  "statementCheckLink": "Check link",
+  "statementSharePdf": "Save or share PDF",
+  "statementShareCsv": "Share as spreadsheet (CSV)",
+  "statementCreate": "Create my statement",
+  "statementCreateNew": "Create an up-to-date statement",
+  "statementEntriesTitle": "Payments in this statement",
+  "statementEntriesBody": "Each line is one verified record from your History.",
+  "statementHowTitle": "Why a lender can trust it",
+  "statementHowVerified": "Only payments verified by the organizer are counted. Recorded-but-unverified payments are left out.",
+  "statementHowChain": "Records cannot be edited. If any record behind this statement were changed, the check page would say so.",
+  "statementHowPrivacy": "The check page shows your initials and totals only. Nothing about other members.",
+  "errNothingVerified": "You have no verified payments in this circle yet.",
+  "errLedgerIntegrity": "This circle's record failed its integrity check. Please contact support before relying on it.",
+  "sharingTitle": "Privacy & access",
+  "sharingRowHint": "What a community officer can and cannot see",
+  "sharingOfficerTitle": "What a community officer sees",
+  "sharingSeesTotals": "Only if every member agrees: the circle's code, how many members it has and how often payments are on time.",
+  "sharingNeverNames": "Never: names, phone numbers, or anyone's individual payments.",
+  "sharingDisputeException": "One exception: in a dispute, an officer may see only the records named in it, and only after everyone those records are about has agreed. Each view is logged and you are told.",
+  "sharingMySwitch": "I agree to share this circle's totals",
+  "sharingProgress": "{granted} of {needed} members have agreed",
+  "@sharingProgress": {
+    "placeholders": {
+      "granted": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingTooSmall": "Circles with fewer than {min} members are never shown, so no one can be picked out.",
+  "@sharingTooSmall": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingIsShared": "Everyone agreed. Officers can see this circle's totals.",
+  "sharingNotShared": "Not shared. Nothing is visible to officers until every member agrees.",
+  "disputesTitle": "Disputes",
+  "disputeSteps": "1. A dispute is raised  2. Everyone it concerns agrees  3. The officer sees only those records",
+  "disputesEmpty": "No disputes in this circle.",
+  "disputeConsentProgress": "{granted} of {needed} people have agreed",
+  "@disputeConsentProgress": {
+    "placeholders": {
+      "granted": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
+    }
+  },
+  "disputeViewed": "Viewed by an officer {count} time(s) · last {when}",
+  "@disputeViewed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "disputeOutcome": "Outcome: {note}",
+  "@disputeOutcome": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "disputeAskYou": "Do you agree to let a community officer see these records? If you refuse, nothing is shown.",
+  "disputeRefuse": "Refuse",
+  "disputeAllow": "I agree",
+  "disputeHowToRaise": "To raise a dispute, open History and tap the payment you disagree with.",
+  "disputeCatNotRecorded": "I paid, but it was not recorded",
+  "disputeCatRejected": "My payment was rejected wrongly",
+  "disputeCatPayout": "I did not receive my payout",
+  "disputeCatOther": "Something else",
+  "disputeAwaiting": "Waiting for consent",
+  "disputeConsented": "With an officer",
+  "disputeResolved": "Resolved",
+  "disputeDeclined": "Refused",
+  "raiseDisputeTitle": "Disagree with {reference}?",
+  "@raiseDisputeTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "raiseDisputeBody": "Talk to your organizer first. If that does not settle it, you can ask a community officer to look. They see this record only after everyone it concerns agrees, and never your name.",
+  "disputeRaisedToast": "Dispute raised. Others are being asked to agree.",
+  "communityTitle": "Community officer",
+  "communityRowHint": "Consented circle totals and disputes",
+  "communityPrivacyNote": "You see circle codes and totals only, for circles where every member agreed. You never see names or phone numbers. In a dispute you see only the records named in it, after consent; each time you open them it is logged and the members are told.",
+  "communityDisputesTitle": "Disputes you may review",
+  "communityNoDisputes": "No consented disputes right now.",
+  "communityEntryCount": "{count} record(s)",
+  "@communityEntryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "communityCirclesTitle": "Group health",
+  "communityNoCircles": "No circle is sharing its totals yet.",
+  "communityCircleLine": "{members} members · {cycles} cycles",
+  "@communityCircleLine": {
+    "placeholders": {
+      "members": {
+        "type": "int"
+      },
+      "cycles": {
+        "type": "int"
+      }
+    }
+  },
+  "communityOnTime": "{pct}% verified",
+  "@communityOnTime": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "communityEvidenceTitle": "Dispute evidence",
+  "communityEvidenceNote": "Opening this page was logged and the members concerned were notified. People are shown as labels, not names.",
+  "communityResolveTitle": "Record the outcome",
+  "communityResolveBody": "The members concerned will read this. Do not include names or phone numbers.",
+  "communityResolveNote": "Outcome",
+  "communityResolveAction": "Mark as resolved",
+  "evidenceType": "Record type",
+  "evidenceCycle": "Cycle",
+  "evidenceAbout": "About",
+  "evidenceRecordedBy": "Recorded by",
+  "evidenceStatus": "Status",
+  "evidenceWhen": "Recorded on",
+  "circleToolsTitle": "More for this circle",
+  "manageMembersTitle": "Manage members",
+  "manageMembersHint": "Remind an unpaid member or remove a member",
+  "manageMembersDraftBody": "The circle has not started, so a removed member can simply be invited again.",
+  "manageMembersActiveBody": "Removing a member is recorded permanently with your reason. It is only possible before that member has received the payout.",
+  "memberUnpaidThisCycle": "Not paid this cycle",
+  "sendReminderAction": "Send reminder",
+  "nudgeSentToast": "Reminder sent to {name}",
+  "@nudgeSentToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeMemberAction": "Remove member",
+  "removeMemberTitle": "Remove {name}?",
+  "@removeMemberTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeMemberDraftBody": "They leave this circle before it starts. You can invite them again.",
+  "removeMemberActiveBody": "The circle becomes one cycle shorter and later turns move up. What this member already paid in stays on the record, so you can settle it with them.",
+  "removeReasonLabel": "Reason (members will see this)",
+  "removeReasonHint": "For example: moved away",
+  "memberRemovedToast": "{name} was removed",
+  "@memberRemovedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "entryMemberRemoved": "{name} left the circle",
+  "@entryMemberRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveCircleAction": "Leave circle",
+  "leaveCircleTitle": "Leave {name}?",
+  "@leaveCircleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveCircleBody": "The circle has not started. You can join again later if the organizer invites you.",
+  "leftCircleToast": "You left the circle",
+  "errMemberPaidOut": "This member already received the payout, so they must keep contributing and cannot be removed.",
+  "errMemberHasPayment": "Verify or reject this member's payment for the open cycle first.",
+  "errAlreadyReminded": "You already reminded this member today.",
+  "errOrganizerCannotLeave": "The organizer cannot leave the circle.",
+  "errDisputeClosed": "This request is no longer waiting for consent.",
+  "errNotYourRecord": "You can only raise a dispute about a record that is about you.",
+  "doNotPayAgain": "Do not pay again for this cycle.",
+  "turnRuleExplainLottery": "The order was drawn by lottery. Open Circles to check the draw's fingerprint yourself.",
+  "turnRuleExplainFixed": "The organizer set this order when the circle started. It cannot change afterwards.",
+  "turnRuleExplainNeed": "The organizer set this order by who needs the payout soonest. It cannot change afterwards.",
+  "savedOnPhoneTitle": "Saved on this phone",
+  "savedOnPhoneBody": "Not yet confirmed. There is no connection, so it will be sent automatically when you are back online. Do not pay again.",
+  "outboxTryNow": "Send now",
+  "outboxFailed": "This payment was NOT recorded: the circle did not accept it. Check with your organizer, then record it again if needed.",
+  "outboxDiscard": "Remove from this phone"
 }

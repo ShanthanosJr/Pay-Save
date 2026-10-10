@@ -1158,5 +1158,673 @@
   "errInvitationGone": "මෙම ආරාධනාව තවදුරටත් නොමැත.",
   "@errInvitationGone": {
     "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "forgotPasswordLink": "මුරපදය අමතකද?",
+  "@forgotPasswordLink": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "forgotTitlePlain": "ඔබේ මුරපදය",
+  "@forgotTitlePlain": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "forgotTitleAccent": "යළි සකසන්න",
+  "@forgotTitleAccent": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "forgotSubtitle": "ඔබේ ගිණුමේ ඇති දුරකථන අංකය හෝ ඊමේල් ඇතුළත් කරන්න. අපි එයට කේතයක් එවන්නෙමු.",
+  "@forgotSubtitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "resetCodeSentSms": "{target} සඳහා ගිණුමක් තිබේ නම්, SMS මගින් කේතයක් යවා ඇත. එය ඇතුළත් කර නව මුරපදයක් තෝරන්න.",
+  "@resetCodeSentSms": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "resetCodeSentEmail": "{target} සඳහා ගිණුමක් තිබේ නම්, ඊමේල් මගින් කේතයක් යවා ඇත. එය ඇතුළත් කර නව මුරපදයක් තෝරන්න.",
+  "@resetCodeSentEmail": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "newPasswordLabel": "නව මුරපදය",
+  "@newPasswordLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "resetPasswordAction": "නව මුරපදය සකසන්න",
+  "@resetPasswordAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "passwordResetToast": "මුරපදය වෙනස් විය. නව මුරපදයෙන් ඇතුළු වන්න.",
+  "@passwordResetToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePasswordTitle": "මුරපදය වෙනස් කරන්න",
+  "@changePasswordTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "changePasswordNote": "වෙනස් කළ පසු ඔබේ අනෙක් දුරකථන සහ බ්‍රවුසරවලින් ඉවත් වේ. මෙම උපාංගය ඇතුළු වී පවතී.",
+  "@changePasswordNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "currentPasswordLabel": "වත්මන් මුරපදය",
+  "@currentPasswordLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "passwordChangedToast": "මුරපදය වෙනස් විය",
+  "@passwordChangedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errWrongPassword": "වත්මන් මුරපදය නිවැරදි නැත.",
+  "@errWrongPassword": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errDeliveryFailed": "මේ මොහොතේ කේතය යැවීමට නොහැකි විය. විනාඩියකින් නැවත උත්සාහ කරන්න.",
+  "@errDeliveryFailed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notificationsEmptyTitle": "තවම කිසිවක් නැත",
+  "@notificationsEmptyTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notificationsEmptyBody": "ඔබ ගැන ගෙවීමක් සටහන් වූ, තහවුරු වූ හෝ නිවැරදි කළ විට එය මෙහි පෙනේ.",
+  "@notificationsEmptyBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notificationsFootnote": "සෑම දැනුම්දීමක්ම ඉතිහාසයේ ඇති සටහනෙන්ම එයි; එබැවින් ඒ දෙක කිසිදා නොගැළපෙන්නේ නැත.",
+  "@notificationsFootnote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifNewLabel": "අලුත්",
+  "@notifNewLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifPaymentRecorded": "ගෙවීමක් ඔබේ තහවුරු කිරීම බලා සිටී · {reference}",
+  "@notifPaymentRecorded": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifPaymentRecordedForYou": "සංවිධායක ඔබේ {cycle} වන වටයේ මුදල් ගෙවීම සටහන් කළා",
+  "@notifPaymentRecordedForYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifPaymentVerified": "ඔබේ ගෙවීම තහවුරු විය · {reference}",
+  "@notifPaymentVerified": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifPaymentRejected": "ඔබේ ගෙවීම පිළිගත්තේ නැත · {reference}. ඔබට නැවත සටහන් කළ හැක.",
+  "@notifPaymentRejected": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifCycleClosed": "{cycle} වන වටය වසා දමන ලදී",
+  "@notifCycleClosed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifPayoutToYou": "{cycle} වන වටය වසා දමන ලදී. මෙවර මුදල ඔබටයි.",
+  "@notifPayoutToYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifCircleStarted": "ඔබේ සීට්ටුව ආරම්භ විය",
+  "@notifCircleStarted": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifInvitation": "ඔබට සීට්ටුවකට ආරාධනා ලැබුණි",
+  "@notifInvitation": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifMemberJoined": "සාමාජිකයෙක් ඔබේ සීට්ටුවට එක් විය",
+  "@notifMemberJoined": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifMemberLeft": "සාමාජිකයෙක් ඔබේ සීට්ටුවෙන් ඉවත් විය",
+  "@notifMemberLeft": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifMemberRemoved": "සංවිධායක ඔබව මෙම සීට්ටුවෙන් ඉවත් කළා",
+  "@notifMemberRemoved": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDueToday": "{cycle} වන වටය අද ගෙවිය යුතුයි",
+  "@notifDueToday": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDueIn": "{cycle} වන වටය තව දින {days}කින් ගෙවිය යුතුයි",
+  "@notifDueIn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifOverdue": "{cycle} වන වටය ප්‍රමාදයි",
+  "@notifOverdue": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifNudge": "සංවිධායක {cycle} වන වටය ගැන ඔබට මතක් කරයි",
+  "@notifNudge": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDisputeConsent": "ආරවුලක් සඳහා ඔබේ කැමැත්ත ඉල්ලා ඇත",
+  "@notifDisputeConsent": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDisputeResolved": "ආරවුලක් විසඳන ලදී",
+  "@notifDisputeResolved": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDisputeDeclined": "ආරවුල් ඉල්ලීමක් ප්‍රතික්ෂේප විය; කිසිවක් පෙන්වූයේ නැත",
+  "@notifDisputeDeclined": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifDisputeConsented": "සියල්ලෝම එකඟ වූහ. ප්‍රජා නිලධාරියෙකුට දැන් ආරවුලට අදාළ සටහන් බැලිය හැක.",
+  "@notifDisputeConsented": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifEvidenceViewed": "ප්‍රජා නිලධාරියෙක් ආරවුලට අදාළ සටහන් බැලුවා",
+  "@notifEvidenceViewed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "notifGeneric": "ඔබේ සීට්ටුවේ ක්‍රියාකාරකමක්",
+  "@notifGeneric": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "arithmeticVerified": "තහවුරු කළ {count} × {unit} = {total}",
+  "@arithmeticVerified": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersTitle": "මතක් කිරීම්",
+  "@remindersTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersRowHint": "මතක් කළ යුතුද, කවදාද යන්න තෝරන්න",
+  "@remindersRowHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersIntro": "ඔබ සක්‍රිය කරන තුරු මතක් කිරීම් අක්‍රියයි. ඔබේ ගෙවීම සටහන් වූ වහාම ඒ වටය සඳහා ඒවා නවතී.",
+  "@remindersIntro": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersSwitch": "දායක මුදල ගෙවීමට පෙර මට මතක් කරන්න",
+  "@remindersSwitch": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersOn": "සක්‍රියයි",
+  "@remindersOn": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersOff": "අක්‍රියයි",
+  "@remindersOff": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersWhen": "කවදාද",
+  "@remindersWhen": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderOnTheDay": "ගෙවිය යුතු දිනයේ",
+  "@reminderOnTheDay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderDaysBefore": "දින {days}කට පෙර",
+  "@reminderDaysBefore": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderSuggested": "යෝජිතයි",
+  "@reminderSuggested": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersHow": "කෙසේද",
+  "@remindersHow": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersInAppAlways": "මතක් කිරීම සැමවිටම යෙදුම තුළ ලැබේ. අවශ්‍ය නම් SMS හෝ ඊමේල් එක් කරන්න.",
+  "@remindersInAppAlways": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderBySms": "SMS මගින්ද",
+  "@reminderBySms": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderByEmail": "ඊමේල් මගින්ද",
+  "@reminderByEmail": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderEmailNeedsVerify": "පළමුව පැතිකඩෙහි ඔබේ ඊමේල් තහවුරු කරන්න",
+  "@reminderEmailNeedsVerify": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "reminderChooseDay": "මතක් කළ යුතු දිනයක් අවම වශයෙන් එකක් තෝරන්න.",
+  "@reminderChooseDay": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "saveReminders": "මතක් කිරීම් සුරකින්න",
+  "@saveReminders": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "remindersSavedToast": "මතක් කිරීම් සුරැකිණි",
+  "@remindersSavedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errEmailNotVerified": "ඊමේල් මතක් කිරීම් භාවිතයට පෙර ඔබේ ඊමේල් තහවුරු කරන්න.",
+  "@errEmailNotVerified": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementTitle": "ඉතුරුම් ප්‍රකාශය",
+  "@statementTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementRowHint": "බැංකුවකට හෝ ණය දෙන්නෙකුට ඔබේ තහවුරු කළ ගෙවීම්වල සාක්ෂිය",
+  "@statementRowHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementIntro": "ප්‍රකාශයක ඇත්තේ ඔබේ සංවිධායක තහවුරු කළ ගෙවීම් පමණි. ඔබ එය දෙන ඕනෑම අයෙකුට එහි කේතයෙන් එය සැබෑ බව පරීක්ෂා කළ හැක.",
+  "@statementIntro": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementIssued": "නිකුත් කළේ {when}",
+  "@statementIssued": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementCode": "සත්‍යාපන කේතය",
+  "@statementCode": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementCheckLink": "පරීක්ෂා කිරීමේ සබැඳිය",
+  "@statementCheckLink": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementSharePdf": "PDF සුරකින්න හෝ බෙදාගන්න",
+  "@statementSharePdf": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementShareCsv": "පැතුරුම්පතක් ලෙස බෙදාගන්න (CSV)",
+  "@statementShareCsv": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementCreate": "මගේ ප්‍රකාශය සාදන්න",
+  "@statementCreate": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementCreateNew": "යාවත්කාලීන ප්‍රකාශයක් සාදන්න",
+  "@statementCreateNew": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementEntriesTitle": "මෙම ප්‍රකාශයේ ගෙවීම්",
+  "@statementEntriesTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementEntriesBody": "සෑම පේළියක්ම ඔබේ ඉතිහාසයේ තහවුරු කළ එක් සටහනකි.",
+  "@statementEntriesBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementHowTitle": "ණය දෙන්නෙකුට එය විශ්වාස කළ හැක්කේ ඇයි",
+  "@statementHowTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementHowVerified": "ගණන් ගන්නේ සංවිධායක තහවුරු කළ ගෙවීම් පමණි. සටහන් කළත් තහවුරු නොකළ ගෙවීම් ඇතුළත් නොවේ.",
+  "@statementHowVerified": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementHowChain": "සටහන් සංස්කරණය කළ නොහැක. මෙම ප්‍රකාශයට පාදක වූ සටහනක් වෙනස් කළහොත් පරීක්ෂා පිටුව එය පෙන්වයි.",
+  "@statementHowChain": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "statementHowPrivacy": "පරීක්ෂා පිටුවේ පෙන්වන්නේ ඔබේ මුලකුරු සහ එකතු පමණි. අනෙක් සාමාජිකයන් ගැන කිසිවක් නැත.",
+  "@statementHowPrivacy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNothingVerified": "මෙම සීට්ටුවේ ඔබට තවම තහවුරු කළ ගෙවීම් නැත.",
+  "@errNothingVerified": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errLedgerIntegrity": "මෙම සීට්ටුවේ සටහන් අඛණ්ඩතා පරීක්ෂාවෙන් අසමත් විය. එය මත රඳා පැවතීමට පෙර සහාය අමතන්න.",
+  "@errLedgerIntegrity": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingTitle": "පෞද්ගලිකත්වය සහ ප්‍රවේශය",
+  "@sharingTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingRowHint": "ප්‍රජා නිලධාරියෙකුට පෙනෙන සහ නොපෙනෙන දේ",
+  "@sharingRowHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingOfficerTitle": "ප්‍රජා නිලධාරියෙකුට පෙනෙන දේ",
+  "@sharingOfficerTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingSeesTotals": "සෑම සාමාජිකයෙක්ම එකඟ වුවහොත් පමණි: සීට්ටුවේ කේතය, සාමාජික සංඛ්‍යාව සහ ගෙවීම් නියමිත වේලාවට සිදුවන වාර ගණන.",
+  "@sharingSeesTotals": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingNeverNames": "කිසිදා නැත: නම්, දුරකථන අංක හෝ කිසිවෙකුගේ තනි ගෙවීම්.",
+  "@sharingNeverNames": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingDisputeException": "එක් ව්‍යතිරේකයක්: ආරවුලකදී නිලධාරියෙකුට පෙනෙන්නේ එහි නම් කළ සටහන් පමණි, එයත් ඒ සටහන්වලට අදාළ සියල්ලන් එකඟ වූ පසුවයි. සෑම බැලීමක්ම සටහන් වන අතර ඔබට දන්වනු ලැබේ.",
+  "@sharingDisputeException": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingMySwitch": "මෙම සීට්ටුවේ එකතු බෙදාගැනීමට මම එකඟයි",
+  "@sharingMySwitch": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingProgress": "සාමාජිකයන් {needed} දෙනාගෙන් {granted} දෙනෙක් එකඟ වී ඇත",
+  "@sharingProgress": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingTooSmall": "සාමාජිකයන් {min}ට අඩු සීට්ටු කිසිදා පෙන්වන්නේ නැත; එවිට කිසිවෙකු හඳුනාගත නොහැක.",
+  "@sharingTooSmall": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingIsShared": "සියල්ලෝම එකඟ වූහ. නිලධාරීන්ට මෙම සීට්ටුවේ එකතු පෙනේ.",
+  "@sharingIsShared": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sharingNotShared": "බෙදාගෙන නැත. සෑම සාමාජිකයෙක්ම එකඟ වන තුරු නිලධාරීන්ට කිසිවක් නොපෙනේ.",
+  "@sharingNotShared": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputesTitle": "ආරවුල්",
+  "@disputesTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeSteps": "1. ආරවුලක් ඉදිරිපත් කෙරේ  2. අදාළ සියල්ලෝ එකඟ වෙති  3. නිලධාරියාට පෙනෙන්නේ ඒ සටහන් පමණි",
+  "@disputeSteps": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputesEmpty": "මෙම සීට්ටුවේ ආරවුල් නැත.",
+  "@disputesEmpty": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeConsentProgress": "පුද්ගලයන් {needed} දෙනාගෙන් {granted} දෙනෙක් එකඟ වී ඇත",
+  "@disputeConsentProgress": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeViewed": "නිලධාරියෙක් {count} වතාවක් බැලුවා · අවසන් වරට {when}",
+  "@disputeViewed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeOutcome": "ප්‍රතිඵලය: {note}",
+  "@disputeOutcome": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeAskYou": "ප්‍රජා නිලධාරියෙකුට මෙම සටහන් බැලීමට ඔබ එකඟද? ඔබ ප්‍රතික්ෂේප කළහොත් කිසිවක් පෙන්වන්නේ නැත.",
+  "@disputeAskYou": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeRefuse": "ප්‍රතික්ෂේප කරන්න",
+  "@disputeRefuse": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeAllow": "මම එකඟයි",
+  "@disputeAllow": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeHowToRaise": "ආරවුලක් ඉදිරිපත් කිරීමට ඉතිහාසය විවෘත කර ඔබ එකඟ නොවන ගෙවීම තට්ටු කරන්න.",
+  "@disputeHowToRaise": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeCatNotRecorded": "මම ගෙව්වා, නමුත් සටහන් වී නැත",
+  "@disputeCatNotRecorded": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeCatRejected": "මගේ ගෙවීම වැරදියට ප්‍රතික්ෂේප විය",
+  "@disputeCatRejected": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeCatPayout": "මට මගේ මුදල ලැබුණේ නැත",
+  "@disputeCatPayout": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeCatOther": "වෙනත් දෙයක්",
+  "@disputeCatOther": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeAwaiting": "කැමැත්ත බලාපොරොත්තුවෙන්",
+  "@disputeAwaiting": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeConsented": "නිලධාරියෙකු වෙත",
+  "@disputeConsented": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeResolved": "විසඳා ඇත",
+  "@disputeResolved": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeDeclined": "ප්‍රතික්ෂේපිතයි",
+  "@disputeDeclined": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "raiseDisputeTitle": "{reference} සමඟ එකඟ නැද්ද?",
+  "@raiseDisputeTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "raiseDisputeBody": "පළමුව ඔබේ සංවිධායක සමඟ කතා කරන්න. එයින් නොවිසඳුණහොත් ප්‍රජා නිලධාරියෙකුගෙන් බලන ලෙස ඉල්ලිය හැක. අදාළ සියල්ලන් එකඟ වූ පසුව පමණක් ඔවුන්ට මෙම සටහන පෙනේ; ඔබේ නම කිසිදා නොපෙනේ.",
+  "@raiseDisputeBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "disputeRaisedToast": "ආරවුල ඉදිරිපත් විය. අනෙක් අයගෙන් එකඟතාව ඉල්ලනු ලැබේ.",
+  "@disputeRaisedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityTitle": "ප්‍රජා නිලධාරී",
+  "@communityTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityRowHint": "කැමැත්ත දුන් සීට්ටුවල එකතු සහ ආරවුල්",
+  "@communityRowHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityPrivacyNote": "ඔබට පෙනෙන්නේ සෑම සාමාජිකයෙක්ම එකඟ වූ සීට්ටුවල කේත සහ එකතු පමණි. නම් හෝ දුරකථන අංක කිසිදා නොපෙනේ. ආරවුලකදී, කැමැත්තෙන් පසු, එහි නම් කළ සටහන් පමණක් පෙනේ; ඔබ ඒවා විවෘත කරන සෑම විටම එය සටහන් වන අතර සාමාජිකයන්ට දන්වනු ලැබේ.",
+  "@communityPrivacyNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityDisputesTitle": "ඔබට සමාලෝචනය කළ හැකි ආරවුල්",
+  "@communityDisputesTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityNoDisputes": "දැනට කැමැත්ත දුන් ආරවුල් නැත.",
+  "@communityNoDisputes": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityEntryCount": "සටහන් {count}ක්",
+  "@communityEntryCount": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityCirclesTitle": "කණ්ඩායම් තත්ත්වය",
+  "@communityCirclesTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityNoCircles": "තවම කිසිදු සීට්ටුවක් එකතු බෙදාගන්නේ නැත.",
+  "@communityNoCircles": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityCircleLine": "සාමාජිකයන් {members} · වට {cycles}",
+  "@communityCircleLine": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityOnTime": "{pct}% තහවුරුයි",
+  "@communityOnTime": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityEvidenceTitle": "ආරවුල් සාක්ෂි",
+  "@communityEvidenceTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityEvidenceNote": "මෙම පිටුව විවෘත කිරීම සටහන් වූ අතර අදාළ සාමාජිකයන්ට දන්වන ලදී. පුද්ගලයන් නම් ලෙස නොව ලේබල ලෙස පෙන්වයි.",
+  "@communityEvidenceNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityResolveTitle": "ප්‍රතිඵලය සටහන් කරන්න",
+  "@communityResolveTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityResolveBody": "අදාළ සාමාජිකයන් මෙය කියවනු ඇත. නම් හෝ දුරකථන අංක ඇතුළත් නොකරන්න.",
+  "@communityResolveBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityResolveNote": "ප්‍රතිඵලය",
+  "@communityResolveNote": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "communityResolveAction": "විසඳූ ලෙස සලකුණු කරන්න",
+  "@communityResolveAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceType": "සටහන් වර්ගය",
+  "@evidenceType": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceCycle": "වටය",
+  "@evidenceCycle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceAbout": "අදාළ පුද්ගලයා",
+  "@evidenceAbout": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceRecordedBy": "සටහන් කළේ",
+  "@evidenceRecordedBy": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceStatus": "තත්ත්වය",
+  "@evidenceStatus": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "evidenceWhen": "සටහන් කළ දිනය",
+  "@evidenceWhen": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "circleToolsTitle": "මෙම සීට්ටුව සඳහා තවත්",
+  "@circleToolsTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "manageMembersTitle": "සාමාජිකයන් කළමනාකරණය",
+  "@manageMembersTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "manageMembersHint": "නොගෙවූ සාමාජිකයෙකුට මතක් කරන්න හෝ සාමාජිකයෙකු ඉවත් කරන්න",
+  "@manageMembersHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "manageMembersDraftBody": "සීට්ටුව තවම ආරම්භ වී නැත; ඉවත් කළ සාමාජිකයෙකුට නැවත ආරාධනා කළ හැක.",
+  "@manageMembersDraftBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "manageMembersActiveBody": "සාමාජිකයෙකු ඉවත් කිරීම ඔබේ හේතුව සමඟ ස්ථිරව සටහන් වේ. එය කළ හැක්කේ ඒ සාමාජිකයාට මුදල ලැබීමට පෙර පමණි.",
+  "@manageMembersActiveBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "memberUnpaidThisCycle": "මෙම වටයේ ගෙවා නැත",
+  "@memberUnpaidThisCycle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "sendReminderAction": "මතක් කිරීමක් යවන්න",
+  "@sendReminderAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "nudgeSentToast": "{name} වෙත මතක් කිරීම යවන ලදී",
+  "@nudgeSentToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMemberAction": "සාමාජිකයා ඉවත් කරන්න",
+  "@removeMemberAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMemberTitle": "{name} ඉවත් කරන්නද?",
+  "@removeMemberTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMemberDraftBody": "සීට්ටුව ආරම්භ වීමට පෙර ඔවුන් ඉවත් වේ. ඔබට නැවත ආරාධනා කළ හැක.",
+  "@removeMemberDraftBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeMemberActiveBody": "සීට්ටුව එක් වටයකින් කෙටි වන අතර පසු වාර ඉදිරියට එයි. මෙම සාමාජිකයා දැනටමත් ගෙවූ දේ සටහනේ පවතී; ඒ අනුව ඔවුන් සමඟ එය පියවිය හැක.",
+  "@removeMemberActiveBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeReasonLabel": "හේතුව (සාමාජිකයන්ට මෙය පෙනේ)",
+  "@removeReasonLabel": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "removeReasonHint": "උදාහරණයක්: වෙනත් ප්‍රදේශයකට ගියා",
+  "@removeReasonHint": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "memberRemovedToast": "{name} ඉවත් කරන ලදී",
+  "@memberRemovedToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "entryMemberRemoved": "{name} සීට්ටුවෙන් ඉවත් විය",
+  "@entryMemberRemoved": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "leaveCircleAction": "සීට්ටුවෙන් ඉවත් වන්න",
+  "@leaveCircleAction": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "leaveCircleTitle": "{name} වෙතින් ඉවත් වන්නද?",
+  "@leaveCircleTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "leaveCircleBody": "සීට්ටුව තවම ආරම්භ වී නැත. සංවිධායක ආරාධනා කළහොත් පසුව නැවත එක් විය හැක.",
+  "@leaveCircleBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "leftCircleToast": "ඔබ සීට්ටුවෙන් ඉවත් විය",
+  "@leftCircleToast": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errMemberPaidOut": "මෙම සාමාජිකයාට දැනටමත් මුදල ලැබී ඇත; එබැවින් ඔවුන් දිගටම ගෙවිය යුතු අතර ඉවත් කළ නොහැක.",
+  "@errMemberPaidOut": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errMemberHasPayment": "පළමුව මෙම සාමාජිකයාගේ විවෘත වටයේ ගෙවීම තහවුරු කරන්න හෝ ප්‍රතික්ෂේප කරන්න.",
+  "@errMemberHasPayment": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errAlreadyReminded": "ඔබ අද දැනටමත් මෙම සාමාජිකයාට මතක් කර ඇත.",
+  "@errAlreadyReminded": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errOrganizerCannotLeave": "සංවිධායකට සීට්ටුවෙන් ඉවත් විය නොහැක.",
+  "@errOrganizerCannotLeave": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errDisputeClosed": "මෙම ඉල්ලීම තවදුරටත් කැමැත්ත බලාපොරොත්තුවෙන් නැත.",
+  "@errDisputeClosed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "errNotYourRecord": "ඔබට ආරවුලක් ඉදිරිපත් කළ හැක්කේ ඔබ ගැන වූ සටහනක් ගැන පමණි.",
+  "@errNotYourRecord": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "doNotPayAgain": "මෙම වටය සඳහා නැවත ගෙවන්න එපා.",
+  "@doNotPayAgain": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "turnRuleExplainLottery": "වාර අනුපිළිවෙළ ලොතරැයියකින් තීරණය විය. ඇදීමේ සලකුණ ඔබම පරීක්ෂා කිරීමට සීට්ටු විවෘත කරන්න.",
+  "@turnRuleExplainLottery": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "turnRuleExplainFixed": "සීට්ටුව ආරම්භ වූ විට සංවිධායක මෙම අනුපිළිවෙළ සැකසීය. ඉන්පසු එය වෙනස් කළ නොහැක.",
+  "@turnRuleExplainFixed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "turnRuleExplainNeed": "මුදල ඉක්මනින්ම අවශ්‍ය අය අනුව සංවිධායක මෙම අනුපිළිවෙළ සැකසීය. ඉන්පසු එය වෙනස් කළ නොහැක.",
+  "@turnRuleExplainNeed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "savedOnPhoneTitle": "මෙම දුරකථනයේ සුරැකිණි",
+  "@savedOnPhoneTitle": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "savedOnPhoneBody": "තවම තහවුරු වී නැත. සම්බන්ධතාවක් නොමැති නිසා ඔබ නැවත සම්බන්ධ වූ විට එය ස්වයංක්‍රීයව යැවේ. නැවත ගෙවන්න එපා.",
+  "@savedOnPhoneBody": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "outboxTryNow": "දැන් යවන්න",
+  "@outboxTryNow": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "outboxFailed": "මෙම ගෙවීම සටහන් වූයේ නැත: සීට්ටුව එය පිළිගත්තේ නැත. ඔබේ සංවිධායකගෙන් විමසා, අවශ්‍ය නම් නැවත සටහන් කරන්න.",
+  "@outboxFailed": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
+  },
+  "outboxDiscard": "මෙම දුරකථනයෙන් ඉවත් කරන්න",
+  "@outboxDiscard": {
+    "description": "TODO(translate): drafted by an AI agent, needs native-speaker review"
   }
 }

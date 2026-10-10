@@ -1,3 +1,4 @@
+import { PasswordRules } from '../../auth/dto/auth.dto';
 import { Transform } from 'class-transformer';
 import {
   IsIn,
@@ -73,4 +74,13 @@ export class VerifyEmailDto {
   @IsString()
   @Matches(/^\d{6}$/)
   code!: string;
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @MaxLength(200)
+  currentPassword!: string;
+
+  @PasswordRules()
+  newPassword!: string;
 }

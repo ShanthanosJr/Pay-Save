@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConsoleOtpSender } from './console-otp-sender';
+import { MessageOtpSender } from './message-otp-sender';
 import { OtpRepository } from './otp.repository';
 import { OtpService } from './otp.service';
 import { OTP_SENDER } from './otp-sender';
@@ -8,7 +8,7 @@ import { OTP_SENDER } from './otp-sender';
   providers: [
     OtpRepository,
     OtpService,
-    { provide: OTP_SENDER, useClass: ConsoleOtpSender },
+    { provide: OTP_SENDER, useClass: MessageOtpSender },
   ],
   exports: [OtpService],
 })

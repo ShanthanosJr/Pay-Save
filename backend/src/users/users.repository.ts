@@ -216,6 +216,16 @@ export class UsersRepository {
     );
   }
 
+  /** Also ends every session and clears any lockout. */
+  async setPassword(userId: string, hash: string, at: Date): Promise<void> {
+    await this.pool.query(
+      `UPDATE users SET password_hash = $2, password_changed_at = $3, refresh_token_hash = NULL,
+              failed_login_count = 0, locked_until = NULL, updated_at = now()
+       WHERE id = $1`,
+      [userId, hash, at],
+    );
+  }
+
   async markEmailVerified(userId: string, at: Date): Promise<void> {
     await this.pool.query(
       'UPDATE users SET email_verified_at = $2, updated_at = now() WHERE id = $1',

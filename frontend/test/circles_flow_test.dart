@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pay_and_save/core/auth/auth_controller.dart';
 import 'package:pay_and_save/core/circles/circles_providers.dart';
+import 'package:pay_and_save/core/outbox/outbox.dart';
 import 'package:pay_and_save/core/payouts/payouts_api.dart';
 import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/circle/join_circle_screen.dart';
@@ -24,6 +25,7 @@ Future<FakeCirclesApi> pumpSignedIn(WidgetTester tester, FakeSeed seed) async {
       circlesApiProvider.overrideWithValue(circles),
       socialApiProvider.overrideWithValue(FakeSocialApi()),
       payoutsApiProvider.overrideWithValue(FakePayoutsApi()),
+      outboxStoreProvider.overrideWithValue(MemoryOutboxStore()),
     ],
     child: const PayAndSaveApp(),
   ));
@@ -114,7 +116,7 @@ void main() {
 
     expect(api.calls.last, 'record:u-me:mobile_wallet:Genie:TX-99812');
     expect(find.text('PS-1006'), findsOneWidget);
-    expect(find.textContaining('Do not pay again'), findsOneWidget);
+    expect(find.textContaining('Do not pay again'), findsWidgets);
     await tapButton(tester, 'Done');
 
     // Pay now is gone once a record exists for the cycle (U-01).

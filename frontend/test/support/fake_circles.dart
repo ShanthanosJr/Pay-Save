@@ -25,6 +25,12 @@ class FakeCirclesApi extends CirclesApi {
   final FakeSeed seed;
   final calls = <String>[];
 
+  /// No signal: writes fail the way a dropped connection does.
+  bool offline = false;
+
+  /// clientEntryId of every record attempt, including the ones that failed.
+  final attempts = <String>[];
+
   /// Invitations addressed to me (raw API JSON).
   final invitations = <Map<String, dynamic>>[];
 
@@ -304,6 +310,18 @@ class FakeCirclesApi extends CirclesApi {
   }
 
   @override
+  Future<void> leave(String id) async {
+    calls.add('leave:$id');
+    _circles.remove(id);
+  }
+
+  @override
+  Future<CircleDetail> removeMember(String id, String userId, {String? reason}) async {
+    calls.add('remove:$userId:${reason ?? ''}');
+    return _detailOf(id);
+  }
+
+  @override
   Future<CircleDetail> commitLottery(String id) async {
     calls.add('commit:$id');
     _get(id).commitment = 'a1b2' * 16;
@@ -333,7 +351,10 @@ class FakeCirclesApi extends CirclesApi {
     String? provider,
     String? receiptReference,
     String? subjectUserId,
+    DateTime? deviceCreatedAt,
   }) async {
+    attempts.add(clientEntryId);
+    if (offline) throw ApiException(code: 'NETWORK');
     calls.add('record:${subjectUserId ?? me}:${wireName(method)}:${provider ?? ''}:${receiptReference ?? ''}');
     final c = _get(circleId);
     final subject = subjectUserId ?? me;

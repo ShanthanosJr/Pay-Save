@@ -14,6 +14,12 @@ import type { AppConfig } from './config/app-config';
 import { AppConfigModule } from './config/app-config.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationsModule } from './notifications/notifications.module';
+import { CommunityModule } from './community/community.module';
+import { StatementsModule } from './statements/statements.module';
+import { RemindersModule } from './reminders/reminders.module';
+import { MessagingModule } from './messaging/messaging.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { SocialModule } from './social/social.module';
@@ -24,6 +30,9 @@ import { UsersModule } from './users/users.module';
     AppConfigModule,
     CommonModule,
     DatabaseModule,
+    MessagingModule,
+    ScheduleModule.forRoot(),
+    NotificationsModule,
     ThrottlerModule.forRootAsync({
       inject: [APP_CONFIG],
       useFactory: (cfg: AppConfig) => ({
@@ -40,6 +49,9 @@ import { UsersModule } from './users/users.module';
     ContributionsModule,
     SocialModule,
     PayoutsModule,
+    RemindersModule,
+    StatementsModule,
+    CommunityModule,
   ],
   controllers: [AppController],
   providers: [

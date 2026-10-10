@@ -6,6 +6,7 @@ import { AppException } from '../common/errors/app.exception';
 import { PG_POOL } from '../database/database.module';
 import { Db, withTransaction } from '../database/transaction';
 import { LedgerService } from '../ledger/ledger.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PayoutsService } from '../payouts/payouts.service';
 import { avatarUrl } from '../users/image-type';
 import { CircleInvitationsRepository } from './circle-invitations.repository';
@@ -54,6 +55,7 @@ export class CirclesService {
     private readonly ledger: LedgerService,
     private readonly payouts: PayoutsService,
     private readonly invitations: CircleInvitationsRepository,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async create(userId: string, dto: CreateCircleDto): Promise<CircleDetail> {
@@ -142,6 +144,14 @@ export class CirclesService {
         actorUserId: userId,
         payload: { role: 'member', via: 'join_code' },
       });
+      await this.notifications.notify(tx, [
+        {
+          userId: organizer.userId,
+          kind: 'member_joined',
+          circleId: circle.id,
+          payload: { userId },
+        },
+      ]);
       return this.detail(tx, circle.id, userId);
     });
   }
@@ -233,6 +243,17 @@ export class CirclesService {
         actorUserId: m.userId,
         payload,
       });
+      await this.notifications.notify(
+        tx,
+        ids
+          .filter((id) => id !== m.userId)
+          .map((userId) => ({
+            userId,
+            kind: 'circle_started' as const,
+            circleId: circle.id,
+            payload: { turn: order.indexOf(userId) + 1, firstDueDate: first },
+          })),
+      );
       return this.detail(tx, circle.id, m.userId);
     });
   }
@@ -384,8 +405,157 @@ export class CirclesService {
           acknowledgeUnpaid,
         },
       });
+      const members = await this.repo.members(tx, circle.id);
+      await this.notifications.notify(
+        tx,
+        members
+          .filter((x) => x.userId !== m.userId)
+          .map((x) => ({
+            userId: x.userId,
+            kind:
+              x.userId === current.payoutUserId
+                ? ('payout_due_to_you' as const)
+                : ('cycle_closed' as const),
+            circleId: circle.id,
+            payload: {
+              cycleNumber: current.number,
+              count: verified.count,
+              unitMinor: verified.unitMinor,
+              totalMinor: verified.totalMinor,
+            },
+          })),
+      );
       await this.repo.closeCycle(tx, current.id, this.clock.now());
       await this.repo.completeIfNoOpenCycles(tx, circle.id);
+      return this.detail(tx, circle.id, m.userId);
+    });
+  }
+
+  /** A member steps out of a circle that has not started. */
+  leave(m: Membership): Promise<void> {
+    return withTransaction(this.pool, async (tx) => {
+      const circle = await this.lock(tx, m.circleId);
+      if (m.role === 'organizer')
+        throw conflict('ORGANIZER_CANNOT_LEAVE', 'The organizer cannot leave');
+      if (circle.status !== 'draft')
+        throw conflict(
+          'CIRCLE_ALREADY_STARTED',
+          'Ask the organizer to remove you from a running circle',
+        );
+      await this.repo.removeFromDraft(
+        tx,
+        circle.id,
+        m.userId,
+        this.clock.now(),
+      );
+      await this.ledger.append(tx, {
+        circleId: circle.id,
+        type: 'member_removed',
+        subjectUserId: m.userId,
+        actorUserId: m.userId,
+        payload: { via: 'left' },
+      });
+      const organizer = (await this.repo.members(tx, circle.id)).find(
+        (x) => x.role === 'organizer',
+      );
+      if (organizer)
+        await this.notifications.notify(tx, [
+          {
+            userId: organizer.userId,
+            kind: 'member_removed',
+            circleId: circle.id,
+            payload: { userId: m.userId, via: 'left' },
+          },
+        ]);
+    });
+  }
+
+  /**
+   * Organizer removes a member (FR-05). In a running circle this is only
+   * possible before the member's own payout and while they have nothing
+   * recorded for the open cycle; the change is recorded against that cycle
+   * with a reason, and what they already paid in stays on the record.
+   */
+  removeMember(
+    m: Membership,
+    targetId: string,
+    reason: string | undefined,
+  ): Promise<CircleDetail> {
+    const userId = targetId.toLowerCase();
+    return withTransaction(this.pool, async (tx) => {
+      const circle = await this.lock(tx, m.circleId);
+      const members = await this.repo.members(tx, circle.id);
+      const target = members.find((x) => x.userId === userId);
+      if (!target)
+        throw new AppException(404, 'MEMBER_NOT_FOUND', 'Member not found');
+      if (target.role === 'organizer')
+        throw conflict('ORGANIZER_CANNOT_LEAVE', 'The organizer cannot leave');
+      if (circle.status === 'completed')
+        throw conflict('CIRCLE_COMPLETED', 'This circle has finished');
+
+      const now = this.clock.now();
+      const payload: Record<string, unknown> = { via: 'removed' };
+      let cycleId: string | null = null;
+      if (circle.status === 'draft') {
+        await this.repo.removeFromDraft(tx, circle.id, userId, now);
+      } else {
+        if (!reason)
+          throw new AppException(
+            400,
+            'REASON_REQUIRED',
+            'Give a reason for removing a member from a running circle',
+          );
+        const cycles = await this.repo.cycles(tx, circle.id);
+        const current = cycles.find((c) => c.status === 'open');
+        if (!current) throw conflict('CYCLE_NOT_OPEN', 'No open cycle');
+        const turn = cycles.find((c) => c.payoutUserId === userId);
+        if (!turn || turn.status === 'closed')
+          throw conflict(
+            'MEMBER_ALREADY_PAID_OUT',
+            'This member already received the pot and must keep contributing',
+          );
+        if (members.length <= 2)
+          throw conflict('NOT_ENOUGH_MEMBERS', 'At least 2 members are needed');
+        const status = await this.repo.memberStatus(tx, current.id, userId);
+        if (status?.contributionId)
+          throw conflict(
+            'MEMBER_HAS_PAYMENT',
+            'Verify or reject this member’s payment for the open cycle first',
+          );
+        const paidIn = await this.repo.verifiedByMember(tx, circle.id, userId);
+        payload.fromCycle = current.number;
+        payload.paidIn = {
+          count: paidIn.count,
+          unitMinor: circle.contributionMinor,
+          totalMinor: paidIn.totalMinor,
+          entryIds: paidIn.entryIds,
+        };
+        cycleId = current.id;
+        await this.repo.removeFromActive(
+          tx,
+          circle.id,
+          userId,
+          current.number,
+          now,
+        );
+      }
+      await this.ledger.append(tx, {
+        circleId: circle.id,
+        cycleId,
+        type: 'member_removed',
+        subjectUserId: userId,
+        actorUserId: m.userId,
+        note: reason ?? null,
+        payload,
+      });
+      await this.notifications.notify(tx, [
+        {
+          userId,
+          kind: 'member_removed',
+          circleId: circle.id,
+          payload: { ...payload, reason: reason ?? null },
+        },
+      ]);
       return this.detail(tx, circle.id, m.userId);
     });
   }

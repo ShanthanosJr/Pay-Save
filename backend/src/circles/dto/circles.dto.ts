@@ -119,3 +119,12 @@ export class LedgerQueryDto {
   @IsIn(['mine', 'all'])
   scope?: 'mine' | 'all';
 }
+
+export class RemoveMemberDto {
+  /** Required once the circle is running; members see it in the record. */
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @Length(3, 200)
+  reason?: string;
+}

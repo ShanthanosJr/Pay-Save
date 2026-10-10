@@ -10,6 +10,7 @@ import {
   registerUser,
   verifyPhone,
 } from './support/app';
+import { TestDatabase, createTestDatabase } from './support/test-db';
 
 const JPEG = Buffer.concat([
   Buffer.from([0xff, 0xd8, 0xff, 0xe0]),
@@ -47,11 +48,19 @@ describe('Profile, people and chat (e2e)', () => {
       sent: { id: string }[];
     };
 
-  beforeAll(() => {
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  // Own database: the dev database holds real accounts that would show up
+  // in search, and this suite deletes rows between tests.
+  let db: TestDatabase;
+  const savedUrl = process.env.DATABASE_URL;
+  beforeAll(async () => {
+    db = await createTestDatabase(savedUrl as string);
+    process.env.DATABASE_URL = db.url;
+    pool = new Pool({ connectionString: db.url });
   });
   afterAll(async () => {
     await pool.end();
+    process.env.DATABASE_URL = savedUrl;
+    await db.drop();
   });
 
   const cleanup = async () => {

@@ -33,6 +33,7 @@ jobs:
       - if: hashFiles('frontend/pubspec.yaml') != ''
         working-directory: frontend
         run: |
+          sudo apt-get install -y libsqlite3-dev   # the outbox test opens an in-memory SQLite
           flutter pub get
           flutter analyze
           flutter test

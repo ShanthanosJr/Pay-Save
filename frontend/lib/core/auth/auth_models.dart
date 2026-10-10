@@ -25,6 +25,7 @@ class UserProfile {
     this.bio,
     this.city,
     this.avatarUrl,
+    this.isCommunityOfficer = false,
   });
 
   final String id;
@@ -43,6 +44,9 @@ class UserProfile {
   /// Server-relative, versioned (`/users/<id>/avatar?v=…`); null = no photo.
   final String? avatarUrl;
 
+  /// Community officers see consented totals, never member names.
+  final bool isCommunityOfficer;
+
   String get firstName => fullName.trim().split(RegExp(r'\s+')).first;
 
   UserProfile copyWith({bool? emailVerified, String? language}) => UserProfile(
@@ -59,6 +63,7 @@ class UserProfile {
         bio: bio,
         city: city,
         avatarUrl: avatarUrl,
+        isCommunityOfficer: isCommunityOfficer,
       );
 
   factory UserProfile.fromJson(Map<String, dynamic> j) => UserProfile(
@@ -75,6 +80,7 @@ class UserProfile {
         bio: j['bio'] as String?,
         city: j['city'] as String?,
         avatarUrl: j['avatarUrl'] as String?,
+        isCommunityOfficer: j['isCommunityOfficer'] as bool? ?? false,
       );
 }
 
@@ -91,7 +97,10 @@ class AuthSession {
 }
 
 class OtpChallenge {
-  const OtpChallenge({required this.resendAfterSeconds, this.devCode});
+  const OtpChallenge({required this.resendAfterSeconds, this.devCode, this.channel});
+
+  /// 'sms' or 'email' for a password reset code.
+  final String? channel;
 
   final int resendAfterSeconds;
   final String? devCode;
@@ -99,5 +108,6 @@ class OtpChallenge {
   factory OtpChallenge.fromJson(Map<String, dynamic> j) => OtpChallenge(
         resendAfterSeconds: (j['resendAfterSeconds'] as num?)?.toInt() ?? 30,
         devCode: j['devCode'] as String?,
+        channel: j['channel'] as String?,
       );
 }

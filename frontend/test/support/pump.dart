@@ -8,7 +8,15 @@ import 'package:pay_and_save/core/social/social_providers.dart';
 import 'package:pay_and_save/features/profile/profile_photo.dart';
 import 'package:pay_and_save/main.dart';
 
+import 'package:pay_and_save/core/community/community.dart';
+import 'package:pay_and_save/core/notifications/notifications.dart';
+import 'package:pay_and_save/core/outbox/outbox.dart';
+import 'package:pay_and_save/core/reminders/reminders.dart';
+import 'package:pay_and_save/core/statements/file_sharer.dart';
+import 'package:pay_and_save/core/statements/statements.dart';
+
 import 'fake_circles.dart';
+import 'fake_extras.dart';
 import 'fakes.dart';
 
 /// Boots the whole app on a phone-sized screen against in-memory fakes.
@@ -18,12 +26,19 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
   FakeSocialApi? social,
   FakeCirclesApi? circles,
   FakePayoutsApi? payouts,
+  FakeNotificationsApi? notifications,
+  FakeRemindersApi? reminders,
+  FakeStatementsApi? statements,
+  FakeCommunityApi? community,
+  List<String>? sharedFiles,
+  bool officer = false,
+  OutboxStore? outbox,
 }) async {
   tester.view.physicalSize = const Size(390 * 2, 844 * 2);
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
 
-  final api = FakeAuthApi();
+  final api = FakeAuthApi()..officer = officer;
   final store = MemoryTokenStore();
   if (signedIn) store.tokens = testTokens;
 
@@ -35,6 +50,12 @@ Future<(WidgetTester, FakeAuthApi, MemoryTokenStore)> pumpApp(
       circlesApiProvider.overrideWithValue(circles ?? FakeCirclesApi()),
       payoutsApiProvider.overrideWithValue(payouts ?? FakePayoutsApi()),
       imagePickerProvider.overrideWithValue(FakeImagePicker()),
+      outboxStoreProvider.overrideWithValue(outbox ?? MemoryOutboxStore()),
+      notificationsApiProvider.overrideWithValue(notifications ?? FakeNotificationsApi()),
+      remindersApiProvider.overrideWithValue(reminders ?? FakeRemindersApi()),
+      statementsApiProvider.overrideWithValue(statements ?? FakeStatementsApi()),
+      communityApiProvider.overrideWithValue(community ?? FakeCommunityApi()),
+      fileSharerProvider.overrideWithValue((bytes, {required name, required mimeType}) async => sharedFiles?.add(name)),
     ],
     child: const PayAndSaveApp(),
   ));

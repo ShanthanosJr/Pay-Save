@@ -83,8 +83,12 @@ class AuthApi {
     }
   }
 
-  Future<OtpChallenge> requestPhoneOtp(String phone) => _call(() async {
-        final r = await _dio.post<Map<String, dynamic>>('/auth/otp/request', data: {'phone': phone});
+  /// [language] is the language of the SMS; there is no account yet.
+  Future<OtpChallenge> requestPhoneOtp(String phone, {String? language}) => _call(() async {
+        final r = await _dio.post<Map<String, dynamic>>(
+          '/auth/otp/request',
+          data: {'phone': phone, 'language': ?language},
+        );
         return OtpChallenge.fromJson(r.data!);
       });
 
@@ -124,6 +128,31 @@ class AuthApi {
           data: {'identifier': identifier, 'password': password},
         );
         return AuthSession.fromJson(r.data!);
+      });
+
+  /// Sends a reset code to the phone or email typed. The answer is the same
+  /// whether or not an account exists.
+  Future<OtpChallenge> forgotPassword(String identifier) => _call(() async {
+        final r = await _dio.post<Map<String, dynamic>>('/auth/password/forgot', data: {'identifier': identifier});
+        return OtpChallenge.fromJson(r.data!);
+      });
+
+  Future<void> resetPassword({required String identifier, required String code, required String newPassword}) =>
+      _call(() async {
+        await _dio.post<void>(
+          '/auth/password/reset',
+          data: {'identifier': identifier, 'code': code, 'newPassword': newPassword},
+        );
+      });
+
+  /// Signs other devices out; the returned tokens keep this one signed in.
+  Future<AuthTokens> changePassword({required String currentPassword, required String newPassword}) =>
+      _call(() async {
+        final r = await _dio.post<Map<String, dynamic>>(
+          '/users/me/password',
+          data: {'currentPassword': currentPassword, 'newPassword': newPassword},
+        );
+        return AuthTokens.fromJson(r.data!);
       });
 
   Future<void> logout() => _call(() async {

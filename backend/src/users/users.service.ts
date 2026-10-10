@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TokenService } from '../auth/token.service';
+import type { TokenPair } from '../auth/token.service';
 import { CLOCK } from '../common/clock/clock';
 import type { Clock } from '../common/clock/clock';
 import { CryptoService } from '../common/crypto/crypto.service';
@@ -47,6 +48,7 @@ export interface PublicUser {
   bio: string | null;
   city: string | null;
   avatarUrl: string | null;
+  isCommunityOfficer: boolean;
   createdAt: string;
 }
 
@@ -79,6 +81,7 @@ export class UsersService {
       bio: u.bio,
       city: u.city,
       avatarUrl: avatarUrl(u.id, u.avatarUpdatedAt),
+      isCommunityOfficer: u.isCommunityOfficer,
       createdAt: u.createdAt.toISOString(),
     };
   }
@@ -157,6 +160,34 @@ export class UsersService {
     return this.me(id);
   }
 
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<TokenPair> {
+    const user = await this.getOrThrow(id);
+    if (
+      !user.passwordHash ||
+      !(await this.crypto.verifyPassword(currentPassword, user.passwordHash))
+    )
+      throw new AppException(
+        400,
+        'WRONG_PASSWORD',
+        'Current password is incorrect',
+      );
+    await this.users.setPassword(
+      id,
+      await this.crypto.hashPassword(newPassword),
+      this.clock.now(),
+    );
+    const pair = await this.tokens.issuePair(id);
+    await this.users.setRefreshHash(
+      id,
+      this.crypto.hashToken(pair.refreshToken),
+    );
+    return pair;
+  }
+
   async setAvatar(id: string, file: Buffer | undefined): Promise<PublicUser> {
     await this.getOrThrow(id);
     if (!file || file.length === 0)
@@ -197,7 +228,7 @@ export class UsersService {
         'Email already verified',
       );
     return otpResponse(
-      await this.otp.issue('email_verify', user.email, user.id),
+      await this.otp.issue('email_verify', user.email, user.id, user.language),
       this.cfg.devOtpEcho,
     );
   }

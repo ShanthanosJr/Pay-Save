@@ -188,9 +188,30 @@ export class CirclesRepository {
     role: MemberRole,
   ): Promise<void> {
     await tx.query(
+      // someone who left a draft circle may come back
       `INSERT INTO circle_members (circle_id, user_id, role, joined_cycle)
-       VALUES ($1, $2, $3, 1)`,
+       VALUES ($1, $2, $3, 1)
+       ON CONFLICT (circle_id, user_id) DO UPDATE
+         SET left_cycle = NULL, left_at = NULL, joined_at = clock_timestamp()
+         WHERE circle_members.left_cycle IS NOT NULL`,
       [circleId, userId, role],
+    );
+    await this.syncCommunityConsent(tx, circleId);
+  }
+
+  /**
+   * A circle is shared with the community tier only while every current
+   * member agrees, so each membership change re-checks it.
+   */
+  async syncCommunityConsent(tx: PoolClient, circleId: string): Promise<void> {
+    await tx.query(
+      `UPDATE circles c SET community_consent = NOT EXISTS (
+         SELECT 1 FROM circle_members m
+         WHERE m.circle_id = c.id AND m.left_cycle IS NULL AND NOT EXISTS (
+           SELECT 1 FROM consents k WHERE k.circle_id = c.id AND k.user_id = m.user_id
+             AND k.scope = 'community_aggregates' AND k.revoked_at IS NULL))
+       WHERE c.id = $1`,
+      [circleId],
     );
   }
 
@@ -203,6 +224,118 @@ export class CirclesRepository {
       circleId,
       mode,
     ]);
+  }
+
+  /** Draft circles have no cycles yet, so the member simply never took part. */
+  async removeFromDraft(
+    tx: PoolClient,
+    circleId: string,
+    userId: string,
+    at: Date,
+  ): Promise<void> {
+    await tx.query(
+      `UPDATE circle_members SET left_cycle = 1, left_at = $3
+       WHERE circle_id = $1 AND user_id = $2`,
+      [circleId, userId, at],
+    );
+    await tx.query(
+      'DELETE FROM circle_payout_shares WHERE circle_id = $1 AND user_id = $2',
+      [circleId, userId],
+    );
+    await this.revokeConsents(tx, circleId, userId, at);
+  }
+
+  private async revokeConsents(
+    tx: PoolClient,
+    circleId: string,
+    userId: string,
+    at: Date,
+  ): Promise<void> {
+    await tx.query(
+      `UPDATE consents SET revoked_at = $3
+       WHERE circle_id = $1 AND user_id = $2 AND scope = 'community_aggregates'
+         AND revoked_at IS NULL`,
+      [circleId, userId, at],
+    );
+    await this.syncCommunityConsent(tx, circleId);
+  }
+
+  /**
+   * Takes a member who has not yet received the pot out of a running circle
+   * from `fromCycle` on. One member fewer means one cycle fewer: the last
+   * cycle is dropped and the remaining turns move up.
+   */
+  async removeFromActive(
+    tx: PoolClient,
+    circleId: string,
+    userId: string,
+    fromCycle: number,
+    at: Date,
+  ): Promise<void> {
+    await tx.query(
+      `UPDATE circle_members SET left_cycle = $3, left_at = $4, payout_position = NULL
+       WHERE circle_id = $1 AND user_id = $2`,
+      [circleId, userId, fromCycle, at],
+    );
+    // the remaining recipients of the open cycles, in their existing order
+    const { rows } = await tx.query<{ user_id: string }>(
+      `SELECT cy.payout_user_id AS user_id FROM cycles cy
+       WHERE cy.circle_id = $1 AND cy.status = 'open' AND cy.payout_user_id <> $2
+       ORDER BY cy.number`,
+      [circleId, userId],
+    );
+    const { rows: open } = await tx.query<{ id: string; number: number }>(
+      `SELECT id, number FROM cycles WHERE circle_id = $1 AND status = 'open' ORDER BY number`,
+      [circleId],
+    );
+    const last = open[open.length - 1];
+    await tx.query('DELETE FROM cycles WHERE id = $1', [last.id]);
+    // two passes keep UNIQUE (circle_id, payout_position) satisfied
+    await tx.query(
+      `UPDATE circle_members SET payout_position = -payout_position
+       WHERE circle_id = $1 AND left_cycle IS NULL AND payout_position >= $2`,
+      [circleId, open[0].number],
+    );
+    for (let i = 0; i < rows.length; i++) {
+      await tx.query('UPDATE cycles SET payout_user_id = $2 WHERE id = $1', [
+        open[i].id,
+        rows[i].user_id,
+      ]);
+      await tx.query(
+        `UPDATE circle_members SET payout_position = $3
+         WHERE circle_id = $1 AND user_id = $2`,
+        [circleId, rows[i].user_id, open[i].number],
+      );
+    }
+    await tx.query(
+      'UPDATE circles SET planned_cycles = planned_cycles - 1 WHERE id = $1',
+      [circleId],
+    );
+    await this.revokeConsents(tx, circleId, userId, at);
+  }
+
+  /** A member's verified contributions so far, with their parts. */
+  async verifiedByMember(
+    db: Db,
+    circleId: string,
+    userId: string,
+  ): Promise<{ count: number; totalMinor: number; entryIds: string[] }> {
+    const { rows } = await db.query<{
+      count: number;
+      total: string;
+      ids: string[];
+    }>(
+      `SELECT count(*)::int AS count, COALESCE(sum(amount_minor), 0)::bigint AS total,
+              COALESCE(array_agg(contribution_id::text ORDER BY cycle_number), '{}') AS ids
+       FROM v_cycle_member_status
+       WHERE circle_id = $1 AND user_id = $2 AND status = 'verified'`,
+      [circleId, userId],
+    );
+    return {
+      count: rows[0].count,
+      totalMinor: toInt(rows[0].total),
+      entryIds: rows[0].ids,
+    };
   }
 
   async circleIdsFor(db: Db, userId: string): Promise<string[]> {

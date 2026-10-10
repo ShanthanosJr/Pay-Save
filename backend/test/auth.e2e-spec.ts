@@ -8,16 +8,17 @@ import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 import { configureApp } from './../src/app.setup';
 import { CLOCK, Clock } from './../src/common/clock/clock';
-import { OTP_SENDER, OtpPurpose, OtpSender } from './../src/otp/otp-sender';
+import {
+  OTP_SENDER,
+  OtpMessage,
+  OtpPurpose,
+  OtpSender,
+} from './../src/otp/otp-sender';
 import { createTestDatabase, TestDatabase } from './support/test-db';
 
 class RecordingSender implements OtpSender {
-  sent: { purpose: OtpPurpose; target: string; code: string }[] = [];
-  send(m: {
-    purpose: OtpPurpose;
-    target: string;
-    code: string;
-  }): Promise<void> {
+  sent: OtpMessage[] = [];
+  send(m: OtpMessage): Promise<void> {
     this.sent.push(m);
     return Promise.resolve();
   }
@@ -185,6 +186,7 @@ describe('Auth (e2e)', () => {
         'emailVerified',
         'fullName',
         'id',
+        'isCommunityOfficer',
         'language',
         'nicMasked',
         'phoneMasked',
@@ -700,6 +702,152 @@ describe('Auth (e2e)', () => {
         statuses.push(r.status);
       }
       expect(statuses).toEqual([401, 401, 401, 401, 401, 429, 429]);
+    });
+  });
+
+  describe('password reset and change', () => {
+    const login = (identifier: string, password: string) =>
+      http().post('/auth/login').send({ identifier, password });
+
+    it('resets by SMS code, signs other devices out and clears a lockout', async () => {
+      const reg = await register();
+      const { refreshToken } = reg.body as { refreshToken: string };
+      for (let i = 0; i < 5; i++) await login(PHONE, 'Wrong-pass1');
+      await login(PHONE, PASSWORD).expect(429);
+
+      const forgot = await http()
+        .post('/auth/password/forgot')
+        .send({ identifier: PHONE })
+        .expect(200);
+      expect(forgot.body).toEqual({
+        channel: 'sms',
+        expiresInSeconds: 300,
+        resendAfterSeconds: 30,
+      });
+      const sent = ctx.sender.sent.at(-1)!;
+      expect(sent).toMatchObject({
+        purpose: 'password_reset',
+        target: PHONE_E164,
+      });
+
+      await http()
+        .post('/auth/password/reset')
+        .send({ identifier: PHONE, code: '000000', newPassword: 'Newpass123' })
+        .expect(400);
+      await http()
+        .post('/auth/password/reset')
+        .send({ identifier: PHONE, code: sent.code, newPassword: 'short' })
+        .expect(400);
+      await http()
+        .post('/auth/password/reset')
+        .send({ identifier: PHONE, code: sent.code, newPassword: 'Newpass123' })
+        .expect(204);
+
+      await login(PHONE, PASSWORD).expect(401);
+      await login(EMAIL, 'Newpass123').expect(200);
+      await http().post('/auth/refresh').send({ refreshToken }).expect(401);
+      // the code is spent
+      await http()
+        .post('/auth/password/reset')
+        .send({ identifier: PHONE, code: sent.code, newPassword: 'Other1234' })
+        .expect(400);
+    });
+
+    it('resets by email code and answers the same for unknown accounts', async () => {
+      await register();
+      const known = await http()
+        .post('/auth/password/forgot')
+        .send({ identifier: EMAIL })
+        .expect(200);
+      const before = ctx.sender.sent.length;
+      const unknown = await http()
+        .post('/auth/password/forgot')
+        .send({ identifier: 'nobody@e2e.test' })
+        .expect(200);
+      expect(unknown.body).toEqual(known.body);
+      expect(ctx.sender.sent).toHaveLength(before);
+      // asking again inside the cooldown does not reveal the account either
+      const again = await http()
+        .post('/auth/password/forgot')
+        .send({ identifier: EMAIL })
+        .expect(200);
+      expect(again.body).toEqual(known.body);
+
+      const sent = ctx.sender.sent.at(-1)!;
+      expect(sent).toMatchObject({ purpose: 'password_reset', target: EMAIL });
+      await http()
+        .post('/auth/password/reset')
+        .send({ identifier: EMAIL, code: sent.code, newPassword: 'Newpass123' })
+        .expect(204);
+      await login(EMAIL, 'Newpass123').expect(200);
+      await http()
+        .post('/auth/password/reset')
+        .send({
+          identifier: 'nobody@e2e.test',
+          code: '123456',
+          newPassword: 'Newpass123',
+        })
+        .expect(400);
+    });
+
+    it('changes the password with the current one and rotates the session', async () => {
+      const reg = await register();
+      const { accessToken, refreshToken } = reg.body as {
+        accessToken: string;
+        refreshToken: string;
+      };
+      const auth = { Authorization: `Bearer ${accessToken}` };
+      await http()
+        .post('/users/me/password')
+        .set(auth)
+        .send({ currentPassword: 'Wrong-pass1', newPassword: 'Newpass123' })
+        .expect(400)
+        .expect((r) =>
+          expect(r.body).toMatchObject({ code: 'WRONG_PASSWORD' }),
+        );
+      const res = await http()
+        .post('/users/me/password')
+        .set(auth)
+        .send({ currentPassword: PASSWORD, newPassword: 'Newpass123' })
+        .expect(200);
+      await http()
+        .post('/auth/refresh')
+        .send({
+          refreshToken: (res.body as { refreshToken: string }).refreshToken,
+        })
+        .expect(200);
+      // the session from before the change is gone
+      await http().post('/auth/refresh').send({ refreshToken }).expect(401);
+      await login(PHONE, PASSWORD).expect(401);
+      await login(PHONE, 'Newpass123').expect(200);
+    });
+  });
+
+  describe('delivery', () => {
+    it('a gateway failure is a 503 and does not start the cooldown', async () => {
+      const real = ctx.sender.send.bind(ctx.sender);
+      ctx.sender.send = () => Promise.reject(new Error('sms delivery failed'));
+      await http()
+        .post('/auth/otp/request')
+        .send({ phone: PHONE })
+        .expect(503)
+        .expect((r) =>
+          expect(r.body).toMatchObject({ code: 'DELIVERY_FAILED' }),
+        );
+      ctx.sender.send = real;
+      await http().post('/auth/otp/request').send({ phone: PHONE }).expect(200);
+    });
+
+    it('passes the chosen language to the sender', async () => {
+      await http()
+        .post('/auth/otp/request')
+        .send({ phone: PHONE, language: 'si' })
+        .expect(200);
+      expect(ctx.sender.sent.at(-1)).toMatchObject({ language: 'si' });
+      await http()
+        .post('/auth/otp/request')
+        .send({ phone: '0770000009', language: 'fr' })
+        .expect(400);
     });
   });
 
